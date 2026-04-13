@@ -11,6 +11,7 @@ const initialState = {
   isChatPageActive: false, // True when ChatPage is mounted - prevents duplicate API calls from PushNotification
 };
 
+
 const chatUISlice = createSlice({
   name: 'chatUI',
   initialState,
