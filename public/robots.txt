@@ -1,0 +1,17 @@
+# robots.txt for eDemand
+# This file tells search engine crawlers which pages they can access
+
+# Allow all crawlers to access all content
+User-agent: *
+Allow: /
+
+# Disallow admin and API routes
+Disallow: /api/
+Disallow: /admin/
+Disallow: /_next/
+
+# Sitemap location - helps search engines discover all pages
+# This is the main sitemap that contains all language versions
+# Update this URL to match your production domain
+Sitemap: https://e-demand-next-js.vercel.app/sitemap.xml
+

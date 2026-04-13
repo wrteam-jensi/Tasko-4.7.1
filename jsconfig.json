@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",  // Ensures VS Code resolves paths from the root
+    "paths": {
+      "@/*": ["./src/*"],   // Your existing alias
+      "react": ["node_modules/react"],  // Add React explicitly
+      "react-dom": ["node_modules/react-dom"]
+    }
+  },
+  "exclude": ["node_modules"]  // Prevent indexing node_modules
+}

@@ -1,0 +1,81 @@
+// Api end points is to get particular data
+export const getHomePage = "get_home_screen_data";
+export const getCategory = "get_categories";
+export const getProviders = "get_providers";
+export const getServices = "get_services";
+export const getSettings = "get_settings";
+export const getBookmark = "book_mark";
+export const getCart = "get_cart";
+export const providerCheckAvailability = "provider_check_availability";
+export const addAddress = "add_address";
+export const checkAvailableSlot = "check_available_slot";
+export const placeOrder = "place_order";
+export const createRazorOrder = "razorpay_create_order";
+export const getAvailableSlot = "get_available_slots";
+export const manageCart = "manage_cart";
+export const getPromoCodes = "get_promo_codes";
+export const validatePromoCode = "validate_promo_code";
+export const verifyUser = "verify_user";
+export const manageUser = "manage_user";
+export const deleteAddress = "delete_address";
+export const getAddress = "get_address";
+export const updateUser = "update_user";
+export const getSubCategories = "get_sub_categories";
+export const deleteUserAccount = "delete_user_account";
+export const logout = "logout";
+export const getOrders = "get_orders";
+export const getNotifications = "get_notifications";
+export const getTransaction = "get_transactions";
+export const removeFromCart = "remove_from_cart";
+export const getRating = "get_ratings";
+export const addTransaction = "add_transaction";
+export const contactUsApi = "contact_us_api";
+export const addRating = "add_rating";
+export const updateOrderStatus = "update_order_status";
+export const downloadInvoices = "invoice-download";
+export const searchServicesProviders = "search_services_providers";
+export const getChatProviderList = "get_chat_providers_list";
+export const getChatHistory = "get_chat_history";
+export const sendChatMessage = "send_chat_message";
+export const getFaqs = "get_faqs";
+export const verifyOTP = "verify_otp"; // this is for twillo sms
+export const resendOTP = "resend_otp"; // this is for twillo sms
+export const getWebLandingPage = "get_web_landing_page_settings";
+export const makeCustomJobRequest = "make_custom_job_request";
+export const fetchMyCustomJobRequests = "fetch_my_custom_job_requests";
+export const fetchMyCustomJobBidders = "fetch_custom_job_bidders";
+export const cancleCustomJobReq = "cancle_custom_job_request";
+export const getPlacesForWeb = "get_places_for_web";
+export const getPlacesDeatilsForWeb = "get_place_details_for_web";
+export const getBecomeProviderSetings = "get_become_provider_settings";
+export const allCategories = "get_all_categories";
+export const getReportReasons = "get_report_reasons";
+export const blockUser = "block_user";
+export const unblockUser = "unblock_user";
+export const deleteChatUser = "delete_chat_user";
+export const markMessageAsRead = "mark_message_as_read";
+export const getParentCategorySlug = "get_parent_category_slug";
+export const getBlockedProviders = "get_blocked_providers";
+export const getBlogs = "get_blogs";
+export const getBlogCategories = "get_blog_categories";
+export const getBlogTags = "get_blog_tags";
+export const getBlogDetails = "get_blog_details";
+export const getProvidersOnMap = "get_providers_on_map";
+export const getLanguageList = "get_language_list";
+export const getLanguageJsonData = "get_language_json_data";
+export const getPageSettings = "get_page_setting";
+
+// register provider apis
+export const registerProvider = "register_provider";
+export const verifyProvider = "verify_provider";
+export const verifyProviderOtp = "verify_provider_otp";
+export const resendProviderOtp = "resend_provider_otp";
+export const changePassword = "change_password";
+
+export const stripePaymentIntent = "create_stripe_payment_intent";
+
+export const createCashfreeOrder = "cashfree_create_order";
+
+export const updateFcm = "update_fcm";
+
+export const getUserInfo = "get_user_info";

@@ -1,0 +1,83 @@
+{
+  "name": "eDemand",
+  "short_name": "eDemand",
+  "description": "Your On-Demand Service Booking Platform",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#0277fa",
+  "background_color": "#FFFFFF",
+  "icons": [
+    {
+      "src": "/favicon-16x16.png",
+      "sizes": "16x16",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Home",
+      "url": "/"
+    },
+    {
+      "name": "Services",
+      "url": "/services"
+    },
+    {
+      "name": "Profile",
+      "url": "/profile"
+    }
+  ],
+  "scope": "/",
+  "orientation": "portrait",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["business", "productivity", "lifestyle"],
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "iarc_rating_id": "",
+  "screenshots": [
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "platform": "wide",
+      "label": "eDemand Home Screen"
+    }
+  ],
+  "capture_links": "existing-client-navigate",
+  "handle_links": "auto",
+  "launch_handler": {
+    "client_mode": ["navigate-existing", "auto"]
+  },
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "id": "edemand-pwa",
+  "file_handlers": [],
+  "protocol_handlers": []
+}
