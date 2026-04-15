@@ -4,19 +4,16 @@ import React from "react";
 import CommanHeadline from "../ReUseableComponents/CommanHeadline";
 import HomeCategoryCard from "../Cards/HomeCategoryCard";
 import { useDispatch } from "react-redux";
-import {
-  addCategory,
-  clearCategories,
-} from "../../redux/reducers/multiCategoriesSlice";
+import { addCategory, clearCategories } from "../../redux/reducers/multiCategoriesSlice";
 import { useRouter } from "next/router";
 import { useTranslation } from "../Layout/TranslationContext";
 import { useRTL } from "@/utils/Helper";
 import { logClarityEvent } from "@/utils/clarityEvents";
 import { HOME_EVENTS } from "@/constants/clarityEventNames";
-
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
-import { Autoplay, FreeMode, Pagination } from "swiper/modules";
+import { Autoplay, FreeMode } from "swiper/modules";
+import Link from "next/link";
 
 const HomeCategories = ({ categoriesData }) => {
   const dispatch = useDispatch();
@@ -25,87 +22,70 @@ const HomeCategories = ({ categoriesData }) => {
   const isRTL = useRTL();
 
   const handleRouteCategory = (categorySlug) => {
-
     dispatch(clearCategories());
     dispatch(addCategory(categorySlug));
     logClarityEvent(HOME_EVENTS.HOME_CATEGORY_SHORTCUT_TAPPED, {
       category_slug: categorySlug?.slug,
     });
-
     router.push(`/service/${categorySlug.slug}`);
   };
 
-  const breakpoints = {
-    0: {
-      slidesPerView: 1.3,
-    },
-    768: {
-      slidesPerView: 1.5,
-    },
-    992: {
-      slidesPerView: 1.8,
-    },
-    1200: {
-      slidesPerView: 1.8,
-    },
-    1400: {
-      slidesPerView: 2.7,
-    },
-    1600: {
-      slidesPerView: 3.5,
-    },
-  };
-
   return (
-    <div className="categories light_bg_color pt-4  pb-0 md:py-8 homeCategories">
+    <div className="light_bg_color py-8">
       <div className="container mx-auto px-4 md:px-8">
-        <div className="hidden md:block">
-        <CommanHeadline
-          headline={t("chooseYourService")}
-          subHeadline={t("discoverServices")}
-          link={"/services"}
-        />
+
+        {/* Header row: title + View All */}
+        <div className="flex items-start justify-between mb-6">
+          <div>
+            <h2 className="text-xl md:text-2xl font-semibold text-gray-900 dark:text-white leading-tight">
+              {t("chooseYourService")}
+            </h2>
+            <p className="text-sm text-blue-500 mt-0.5">
+              {t("discoverServices")}
+            </p>
+          </div>
+          <Link
+            href="/services"
+            className="text-sm text-gray-700 dark:text-gray-300 hover:text-blue-500 transition-colors whitespace-nowrap mt-1"
+          >
+            {t("viewAll")}
+          </Link>
         </div>
 
-        {/* Responsive Grid Layout */}
-        <div className="hidden md:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {/* Desktop grid — 8 columns */}
+        <div className="hidden md:grid grid-cols-8 gap-4">
           {categoriesData.slice(0, 8).map((category, index) => (
-            <div key={index}>
-              <HomeCategoryCard
-                data={category}
-                handleRouteCategory={handleRouteCategory}
-                isRTL={isRTL}
-              />
-            </div>
+            <HomeCategoryCard
+              key={index}
+              data={category}
+              handleRouteCategory={handleRouteCategory}
+            />
           ))}
         </div>
 
+        {/* Mobile swiper */}
         <div className="block md:hidden">
           <Swiper
-            modules={[Autoplay, FreeMode,Pagination]} // Include FreeMode module
-            spaceBetween={20}
+            modules={[Autoplay, FreeMode]}
+            spaceBetween={12}
+            slidesPerView={3.5}
             loop={true}
-            key={isRTL}
-            slidesPerView={3.5} // Set to 3.5
             dir={isRTL ? "rtl" : "ltr"}
-            autoplay={{ delay: 3000 }} // Autoplay functionality
-            freeMode={true} // Enable free mode
-            breakpoints={breakpoints} // Add breakpoints here
-            navigation
-            pagination={{
-              clickable: true,
+            key={isRTL ? "rtl" : "ltr"}
+            autoplay={{ delay: 3000 }}
+            freeMode={true}
+            breakpoints={{
+              0: { slidesPerView: 3.5 },
+              480: { slidesPerView: 4.5 },
+              640: { slidesPerView: 5.5 },
             }}
-            className="mySwiper"
           >
             {categoriesData.slice(0, 8).map((category, index) => (
               <SwiperSlide key={index}>
-                <div >
-                  <HomeCategoryCard
-                    data={category}
-                    handleRouteCategory={handleRouteCategory}
-                    isRTL={isRTL}
-                  />
-                </div>
+                <HomeCategoryCard
+                  data={category}
+                  handleRouteCategory={handleRouteCategory}
+                />
               </SwiperSlide>
             ))}
           </Swiper>
