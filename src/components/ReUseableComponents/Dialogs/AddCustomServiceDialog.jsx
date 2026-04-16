@@ -30,6 +30,7 @@ import {
   ChevronRight,
   Gift,
   X,
+  Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import CustomDateTimePicker from "../CustomDateTimePicker/CustomDateTimePicker";
@@ -43,6 +44,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useRef } from "react";
 
 const AddCustomServiceDialog = ({ open, close, fetchBookings }) => {
   const t = useTranslation();
@@ -66,6 +68,8 @@ const AddCustomServiceDialog = ({ open, close, fetchBookings }) => {
     startDateTime: null,
     endDateTime: null,
   });
+  const [attachments, setAttachments] = useState([]);
+  const fileInputRef = useRef(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -112,6 +116,29 @@ const AddCustomServiceDialog = ({ open, close, fetchBookings }) => {
     setShowDatePicker(false);
   };
 
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    const validFiles = files.filter((file) => file.size <= 10 * 1024 * 1024); // 10MB limit
+
+    if (validFiles.length < files.length) {
+      toast.error(t("someFilesTooLarge") || "Some files were too large (max 10MB)");
+    }
+
+    setAttachments((prev) => [...prev, ...validFiles]);
+    e.target.value = ""; // Reset input so same file can be selected again
+  };
+
+  const removeAttachment = (index) => {
+    setAttachments((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const getFileIcon = (type) => {
+    if (type.startsWith("image/")) return <ImageIcon size={16} />;
+    if (type.startsWith("video/")) return <Video size={16} />;
+    if (type.startsWith("audio/")) return <Mic size={16} />;
+    return <FileText size={16} />;
+  };
+
   const fetchCategories = async () => {
     try {
       setCategoriesLoading(true);
@@ -137,6 +164,7 @@ const AddCustomServiceDialog = ({ open, close, fetchBookings }) => {
       endDateTime: null,
     });
     setTimeOption("choose");
+    setAttachments([]);
   };
 
   const handleSubmit = async () => {
@@ -192,6 +220,7 @@ const AddCustomServiceDialog = ({ open, close, fetchBookings }) => {
         service_title: formValues.serviceTitle,
         latitude: locationData?.lat,
         longitude: locationData?.lng,
+        images: attachments,
       });
       if (response?.error === false) {
         toast.success(response?.message);
@@ -348,14 +377,46 @@ const AddCustomServiceDialog = ({ open, close, fetchBookings }) => {
             </p>
 
             <div className="grid grid-cols-4 gap-3 bg-gray-50/50 p-4 border border-dashed rounded-[20px]">
+              <input
+                type="file"
+                ref={fileInputRef}
+                className="hidden"
+                multiple
+                onChange={handleFileChange}
+              />
               {[
-                { icon: ImageIcon, label: t("photo"), color: "text-blue-500" },
-                { icon: Video, label: t("video"), color: "text-green-500" },
-                { icon: FileText, label: t("file"), color: "text-orange-500" },
-                { icon: Mic, label: t("voiceNote"), color: "text-purple-500" },
+                {
+                  icon: ImageIcon,
+                  label: t("photo"),
+                  color: "text-blue-500",
+                  accept: "image/*",
+                },
+                {
+                  icon: Video,
+                  label: t("video"),
+                  color: "text-green-500",
+                  accept: "video/*",
+                },
+                {
+                  icon: FileText,
+                  label: t("file"),
+                  color: "text-orange-500",
+                  accept: ".pdf,.doc,.docx,.txt",
+                },
+                {
+                  icon: Mic,
+                  label: t("voiceNote"),
+                  color: "text-purple-500",
+                  accept: "audio/*",
+                },
               ].map((item, idx) => (
                 <button
                   key={idx}
+                  type="button"
+                  onClick={() => {
+                    fileInputRef.current.setAttribute("accept", item.accept);
+                    fileInputRef.current.click();
+                  }}
                   className="bg-white rounded-[16px] p-3 flex flex-col items-center justify-center gap-1.5 border hover:border-blue-200 hover:shadow-sm transition-all"
                 >
                   <item.icon className={item.color} size={24} />
@@ -365,6 +426,39 @@ const AddCustomServiceDialog = ({ open, close, fetchBookings }) => {
                 </button>
               ))}
             </div>
+
+            {attachments.length > 0 && (
+              <div className="space-y-2 mt-4">
+                {attachments.map((file, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-3 bg-gray-50 rounded-[14px] border border-gray-100 group animate-in flex-1"
+                  >
+                    <div className="flex items-center gap-3 truncate">
+                      <div className="p-2 bg-white rounded-lg shadow-sm">
+                        {getFileIcon(file.type)}
+                      </div>
+                      <div className="flex flex-col truncate">
+                        <span className="text-xs font-semibold text-gray-700 truncate">
+                          {file.name}
+                        </span>
+                        <span className="text-[10px] text-gray-400">
+                          {(file.size / (1024 * 1024)).toFixed(2)} MB
+                        </span>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => removeAttachment(index)}
+                      className="p-2 hover:bg-red-50 hover:text-red-500 text-gray-400 rounded-full transition-colors"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
             <p className="text-[10px] text-gray-400 text-center uppercase tracking-wider font-semibold">
               JPG, PNG, MP4, PDF up to 10MB each
             </p>

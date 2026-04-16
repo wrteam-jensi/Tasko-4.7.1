@@ -832,7 +832,11 @@
   "noCommitment":"No Commitment",
   "moreDetailsBetterQuotes":"More details = better quotes",
   "improveRequestWithAI":"Improve request with AI",
-  "RECOMMENDED":"RECOMMENDED"
-  
-  
+  "RECOMMENDED": "RECOMMENDED",
+  "someFilesTooLarge": "Some files were too large (max 10MB)",
+  "photo": "Photo",
+  "video": "Video",
+  "voiceNote": "Voice Note",
+  "optional": "Optional",
+  "recommended": "Recommended"
 }

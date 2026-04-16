@@ -1317,6 +1317,7 @@ export const makeCustomJobRequestApi = async ({
   requested_end_time,
   latitude,
   longitude,
+  images,
 }) => {
   const formData = new FormData();
   if (category_id) {
@@ -1351,6 +1352,11 @@ export const makeCustomJobRequestApi = async ({
   }
   if (longitude) {
     formData.append("longitude", longitude);
+  }
+  if (Array.isArray(images)) {
+    images.forEach((image, index) => {
+      formData.append(`images[${index}]`, image);
+    });
   }
   try {
     const response = await api.post(
