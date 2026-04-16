@@ -54,7 +54,7 @@ const AddCustomServiceDialog = ({ open, close, fetchBookings }) => {
   const t = useTranslation();
   const locationData = useSelector((state) => state?.location);
   const settingsData = useSelector((state) => state?.settingsData?.settings);
-  const currencySymbol = settingsData?.currency_symbol || "XOF";
+  const currencySymbol = settingsData?.currency_symbol || "";
 
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [datePickerType, setDatePickerType] = useState(null); // 'start' or 'end'
