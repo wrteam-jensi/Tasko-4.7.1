@@ -102,10 +102,16 @@ const AddCustomServiceDialog = ({ open, close, fetchBookings }) => {
       };
 
       mediaRecorder.onstop = () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: "audio/wav" });
-        const audioFile = new File([audioBlob], `voice-note-${Date.now()}.wav`, {
+        const audioBlob = new Blob(audioChunksRef.current, {
           type: "audio/wav",
         });
+        const audioFile = new File(
+          [audioBlob],
+          `voice-note-${Date.now()}.wav`,
+          {
+            type: "audio/wav",
+          },
+        );
         setAttachments((prev) => [...prev, audioFile]);
         setIsRecording(false);
         setRecordingDuration(0);
@@ -121,7 +127,10 @@ const AddCustomServiceDialog = ({ open, close, fetchBookings }) => {
       }, 1000);
     } catch (err) {
       console.error("Error accessing microphone:", err);
-      toast.error(t("microphoneError") || "Could not access microphone. Please check your browser permissions.");
+      toast.error(
+        t("microphoneError") ||
+          "Could not access microphone. Please check your browser permissions.",
+      );
     }
   };
 
@@ -210,7 +219,9 @@ const AddCustomServiceDialog = ({ open, close, fetchBookings }) => {
     const validFiles = files.filter((file) => file.size <= 10 * 1024 * 1024); // 10MB limit
 
     if (validFiles.length < files.length) {
-      toast.error(t("someFilesTooLarge") || "Some files were too large (max 10MB)");
+      toast.error(
+        t("someFilesTooLarge") || "Some files were too large (max 10MB)",
+      );
     }
 
     setAttachments((prev) => [...prev, ...validFiles]);
@@ -465,7 +476,9 @@ const AddCustomServiceDialog = ({ open, close, fetchBookings }) => {
                 "Add photos or files to help pros understand your request better."}
             </p>
 
-            <div className={`p-4 border border-dashed rounded-[20px] transition-all duration-300 ${isRecording ? 'bg-purple-50/50 border-purple-200' : 'bg-gray-50/50'}`}>
+            <div
+              className={`p-4 border border-dashed rounded-[20px] transition-all duration-300 ${isRecording ? "bg-purple-50/50 border-purple-200" : "bg-gray-50/50"}`}
+            >
               <input
                 type="file"
                 ref={fileInputRef}
@@ -508,7 +521,10 @@ const AddCustomServiceDialog = ({ open, close, fetchBookings }) => {
                         if (item.label === t("voiceNote")) {
                           startRecording();
                         } else {
-                          fileInputRef.current.setAttribute("accept", item.accept);
+                          fileInputRef.current.setAttribute(
+                            "accept",
+                            item.accept,
+                          );
                           fileInputRef.current.click();
                         }
                       }}
@@ -531,13 +547,15 @@ const AddCustomServiceDialog = ({ open, close, fetchBookings }) => {
                       </div>
                     </div>
                     <div className="flex flex-col">
-                      <span className="text-sm font-bold text-gray-900">{t("recording") || "Recording..."}</span>
+                      <span className="text-sm font-bold text-gray-900">
+                        {t("recording") || "Recording..."}
+                      </span>
                       <span className="text-xl font-mono font-black text-purple-600 tabular-nums">
                         {formatTime(recordingDuration)}
                       </span>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
@@ -545,7 +563,10 @@ const AddCustomServiceDialog = ({ open, close, fetchBookings }) => {
                       className="p-2.5 bg-white border border-gray-200 text-gray-500 rounded-full hover:bg-red-50 hover:text-red-500 hover:border-red-100 transition-all shadow-sm group"
                       title={t("cancel") || "Cancel"}
                     >
-                      <X size={18} className="group-hover:rotate-90 transition-transform" />
+                      <X
+                        size={18}
+                        className="group-hover:rotate-90 transition-transform"
+                      />
                     </button>
                     <button
                       type="button"
@@ -585,9 +606,13 @@ const AddCustomServiceDialog = ({ open, close, fetchBookings }) => {
                         <button
                           type="button"
                           onClick={() => togglePlayback(file, index)}
-                          className={`p-2 rounded-full transition-all ${playingIndex === index ? 'bg-purple-100 text-purple-600' : 'hover:bg-gray-100 text-gray-500'}`}
+                          className={`p-2 rounded-full transition-all ${playingIndex === index ? "bg-purple-100 text-purple-600" : "hover:bg-gray-100 text-gray-500"}`}
                         >
-                          {playingIndex === index ? <Pause size={16} /> : <Play size={16} />}
+                          {playingIndex === index ? (
+                            <Pause size={16} />
+                          ) : (
+                            <Play size={16} />
+                          )}
                         </button>
                       )}
                       <button
@@ -642,7 +667,6 @@ const AddCustomServiceDialog = ({ open, close, fetchBookings }) => {
                           "Ex.: Air Conditioning, Electrical, Plumbing"}
                       </span>
                     </div>
-                    <ChevronRight className="ml-auto text-blue-600" size={20} />
                   </SelectTrigger>
                   <SelectContent className="max-h-[300px] z-[9999] rounded-[20px]">
                     {categoriesLoading ? (
