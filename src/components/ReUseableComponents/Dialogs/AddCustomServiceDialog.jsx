@@ -884,7 +884,7 @@ const AddCustomServiceDialog = ({ open, close, fetchBookings }) => {
                 color: "text-orange-500",
               },
               {
-                icon: Gift,
+                icon: Lock,
                 title: t("freeToUse") || "Free to use",
                 sub: t("noCommitment") || "No commitment",
                 color: "text-green-500",
