@@ -309,7 +309,7 @@ const AllCategories = () => {
                 />
               </div>
             ) : displayedCategories.length > 0 ? (
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 lg:grid-cols-6 gap-4">
                 {displayedCategories.map((category, index) => (
                   <div key={category.id || index}>
                     <HomeCategoryCard
