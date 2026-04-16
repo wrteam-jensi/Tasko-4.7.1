@@ -31,6 +31,10 @@ import {
   Gift,
   X,
   Trash2,
+  Square,
+  Check,
+  Play,
+  Pause,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import CustomDateTimePicker from "../CustomDateTimePicker/CustomDateTimePicker";
@@ -70,6 +74,91 @@ const AddCustomServiceDialog = ({ open, close, fetchBookings }) => {
   });
   const [attachments, setAttachments] = useState([]);
   const fileInputRef = useRef(null);
+
+  // Voice Recording State
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingDuration, setRecordingDuration] = useState(0);
+  const mediaRecorderRef = useRef(null);
+  const timerRef = useRef(null);
+  const audioChunksRef = useRef([]);
+
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+  };
+
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      audioChunksRef.current = [];
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunksRef.current.push(event.data);
+        }
+      };
+
+      mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: "audio/wav" });
+        const audioFile = new File([audioBlob], `voice-note-${Date.now()}.wav`, {
+          type: "audio/wav",
+        });
+        setAttachments((prev) => [...prev, audioFile]);
+        setIsRecording(false);
+        setRecordingDuration(0);
+
+        // Stop all tracks
+        stream.getTracks().forEach((track) => track.stop());
+      };
+
+      mediaRecorder.start();
+      setIsRecording(true);
+      timerRef.current = setInterval(() => {
+        setRecordingDuration((prev) => prev + 1);
+      }, 1000);
+    } catch (err) {
+      console.error("Error accessing microphone:", err);
+      toast.error(t("microphoneError") || "Could not access microphone. Please check your browser permissions.");
+    }
+  };
+
+  const stopRecording = (shouldSave = true) => {
+    if (mediaRecorderRef.current && isRecording) {
+      if (!shouldSave) {
+        // If we don't want to save, we need to clear onstop or handle it differently
+        mediaRecorderRef.current.onstop = () => {
+          setIsRecording(false);
+          setRecordingDuration(0);
+          const stream = mediaRecorderRef.current.stream;
+          stream.getTracks().forEach((track) => track.stop());
+        };
+      }
+      mediaRecorderRef.current.stop();
+      clearInterval(timerRef.current);
+    }
+  };
+
+  const [playingIndex, setPlayingIndex] = useState(null);
+  const audioRef = useRef(null);
+
+  const togglePlayback = (file, index) => {
+    if (playingIndex === index) {
+      audioRef.current.pause();
+      setPlayingIndex(null);
+    } else {
+      if (audioRef.current) {
+        audioRef.current.pause();
+      }
+      const url = URL.createObjectURL(file);
+      audioRef.current = new Audio(url);
+      audioRef.current.play();
+      setPlayingIndex(index);
+      audioRef.current.onended = () => setPlayingIndex(null);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -376,7 +465,7 @@ const AddCustomServiceDialog = ({ open, close, fetchBookings }) => {
                 "Add photos or files to help pros understand your request better."}
             </p>
 
-            <div className="grid grid-cols-4 gap-3 bg-gray-50/50 p-4 border border-dashed rounded-[20px]">
+            <div className={`p-4 border border-dashed rounded-[20px] transition-all duration-300 ${isRecording ? 'bg-purple-50/50 border-purple-200' : 'bg-gray-50/50'}`}>
               <input
                 type="file"
                 ref={fileInputRef}
@@ -384,47 +473,91 @@ const AddCustomServiceDialog = ({ open, close, fetchBookings }) => {
                 multiple
                 onChange={handleFileChange}
               />
-              {[
-                {
-                  icon: ImageIcon,
-                  label: t("photo"),
-                  color: "text-blue-500",
-                  accept: "image/*",
-                },
-                {
-                  icon: Video,
-                  label: t("video"),
-                  color: "text-green-500",
-                  accept: "video/*",
-                },
-                {
-                  icon: FileText,
-                  label: t("file"),
-                  color: "text-orange-500",
-                  accept: ".pdf,.doc,.docx,.txt",
-                },
-                {
-                  icon: Mic,
-                  label: t("voiceNote"),
-                  color: "text-purple-500",
-                  accept: "audio/*",
-                },
-              ].map((item, idx) => (
-                <button
-                  key={idx}
-                  type="button"
-                  onClick={() => {
-                    fileInputRef.current.setAttribute("accept", item.accept);
-                    fileInputRef.current.click();
-                  }}
-                  className="bg-white rounded-[16px] p-3 flex flex-col items-center justify-center gap-1.5 border hover:border-blue-200 hover:shadow-sm transition-all"
-                >
-                  <item.icon className={item.color} size={24} />
-                  <span className="text-[11px] font-semibold text-gray-700">
-                    {item.label}
-                  </span>
-                </button>
-              ))}
+              {!isRecording ? (
+                <div className="grid grid-cols-4 gap-3">
+                  {[
+                    {
+                      icon: ImageIcon,
+                      label: t("photo"),
+                      color: "text-blue-500",
+                      accept: "image/*",
+                    },
+                    {
+                      icon: Video,
+                      label: t("video"),
+                      color: "text-green-500",
+                      accept: "video/*",
+                    },
+                    {
+                      icon: FileText,
+                      label: t("file"),
+                      color: "text-orange-500",
+                      accept: ".pdf,.doc,.docx,.txt",
+                    },
+                    {
+                      icon: Mic,
+                      label: t("voiceNote"),
+                      color: "text-purple-500",
+                      accept: "audio/*",
+                    },
+                  ].map((item, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => {
+                        if (item.label === t("voiceNote")) {
+                          startRecording();
+                        } else {
+                          fileInputRef.current.setAttribute("accept", item.accept);
+                          fileInputRef.current.click();
+                        }
+                      }}
+                      className="bg-white rounded-[16px] p-3 flex flex-col items-center justify-center gap-1.5 border hover:border-blue-200 hover:shadow-sm transition-all"
+                    >
+                      <item.icon className={item.color} size={24} />
+                      <span className="text-[11px] font-semibold text-gray-700">
+                        {item.label}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex items-center justify-between gap-4 animate-in fade-in zoom-in duration-300">
+                  <div className="flex items-center gap-3 flex-1">
+                    <div className="relative">
+                      <div className="absolute -inset-1 bg-red-500 rounded-full blur opacity-25 animate-pulse"></div>
+                      <div className="relative p-2.5 bg-red-500 rounded-full text-white shadow-lg shadow-red-200">
+                        <Mic size={18} className="animate-pulse" />
+                      </div>
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-sm font-bold text-gray-900">{t("recording") || "Recording..."}</span>
+                      <span className="text-xl font-mono font-black text-purple-600 tabular-nums">
+                        {formatTime(recordingDuration)}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => stopRecording(false)}
+                      className="p-2.5 bg-white border border-gray-200 text-gray-500 rounded-full hover:bg-red-50 hover:text-red-500 hover:border-red-100 transition-all shadow-sm group"
+                      title={t("cancel") || "Cancel"}
+                    >
+                      <X size={18} className="group-hover:rotate-90 transition-transform" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => stopRecording(true)}
+                      className="p-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 hover:scale-110 active:scale-95 transition-all shadow-lg shadow-purple-200"
+                      title={t("stopAndSave") || "Stop and Save"}
+                    >
+                      <Check size={20} />
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
 
             {attachments.length > 0 && (
@@ -447,13 +580,24 @@ const AddCustomServiceDialog = ({ open, close, fetchBookings }) => {
                         </span>
                       </div>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => removeAttachment(index)}
-                      className="p-2 hover:bg-red-50 hover:text-red-500 text-gray-400 rounded-full transition-colors"
-                    >
-                      <Trash2 size={16} />
-                    </button>
+                    <div className="flex items-center gap-2">
+                      {file.type.startsWith("audio/") && (
+                        <button
+                          type="button"
+                          onClick={() => togglePlayback(file, index)}
+                          className={`p-2 rounded-full transition-all ${playingIndex === index ? 'bg-purple-100 text-purple-600' : 'hover:bg-gray-100 text-gray-500'}`}
+                        >
+                          {playingIndex === index ? <Pause size={16} /> : <Play size={16} />}
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => removeAttachment(index)}
+                        className="p-2 hover:bg-red-50 hover:text-red-500 text-gray-400 rounded-full transition-colors"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
