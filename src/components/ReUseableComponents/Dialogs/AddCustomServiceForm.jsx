@@ -1,0 +1,1061 @@
+import React, { useState, useEffect } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Pencil,
+  MessageSquare,
+  Sparkles,
+  Image as ImageIcon,
+  Video,
+  FileText,
+  Mic,
+  Wrench,
+  Zap,
+  Calendar,
+  Plus,
+  Info,
+  ShieldCheck,
+  Lock,
+  ChevronRight,
+  Gift,
+  X,
+  Trash2,
+  Square,
+  Check,
+  Play,
+  Pause,
+  MapPin,
+  Search,
+  Loader2,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import CustomDateTimePicker from "../CustomDateTimePicker/CustomDateTimePicker";
+import { useTranslation } from "@/components/Layout/TranslationContext";
+import dayjs from "dayjs";
+import {
+  getAllCategoriesApi,
+  makeCustomJobRequestApi,
+  getPlacesForWebApi,
+  getPlacesDetailsForWebApi,
+} from "@/api/apiRoutes";
+import { useSelector, useDispatch } from "react-redux";
+import { toast } from "sonner";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { useRef } from "react";
+
+const AddCustomServiceForm = ({ close, fetchBookings }) => {
+  const t = useTranslation();
+  const locationData = useSelector((state) => state?.location);
+  const settingsData = useSelector((state) => state?.settingsData?.settings);
+  const currencySymbol = settingsData?.currency_symbol || "XOF";
+
+  const [currentStep, setCurrentStep] = useState(1);
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [datePickerType, setDatePickerType] = useState(null); // 'start' or 'end'
+  const [loading, setLoading] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(false);
+  const [timeOption, setTimeOption] = useState("flexible");
+  const [isImproving, setIsImproving] = useState(false);
+
+  // Location search states
+  const [locationSearchInput, setLocationSearchInput] = useState(
+    locationData?.address || "",
+  );
+  const [locationSuggestions, setLocationSuggestions] = useState([]);
+  const [isSearchingLocation, setIsSearchingLocation] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState({
+    address: locationData?.address || "",
+    lat: locationData?.lat || 0,
+    lng: locationData?.lng || 0,
+  });
+
+  const [formValues, setFormValues] = useState({
+    serviceTitle: "",
+    serviceDescription: "",
+    category: "",
+    minPrice: "",
+    maxPrice: "",
+    startDateTime: null,
+    endDateTime: null,
+  });
+  const [attachments, setAttachments] = useState([]);
+  const fileInputRef = useRef(null);
+
+  // Auto-category detection logic
+  useEffect(() => {
+    if (categories.length > 0 && formValues.serviceTitle) {
+      const title = formValues.serviceTitle.toLowerCase();
+      const detectedCategory = categories.find((cat) => {
+        const catName = (cat.translated_name || cat.name).toLowerCase();
+        return title.includes(catName) || catName.includes(title);
+      });
+
+      if (detectedCategory && !formValues.category) {
+        setFormValues((prev) => ({ ...prev, category: detectedCategory.id }));
+      }
+    }
+  }, [formValues.serviceTitle, categories]);
+
+  // Voice Recording State
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingDuration, setRecordingDuration] = useState(0);
+  const mediaRecorderRef = useRef(null);
+  const timerRef = useRef(null);
+  const audioChunksRef = useRef([]);
+
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+  };
+
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      audioChunksRef.current = [];
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunksRef.current.push(event.data);
+        }
+      };
+
+      mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(audioChunksRef.current, {
+          type: "audio/wav",
+        });
+        const audioFile = new File(
+          [audioBlob],
+          `voice-note-${Date.now()}.wav`,
+          {
+            type: "audio/wav",
+          },
+        );
+        setAttachments((prev) => [...prev, audioFile]);
+        setIsRecording(false);
+        setRecordingDuration(0);
+
+        // Stop all tracks
+        stream.getTracks().forEach((track) => track.stop());
+      };
+
+      mediaRecorder.start();
+      setIsRecording(true);
+      timerRef.current = setInterval(() => {
+        setRecordingDuration((prev) => prev + 1);
+      }, 1000);
+    } catch (err) {
+      console.error("Error accessing microphone:", err);
+      toast.error(
+        t("microphoneError") ||
+          "Could not access microphone. Please check your browser permissions.",
+      );
+    }
+  };
+
+  const stopRecording = (shouldSave = true) => {
+    if (mediaRecorderRef.current && isRecording) {
+      if (!shouldSave) {
+        mediaRecorderRef.current.onstop = () => {
+          setIsRecording(false);
+          setRecordingDuration(0);
+          const stream = mediaRecorderRef.current.stream;
+          stream.getTracks().forEach((track) => track.stop());
+        };
+      }
+      mediaRecorderRef.current.stop();
+      clearInterval(timerRef.current);
+    }
+  };
+
+  const [playingIndex, setPlayingIndex] = useState(null);
+  const audioRef = useRef(null);
+
+  const togglePlayback = (file, index) => {
+    if (playingIndex === index) {
+      audioRef.current.pause();
+      setPlayingIndex(null);
+    } else {
+      if (audioRef.current) {
+        audioRef.current.pause();
+      }
+      const url = URL.createObjectURL(file);
+      audioRef.current = new Audio(url);
+      audioRef.current.play();
+      setPlayingIndex(index);
+      audioRef.current.onended = () => setPlayingIndex(null);
+    }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormValues((prevValues) => ({
+      ...prevValues,
+      [name]: value,
+    }));
+  };
+
+  const handleTimeOptionSelect = (option) => {
+    setTimeOption(option);
+    const now = dayjs();
+    if (option === "today") {
+      setFormValues((prev) => ({
+        ...prev,
+        startDateTime: now.toDate(),
+        endDateTime: now.endOf("day").toDate(),
+      }));
+    } else if (option === "week") {
+      setFormValues((prev) => ({
+        ...prev,
+        startDateTime: now.toDate(),
+        endDateTime: now.add(7, "day").toDate(),
+      }));
+    } else if (option === "flexible") {
+      setFormValues((prev) => ({
+        ...prev,
+        startDateTime: now.toDate(),
+        endDateTime: now.add(1, "month").toDate(),
+      }));
+    }
+  };
+
+  const handleDateTimeClick = (type) => {
+    setDatePickerType(type);
+    setShowDatePicker(true);
+  };
+
+  const handleDateTimeSelect = (value) => {
+    setFormValues((prev) => ({
+      ...prev,
+      [datePickerType]: value,
+    }));
+    setShowDatePicker(false);
+  };
+
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    const validFiles = files.filter((file) => file.size <= 10 * 1024 * 1024); // 10MB limit
+
+    if (validFiles.length < files.length) {
+      toast.error(
+        t("someFilesTooLarge") || "Some files were too large (max 10MB)",
+      );
+    }
+
+    setAttachments((prev) => [...prev, ...validFiles]);
+    e.target.value = ""; // Reset input so same file can be selected again
+  };
+
+  const removeAttachment = (index) => {
+    setAttachments((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const getFileIcon = (type) => {
+    if (type.startsWith("image/")) return <ImageIcon size={16} />;
+    if (type.startsWith("video/")) return <Video size={16} />;
+    if (type.startsWith("audio/")) return <Mic size={16} />;
+    return <FileText size={16} />;
+  };
+
+  const fetchCategories = async () => {
+    try {
+      setCategoriesLoading(true);
+      const response = await getAllCategoriesApi({});
+      const categoriesData = response?.data || response;
+      setCategories(categoriesData || []);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      setCategories([]);
+    } finally {
+      setCategoriesLoading(false);
+    }
+  };
+
+  const clearForm = () => {
+    setFormValues({
+      serviceTitle: "",
+      serviceDescription: "",
+      category: "",
+      minPrice: "",
+      maxPrice: "",
+      startDateTime: null,
+      endDateTime: null,
+    });
+    setTimeOption("flexible");
+    setAttachments([]);
+    setCurrentStep(1);
+  };
+
+  const handleAIImprove = async () => {
+    if (
+      !formValues.serviceDescription ||
+      formValues.serviceDescription.length < 10
+    ) {
+      toast.error(
+        t("pleaseProvideMoreDetails") ||
+          "Please describe your problem in more detail first.",
+      );
+      return;
+    }
+
+    try {
+      setIsImproving(true);
+      // In a real app: const response = await improveWithAIApi(formValues.serviceDescription);
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      const improvedText = `Professional request regarding ${formValues.serviceTitle || "the service"}: ${formValues.serviceDescription}. I am looking for a high-quality solution with attention to detail. Please provide a quote including estimated timeline.`;
+
+      setFormValues((prev) => ({
+        ...prev,
+        serviceDescription: improvedText,
+      }));
+
+      toast.success(
+        t("aiImprovedDescription") || "AI has enhanced your description!",
+      );
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsImproving(false);
+    }
+  };
+
+  const handleLocationSearch = async (val) => {
+    setLocationSearchInput(val);
+    if (!val.trim() || val.length < 3) {
+      setLocationSuggestions([]);
+      return;
+    }
+
+    try {
+      setIsSearchingLocation(true);
+      const response = await getPlacesForWebApi({ input: val });
+      const data = response?.data?.data || response?.data;
+      setLocationSuggestions(data?.predictions || []);
+    } catch (error) {
+      console.error("Location search error:", error);
+    } finally {
+      setIsSearchingLocation(false);
+    }
+  };
+
+  const handleLocationSelect = async (place) => {
+    setLocationSearchInput(place.description);
+    setLocationSuggestions([]);
+
+    try {
+      setIsSearchingLocation(true);
+      const response = await getPlacesDetailsForWebApi({
+        place_id: place.place_id,
+      });
+      const details =
+        response?.data?.data?.result || response?.data?.data?.results?.[0];
+
+      if (details) {
+        setSelectedLocation({
+          address: details.formatted_address,
+          lat: details.geometry?.location?.lat,
+          lng: details.geometry?.location?.lng,
+        });
+      }
+    } catch (error) {
+      console.error("Location details error:", error);
+    } finally {
+      setIsSearchingLocation(false);
+    }
+  };
+
+  const handleNext = () => {
+    if (currentStep === 1) {
+      if (!formValues.serviceTitle) {
+        toast.error(
+          t("pleaseEnterServiceTitle") || "Please enter a service title",
+        );
+        return;
+      }
+      if (!formValues.serviceDescription) {
+        toast.error(
+          t("pleaseEnterServiceDescription") || "Please describe your problem",
+        );
+        return;
+      }
+    }
+    setCurrentStep((prev) => prev + 1);
+  };
+
+  const handleBack = () => {
+    setCurrentStep((prev) => prev - 1);
+  };
+
+  const handleSubmit = async () => {
+    try {
+      setLoading(true);
+
+      const startDate = formValues.startDateTime
+        ? dayjs(formValues.startDateTime).format("YYYY-MM-DD")
+        : dayjs().format("YYYY-MM-DD");
+      const startTime = formValues.startDateTime
+        ? dayjs(formValues.startDateTime).format("HH:mm:ss")
+        : dayjs().format("HH:mm:ss");
+      const endDate = formValues.endDateTime
+        ? dayjs(formValues.endDateTime).format("YYYY-MM-DD")
+        : dayjs().add(1, "month").format("YYYY-MM-DD");
+      const endTime = formValues.endDateTime
+        ? dayjs(formValues.endDateTime).format("HH:mm:ss")
+        : dayjs().format("HH:mm:ss");
+
+      const response = await makeCustomJobRequestApi({
+        category_id: formValues.category || categories[0]?.id || "1",
+        service_short_description: formValues.serviceDescription,
+        end_date_time:
+          formValues.endDateTime || dayjs().add(1, "month").toDate(),
+        min_price: formValues.minPrice || "0",
+        max_price: formValues.maxPrice || "0",
+        requested_start_date: startDate,
+        requested_start_time: startTime,
+        requested_end_date: endDate,
+        requested_end_time: endTime,
+        service_title: formValues.serviceTitle,
+        latitude: selectedLocation.lat || 0,
+        longitude: selectedLocation.lng || 0,
+        images: attachments,
+      });
+
+      if (response?.error === false) {
+        toast.success(response?.message);
+        close();
+        if (fetchBookings) fetchBookings();
+        clearForm();
+      } else {
+        toast.error(response?.message);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("An error occurred while submitting your request.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // fetchCategories based on component mount since it's now inline
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const timeOptionCards = [
+    {
+      id: "today",
+      title: t("today"),
+      sub: t("asSoonAsPossible"),
+      icon: Zap,
+      color: "text-orange-500",
+      bg: "bg-orange-50",
+      border: "border-orange-200",
+    },
+    {
+      id: "week",
+      title: t("thisWeek"),
+      sub: t("within7Days"),
+      icon: Calendar,
+      color: "text-blue-500",
+      bg: "bg-blue-50",
+      border: "border-blue-200",
+    },
+    {
+      id: "choose",
+      title: t("chooseDates"),
+      sub: t("pickSpecificDates"),
+      icon: Plus,
+      color: "text-green-500",
+      bg: "bg-green-50",
+      border: "border-green-200",
+    },
+    {
+      id: "flexible",
+      title: t("flexible"),
+      sub: t("imFlexible"),
+      icon: Info,
+      color: "text-purple-500",
+      bg: "bg-purple-50",
+      border: "border-purple-200",
+    },
+  ];
+
+  const steps = [
+    { id: 1, title: t("serviceInfo") || "Service Info", icon: Pencil },
+    { id: 2, title: t("detailsContext") || "Details & Context", icon: Info },
+    { id: 3, title: t("summary") || "Summary", icon: Check },
+  ];
+
+  return (
+    <div className="w-full animate-in fade-in slide-in-from-top-4 duration-500 bg-white min-h-[70vh]">
+      {/* Compact Header & Stepper Progress */}
+      <div className="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-gray-100/80">
+        <div className="px-6 py-4 flex items-center justify-between">
+       
+       
+        </div>
+          
+          {/* Sleek Minimalist Stepper */}
+          <div className="px-6 pb-4 pt-2 flex items-center gap-4 max-w-7xl">
+            {steps.map((step, idx) => (
+              <React.Fragment key={step.id}>
+                <div className="flex items-center gap-2 group">
+                  <div className={`
+                    w-6 h-6 rounded-lg flex items-center justify-center transition-all duration-300 text-[10px] font-semibold
+                    ${currentStep >= step.id ? "bg-blue-600 text-white " : "bg-gray-100 text-gray-400"}
+                  `}>
+                    {currentStep > step.id ? <Check size={12} strokeWidth={3} /> : step.id}
+                  </div>
+                  <span className={`text-[15px]  uppercase tracking-wider hidden sm:block whitespace-nowrap ${currentStep >= step.id ? "text-blue-600" : "text-gray-400"}`}>
+                    {step.title}
+                  </span>
+                </div>
+                {idx < steps.length - 1 && (
+                  <div className="flex-1 h-[2px] bg-gray-100 rounded-full mx-1">
+                    <div className={`h-full bg-blue-600 rounded-full transition-all duration-500 ${currentStep > step.id ? "w-full" : "w-0"}`} />
+                  </div>
+                )}
+              </React.Fragment>
+            ))}
+          </div>
+        </div>
+
+        <div className="p-6 md:p-8 max-w-7xl">
+          {currentStep === 1 && (
+            <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+              {/* Step 1: Info */}
+              <div className="bg-white border border-gray-100 rounded-2xl p-4 flex items-start gap-4 transition-all focus-within:ring-2 focus-within:ring-blue-500/10 focus-within:border-blue-500 shadow-sm">
+                <div className="p-2.5 bg-blue-50 rounded-xl text-blue-600">
+                  <Pencil size={18} />
+                </div>
+                <div className="flex-1 space-y-1">
+                  <label className="text-[12px] uppercase tracking-widest flex items-center gap-2">
+                    {t("serviceTitle") || "Service Title"}
+                    <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="serviceTitle"
+                    placeholder="Ex: Kitchen Sink Repair"
+                    className="w-full text-base focus:outline-none placeholder:text-gray-200 bg-transparent text-gray-900"
+                    onChange={handleChange}
+                    value={formValues.serviceTitle}
+                  />
+                </div>
+              </div>
+
+              <div className="bg-white border border-gray-100 rounded-2xl p-4 flex items-start gap-4 transition-all focus-within:ring-2 focus-within:ring-blue-500/10 focus-within:border-blue-500 shadow-sm">
+                <div className="p-2.5 bg-blue-50 rounded-xl text-blue-600">
+                  <MessageSquare size={18} />
+                </div>  
+                <div className="flex-1 space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-[12px] font-weight-600 uppercase tracking-widest">
+                      {t("description") || "Description"}
+                      <span className="text-red-500">*</span>
+                    </label>
+                    <span className="text-[9px] bg-gray-50 px-2 py-0.5 rounded-full text-gray-400 font-semibold">
+                      {formValues.serviceDescription.length}/500
+                    </span>
+                  </div>
+                  <textarea
+                    name="serviceDescription"
+                    placeholder="Tell us more about what you need..."
+                    className="w-full text-sm focus:outline-none resize-none min-h-[100px] placeholder:text-gray-200 bg-transparent text-gray-900 leading-relaxed"
+                    maxLength={500}
+                    onChange={handleChange}
+                    value={formValues.serviceDescription}
+                  />
+                </div>
+              </div>
+
+              {/* AI Improve Action - More Integrated */}
+              <button 
+                onClick={handleAIImprove}
+                disabled={isImproving}
+                className="w-full h-12 bg-white border border-blue-100 hover:border-blue-600 rounded-xl px-4 flex items-center justify-between group transition-all active:scale-[0.99] disabled:opacity-50"
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`p-1.5 bg-blue-50 rounded-lg ${isImproving ? 'animate-spin' : ''}`}>
+                    <Sparkles className="text-blue-600" size={16} />
+                  </div>
+                  <span className="text-sm font-semibold text-gray-700">
+                    {isImproving ? "Refining Details..." : "Improve with Smart AI"}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                   <div className="hidden sm:block px-2 py-0.5 bg-blue-600 text-white text-[9px] font-semibold rounded-md uppercase">New</div>
+                   <ChevronRight size={14} className="text-blue-600 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </button>
+
+              <div className="bg-white border border-gray-100 rounded-2xl p-4 flex items-center gap-4 shadow-sm transition-all focus-within:ring-2 focus-within:ring-indigo-500/10 focus-within:border-indigo-500">
+                <div className="p-2.5 bg-indigo-50 rounded-xl text-indigo-600">
+                  <Wrench size={18} />
+                </div>
+                <div className="flex-1">
+                  <label className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest block mb-0.5">
+                    {t("category") || "Category"}
+                  </label>
+                  <Select
+                    onValueChange={(value) =>
+                      setFormValues((prevValues) => ({
+                        ...prevValues,
+                        category: value,
+                      }))
+                    }
+                    value={formValues.category}
+                  >
+                    <SelectTrigger className="w-full border-none p-0 h-auto focus:ring-0 shadow-none text-left bg-transparent">
+                      <div className="flex flex-col">
+                        <span className="text-base font-semibold text-gray-900 line-clamp-1">
+                          {formValues.category 
+                            ? categories.find(c => c.id === formValues.category)?.translated_name || categories.find(c => c.id === formValues.category)?.name 
+                            : t("selectCategory") || "Choose category"}
+                        </span>
+                      </div>
+                    </SelectTrigger>
+                    <SelectContent className="max-h-[300px] z-[9999] rounded-2xl border-none shadow-2xl p-2 bg-white">
+                      {categoriesLoading ? (
+                        <SelectItem value="loading" disabled className="rounded-xl">
+                          {t("loading")}...
+                        </SelectItem>
+                      ) : categories.length > 0 ? (
+                        categories.map((cat) => (
+                          <SelectItem key={cat.id} value={cat.id} className="rounded-xl my-1 focus:bg-blue-50 focus:text-blue-600 font-semibold">
+                            {cat.translated_name || cat.name}
+                          </SelectItem>
+                        ))
+                      ) : (
+                        <SelectItem value="none" disabled>
+                          {t("noCategoriesAvailable")}
+                        </SelectItem>
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between px-1">
+                    <h3 className="text-sm font-semibold uppercase tracking-widest text-gray-400">
+                      {t("addAttachments") || "Attachments"}
+                      <span className="ml-2 text-[10px] bg-gray-100 px-2 py-0.5 rounded-full lowercase font-semibold tracking-normal italic">
+                        optional
+                      </span>
+                    </h3>
+                  </div>
+                  <div
+                    className={`p-6 border-2 border-dashed rounded-[32px] transition-all duration-500 ${isRecording ? "bg-purple-50/50 border-purple-300" : "bg-white border-gray-100 hover:border-blue-200"}`}
+                  >
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      className="hidden"
+                      multiple
+                      onChange={handleFileChange}
+                    />
+                    {!isRecording ? (
+                      <div className="grid grid-cols-4 gap-4">
+                        {[
+                          {
+                            icon: ImageIcon,
+                            label: "Photo",
+                            color: "bg-blue-50 text-blue-600",
+                            accept: "image/*",
+                          },
+                          {
+                            icon: Video,
+                            label: "Video",
+                            color: "bg-emerald-50 text-emerald-600",
+                            accept: "video/*",
+                          },
+                          {
+                            icon: Mic,
+                            label: "Voice",
+                            color: "bg-purple-50 text-purple-600",
+                            type: "voice",
+                          },
+                          {
+                            icon: FileText,
+                            label: "File",
+                            color: "bg-orange-50 text-orange-600",
+                            accept: ".pdf,.doc,.docx",
+                          },
+                        ].map((item, idx) => (
+                          <button
+                            key={idx}
+                            type="button"
+                            onClick={() => {
+                              if (item.type === "voice") {
+                                startRecording();
+                              } else {
+                                fileInputRef.current.setAttribute(
+                                  "accept",
+                                  item.accept,
+                                );
+                                fileInputRef.current.click();
+                              }
+                            }}
+                            className="group flex flex-col items-center gap-3"
+                          >
+                            <div
+                              className={`w-14 h-14 ${item.color} rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:-translate-y-1 transition-all shadow-sm`}
+                            >
+                              <item.icon size={24} />
+                            </div>
+                            <span className="text-[10px] font-semibold text-gray-500 uppercase tracking-tighter">
+                              {item.label}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-between bg-purple-50/50 p-4 rounded-2xl">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center text-white animate-pulse shadow-lg shadow-red-200">
+                            <Mic size={20} />
+                          </div>
+                          <div>
+                            <p className="text-[10px] font-semibold uppercase text-purple-600">
+                              Recording...
+                            </p>
+                            <p className="text-2xl font-semibold text-gray-900 tabular-nums">
+                              {formatTime(recordingDuration)}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => stopRecording(false)}
+                            className="w-10 h-10 rounded-full bg-white text-gray-400 hover:text-red-500 shadow-sm flex items-center justify-center transition-all"
+                          >
+                            <X size={18} />
+                          </button>
+                          <button
+                            onClick={() => stopRecording(true)}
+                            className="w-10 h-10 rounded-full bg-purple-600 text-white shadow-lg flex items-center justify-center hover:scale-110 transition-all"
+                          >
+                            <Check size={18} />
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  {attachments.length > 0 && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {attachments.map((file, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center justify-between p-4 bg-white rounded-2xl border border-gray-50 shadow-sm group"
+                        >
+                          <div className="flex items-center gap-3 truncate">
+                            <div className="p-2.5 bg-gray-50 rounded-xl text-gray-400 group-hover:text-blue-500 transition-colors">
+                              {getFileIcon(file.type)}
+                            </div>
+                            <div className="truncate">
+                              <p className="text-xs font-semibold text-gray-900 truncate">
+                                {file.name}
+                              </p>
+                              <p className="text-[9px] font-semibold text-gray-400 uppercase">
+                                {(file.size / 1024).toFixed(0)} KB
+                              </p>
+                            </div>
+                          </div>
+                          <button
+                            onClick={() => removeAttachment(index)}
+                            className="p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-full transition-all"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+         
+          )}
+
+          {currentStep === 2 && (
+            <div className="space-y-5 animate-in fade-in slide-in-from-bottom-2 duration-300">
+              {/* Step 2: Location, Timing, Budget */}
+              <div className="space-y-5">
+                <div className="space-y-2">
+                  <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 px-1">
+                    Service Location
+                  </h3>
+                  <div className="relative">
+                    <div className="bg-white border border-gray-100 rounded-2xl p-4 flex items-center gap-4 transition-all focus-within:ring-2 focus-within:ring-blue-500/10 focus-within:border-blue-500 shadow-sm">
+                      <div className="p-2.5 bg-blue-50 rounded-xl text-blue-600">
+                        <MapPin size={18} />
+                      </div>
+                      <div className="flex-1 space-y-0.5">
+                        <label className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
+                          {t("location") || "Address"}
+                        </label>
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="text"
+                            placeholder="Enter your address..."
+                            className="w-full text-base font-semibold focus:outline-none placeholder:text-gray-200 bg-transparent text-gray-900"
+                            onChange={(e) =>
+                              handleLocationSearch(e.target.value)
+                            }
+                            value={locationSearchInput}
+                          />
+                          {isSearchingLocation && (
+                            <Loader2 className="animate-spin text-blue-500" size={16} />
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {locationSuggestions.length > 0 && (
+                      <div className="absolute top-[calc(100%+8px)] left-0 w-full bg-white rounded-xl shadow-2xl border border-gray-100 p-1.5 z-[60] animate-in slide-in-from-top-2">
+                        {locationSuggestions.map((place) => (
+                          <button
+                            key={place.place_id}
+                            onClick={() => handleLocationSelect(place)}
+                            className="w-full flex items-center gap-3 p-3 hover:bg-blue-50 rounded-lg transition-all text-left group"
+                          >
+                            <div className="p-1.5 bg-gray-50 group-hover:bg-white rounded-lg text-gray-400 group-hover:text-blue-500">
+                              <MapPin size={14} />
+                            </div>
+                            <div className="truncate">
+                              <p className="text-xs font-semibold text-gray-900 group-hover:text-blue-600 truncate">{place.structured_formatting.main_text}</p>
+                              <p className="text-[10px] text-gray-400 truncate">{place.structured_formatting.secondary_text}</p>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 px-1">
+                    Scheduling
+                  </h3>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    {timeOptionCards.map((opt) => (
+                      <button
+                        key={opt.id}
+                        onClick={() => handleTimeOptionSelect(opt.id)}
+                        className={`flex flex-col items-center justify-center p-3 rounded-2xl border-2 transition-all relative
+                            ${timeOption === opt.id ? `${opt.border} bg-white shadow-md shadow-gray-100` : "bg-white border-transparent hover:border-gray-100"}
+                          `}
+                      >
+                        <div className={`p-2 ${opt.bg} ${opt.color} rounded-lg mb-2`}>
+                          <opt.icon size={16} />
+                        </div>
+                        <span className={`text-[11px] font-semibold uppercase ${timeOption === opt.id ? "text-gray-900" : "text-gray-600"}`}>
+                          {opt.title}
+                        </span>
+                        {timeOption === opt.id && (
+                          <div className={`absolute top-2 right-2 w-1.5 h-1.5 rounded-full ${opt.color.replace("text-", "bg-")}`} />
+                        )}
+                      </button>
+                    ))}
+                  </div>
+
+                  {timeOption === "choose" && (
+                    <div className="bg-white rounded-2xl p-4 space-y-3 border border-gray-100 shadow-sm animate-in slide-in-from-top-2">
+                      <div className="grid grid-cols-2 gap-3">
+                        <button
+                          onClick={() => handleDateTimeClick("startDateTime")}
+                          className="p-3 bg-gray-50 hover:bg-white border-2 border-transparent hover:border-blue-500 rounded-xl text-left transition-all"
+                        >
+                          <p className="text-[9px] font-semibold text-gray-400 uppercase mb-0.5">Start</p>
+                          <p className="text-xs font-semibold text-gray-900">
+                            {formValues.startDateTime ? dayjs(formValues.startDateTime).format("MMM D, HH:mm") : "Select"}
+                          </p>
+                        </button>
+                        <button
+                          onClick={() => handleDateTimeClick("endDateTime")}
+                          className="p-3 bg-gray-50 hover:bg-white border-2 border-transparent hover:border-orange-500 rounded-xl text-left transition-all"
+                        >
+                          <p className="text-[9px] font-semibold text-gray-400 uppercase mb-0.5">End</p>
+                          <p className="text-xs font-semibold text-gray-900">
+                            {formValues.endDateTime ? dayjs(formValues.endDateTime).format("MMM D, HH:mm") : "Select"}
+                          </p>
+                        </button>
+                      </div>
+                      {showDatePicker && (
+                        <div className="pt-2 border-t border-gray-50">
+                          <CustomDateTimePicker
+                            value={formValues[datePickerType]}
+                            onChange={handleDateTimeSelect}
+                            minDateTime={datePickerType === "endDateTime" ? formValues.startDateTime : null}
+                            type={datePickerType}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 px-1">
+                    Expected Budget ({currencySymbol})
+                  </h3>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="bg-white rounded-2xl p-4 border border-gray-100 focus-within:border-blue-500 shadow-sm transition-all">
+                      <label className="text-[10px] font-semibold text-gray-400 uppercase block mb-0.5">Min Price</label>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-sm font-semibold text-gray-300">{currencySymbol}</span>
+                        <input
+                          type="number"
+                          name="minPrice"
+                          placeholder="0"
+                          className="w-full text-base font-semibold focus:outline-none bg-transparent"
+                          onChange={handleChange}
+                          value={formValues.minPrice}
+                        />
+                      </div>
+                    </div>
+                    <div className="bg-white rounded-2xl p-4 border border-gray-100 focus-within:border-blue-500 shadow-sm transition-all">
+                      <label className="text-[10px] font-semibold text-gray-400 uppercase block mb-0.5">Max Price</label>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-sm font-semibold text-gray-300">{currencySymbol}</span>
+                        <input
+                          type="number"
+                          name="maxPrice"
+                          placeholder="0"
+                          className="w-full text-base font-semibold focus:outline-none bg-transparent"
+                          onChange={handleChange}
+                          value={formValues.maxPrice}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {currentStep === 3 && (
+            <div className="space-y-6 animate-in fade-in zoom-in-95 duration-300 text-left">
+              <div className="bg-white rounded-[32px] p-6 border border-gray-100 shadow-xl shadow-blue-500/5 space-y-6">
+                {/* Header Info */}
+                <div className="flex flex-col sm:flex-row justify-between gap-4 pb-5 border-b border-gray-50">
+                  <div className="space-y-1">
+                    <div className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded-md text-[9px] font-semibold uppercase tracking-widest w-fit mb-2">
+                      {categories.find((c) => c.id === formValues.category)?.translated_name || categories.find((c) => c.id === formValues.category)?.name || "Service"}
+                    </div>
+                    <h4 className="text-xl font-bold text-gray-900 tracking-tight leading-tight">
+                      {formValues.serviceTitle}
+                    </h4>
+                  </div>
+                  <div className="flex items-center gap-2 px-3 py-1.5 bg-green-50 text-green-600 rounded-lg h-fit border border-green-100">
+                    <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                    <span className="text-[10px] font-semibold uppercase tracking-wider">Ready to post</span>
+                  </div>
+                </div>
+
+                {/* Grid Metadata */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  <div className="p-3 bg-gray-50 rounded-2xl border border-gray-100 space-y-1">
+                    <div className="flex items-center gap-1.5 text-gray-400">
+                      <Calendar size={12} />
+                      <span className="text-[9px] font-semibold uppercase tracking-widest">Timing</span>
+                    </div>
+                    <p className="text-[11px] font-semibold text-gray-900 truncate uppercase">{timeOption}</p>
+                  </div>
+                  <div className="p-3 bg-gray-50 rounded-2xl border border-gray-100 space-y-1">
+                    <div className="flex items-center gap-1.5 text-gray-400">
+                      <Gift size={12} />
+                      <span className="text-[9px] font-semibold uppercase tracking-widest">Budget</span>
+                    </div>
+                    <p className="text-[11px] font-semibold text-gray-900 truncate">
+                      {formValues.minPrice && formValues.maxPrice ? `${currencySymbol}${formValues.minPrice}-${formValues.maxPrice}` : "Flexible"}
+                    </p>
+                  </div>
+                  <div className="p-3 bg-gray-50 rounded-2xl border border-gray-100 space-y-1">
+                    <div className="flex items-center gap-1.5 text-gray-400">
+                      <ImageIcon size={12} />
+                      <span className="text-[9px] font-semibold uppercase tracking-widest">Assets</span>
+                    </div>
+                    <p className="text-[11px] font-semibold text-gray-900">{attachments.length} Files</p>
+                  </div>
+                </div>
+
+                {/* Description */}
+                <div className="bg-blue-50/30 rounded-2xl p-5 border border-blue-50 relative group transition-all">
+                  <div className="absolute top-4 left-0 w-1 h-6 bg-blue-500 rounded-r-full" />
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <MessageSquare size={14} className="text-blue-500" />
+                      <span className="text-[10px] font-semibold text-gray-500 uppercase tracking-widest">Details</span>
+                    </div>
+                    <p className="text-sm font-medium text-gray-600 leading-relaxed italic line-clamp-4 group-hover:line-clamp-none transition-all">
+                      "{formValues.serviceDescription}"
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className="mt-12 flex items-center justify-end gap-3 flex-wrap">
+            {currentStep > 1 && (
+              <Button
+                variant="ghost"
+                className="h-11 px-6 text-gray-500 hover:text-gray-900 border border-gray-100 hover:border-gray-200 rounded-xl text-sm font-semibold transition-all active:scale-[0.98]"
+                onClick={handleBack}
+              >
+                {t("back") || "Back"}
+              </Button>
+            )}
+
+            {currentStep < 3 ? (
+              <Button
+                className="w-full md:w-48 h-11 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold flex items-center justify-center gap-2 group transition-all active:scale-[0.98] shadow-sm"
+                onClick={handleNext}
+              >
+                {t("continue") || "Continue"}
+                <ChevronRight className="group-hover:translate-x-1 transition-transform" size={16} />
+              </Button>
+            ) : (
+              <Button
+                className="w-full md:w-56 h-11 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-semibold flex items-center justify-center gap-2 group transition-all active:scale-[0.98] shadow-sm shadow-indigo-100"
+                onClick={handleSubmit}
+                disabled={loading}
+              >
+                {loading ? (
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <>
+                    {t("submitRequest") || "Submit Request"}
+                    <Sparkles className="group-hover:rotate-12 transition-transform" size={16} />
+                  </>
+                )}
+              </Button>
+            )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default AddCustomServiceForm;

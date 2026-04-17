@@ -6,9 +6,10 @@ import NoDataFound from "@/components/ReUseableComponents/Error/NoDataFound";
 import MyServiceRequestCardSkeleton from "@/components/Skeletons/MyServiceRequestCardSkeleton";
 import MiniLoader from "@/components/ReUseableComponents/MiniLoader";
 import { FaPlus } from "react-icons/fa";
-import AddCustomServiceDialog from "@/components/ReUseableComponents/Dialogs/AddCustomServiceDialog";
+import AddCustomServiceForm from "@/components/ReUseableComponents/Dialogs/AddCustomServiceForm";
 import { useTranslation } from "@/components/Layout/TranslationContext";
 import { isMobile } from "@/utils/Helper";
+import { X } from "lucide-react";
 const MyServiceRequest = () => {
   const t = useTranslation();
 
@@ -60,7 +61,7 @@ const MyServiceRequest = () => {
 
   const handleAddNewService = (e) => {
     e.preventDefault();
-    setOpen(true);
+    setOpen(!open);
   };
 
   return (
@@ -72,71 +73,76 @@ const MyServiceRequest = () => {
       <div className="flex flex-col gap-6">
         <div className="flex items-center justify-between w-full max-[350px]:flex-wrap max-[350px]:gap-2">
           <div className="page-headline max-[350px]:text-base text-lg md:text-2xl sm:text-3xl font-semibold">
-            <span>{t("myServiceRequests")}</span>
+            <span>{open ? (t("requestQuote") || "Request a Quote") : t("myServiceRequests")}</span>
           </div>
           <div>
             <button
-              className="flex items-center justify-center gap-2 primary_bg_color rounded-lg text-white py-2 px-2 md:px-3 text-sm md:text-base"
+              className={`flex items-center justify-center gap-2 rounded-lg text-white py-2 px-4 text-sm md:text-base transition-all duration-300 ${open ? "primary_bg_color hover:primary_bg_color " : "primary_bg_color "}`}
               onClick={(e) => handleAddNewService(e)}
             >
               {" "}
-              <span>
-                <FaPlus />
+              <span className="flex items-center gap-1.5">
+                {open ? <X size={18} strokeWidth={2.5} /> : <FaPlus size={14} />}
+                <span className="font-black uppercase text-[11px] md:text-xs">
+                  {open ? t("addService") : t("addService")}
+                </span>
               </span>
-              <span>{t("addService")}</span>
             </button>
           </div>
         </div>
-        <>
-          {/* Grid Section */}
-          {loading ? (
-            // Skeleton when loading
-            <div className="grid grid-cols-1 sm:grid-cols-1 xl:grid-cols-2 gap-6">
-              {[...Array(8)].map((_, index) => (
-                <MyServiceRequestCardSkeleton key={index} />
-              ))}
-            </div>
-          ) : bookigs?.length === 0 ? (
-            // No Data Found Message
-            <div className="w-full h-[60vh] flex items-center justify-center">
-              <NoDataFound
-                title={t("noMyServiceRequests")}
-                desc={t("noMyServiceRequestsText")}
-              />
-            </div>
+        <div className="space-y-6">
+          {open ? (
+            <AddCustomServiceForm close={() => setOpen(false)} fetchBookings={fetchBookings} />
           ) : (
-            // Render Booking Cards
             <>
-              <div className="grid grid-cols-1 sm:grid-cols-1 xl:grid-cols-2 gap-6">
-                {bookigs?.map((booking, index) => (
-                  <MyServiceRequestCard data={booking} key={index} />
-                ))}
-              </div>
+              {/* Grid Section */}
+              {loading ? (
+                // Skeleton when loading
+                <div className="grid grid-cols-1 sm:grid-cols-1 xl:grid-cols-2 gap-6">
+                  {[...Array(8)].map((_, index) => (
+                    <MyServiceRequestCardSkeleton key={index} />
+                  ))}
+                </div>
+              ) : bookigs?.length === 0 ? (
+                // No Data Found Message
+                <div className="w-full h-[60vh] flex items-center justify-center">
+                  <NoDataFound
+                    title={t("noMyServiceRequests")}
+                    desc={t("noMyServiceRequestsText")}
+                  />
+                </div>
+              ) : (
+                // Render Booking Cards
+                <>
+                  <div className="grid grid-cols-1 sm:grid-cols-1 xl:grid-cols-2 gap-6">
+                    {bookigs?.map((booking, index) => (
+                      <MyServiceRequestCard data={booking} key={index} />
+                    ))}
+                  </div>
 
-              {/* Load More Button */}
-              <div className="loadmore my-6 flex items-center justify-center">
-                {isloadMore ? (
-                  <button className="primary_bg_color primary_text_color py-3 px-8 rounded-xl">
-                    <MiniLoader />
-                  </button>
-                ) : (
-                  bookigs.length < total && (
-                    <button
-                      onClick={handleLoadMore}
-                      className="primary_bg_color text-white py-3 px-8 rounded-xl"
-                      disabled={isloadMore}
-                    >
-                      {t("loadMore")}
-                    </button>
-                  )
-                )}
-              </div>
+                  {/* Load More Button */}
+                  <div className="loadmore my-6 flex items-center justify-center">
+                    {isloadMore ? (
+                      <button className="primary_bg_color primary_text_color py-3 px-8 rounded-xl">
+                        <MiniLoader />
+                      </button>
+                    ) : (
+                      bookigs.length < total && (
+                        <button
+                          onClick={handleLoadMore}
+                          className="primary_bg_color text-white py-3 px-8 rounded-xl"
+                          disabled={isloadMore}
+                        >
+                          {t("loadMore")}
+                        </button>
+                      )
+                    )}
+                  </div>
+                </>
+              )}
             </>
           )}
-        </>
-        {open && (
-          <AddCustomServiceDialog open={open} close={() => setOpen(false)} fetchBookings={fetchBookings} />
-        )}
+        </div>
       </div>
     </ProfileLayout>
   );

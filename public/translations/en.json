@@ -838,5 +838,9 @@
   "video": "Video",
   "voiceNote": "Voice Note",
   "optional": "Optional",
-  "recommended": "Recommended"
+  "recommended": "Recommended",
+  "serviceInfo":"Service Info",
+  "detailsContext":"Details & Context",
+  "summary":"Summary"
+  
 }
