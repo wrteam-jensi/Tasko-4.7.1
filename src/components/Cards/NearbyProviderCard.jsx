@@ -1,7 +1,8 @@
 "use client";
 import { formatResponseTime, showDistance } from "@/utils/Helper";
-import { FaMapMarkerAlt, FaStar } from "react-icons/fa";
+import { FaMapMarkerAlt, FaStar, FaRegClock } from "react-icons/fa";
 import CustomImageTag from "../ReUseableComponents/CustomImageTag";
+import { MdVerified } from "react-icons/md";
 
 const NearbyProviderCard = ({ provider }) => {
   return (
@@ -20,7 +21,7 @@ const NearbyProviderCard = ({ provider }) => {
         {/* Reply Badge */}
         {provider?.avg_response_time && formatResponseTime(provider.avg_response_time) && (
           <div className="absolute bottom-[18px] left-[18px] bg-[#34A853]/90 backdrop-blur-sm rounded-full px-2.5 py-1.5 flex items-center gap-1.5 shadow-sm">
-            <FaMapMarkerAlt size={9} className="text-[#A5D6A7]" />
+            <FaRegClock size={9} className="text-[#ffffff]" />
             <span className="text-[11px] font-bold text-white tracking-tight">
               Replies in {formatResponseTime(provider.avg_response_time)}
             </span>
@@ -37,23 +38,7 @@ const NearbyProviderCard = ({ provider }) => {
               {provider?.translated_company_name || provider?.company_name}
             </h2>
             {provider?.is_verified && (
-              <div className="bg-blue-500 rounded-full p-0.5 shrink-0 w-4 h-4 flex items-center justify-center">
-                <svg
-                  width="9"
-                  height="9"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M4.5 8L7 10.5L11.5 6"
-                    stroke="white"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </div>
+             <MdVerified className="text-blue-500" size={14} />
             )}
           </div>
 
@@ -81,7 +66,7 @@ const NearbyProviderCard = ({ provider }) => {
         <div className="flex items-center gap-3 mt-2.5">
           <div className="flex items-center gap-1">
             <FaStar className="text-amber-400" size={14} />
-            <span className="text-[13px] font-extrabold text-gray-900">
+            <span className="text-[13px]  text-gray-900">
               {provider?.ratings > 0
                 ? Number(provider.ratings).toFixed(1)
                 : "0.0"}

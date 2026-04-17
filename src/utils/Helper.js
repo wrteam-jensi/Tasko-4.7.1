@@ -586,7 +586,7 @@ export const showPrice = (price) => {
 export const formatResponseTime = (seconds) => {
   if (!seconds || seconds === "0" || seconds === "") return null;
 
-  const totalSeconds = parseInt(seconds, 10);
+  const totalSeconds = parseInt(seconds, 10) / 60;
   if (isNaN(totalSeconds)) return seconds;
 
   const hours = Math.floor(totalSeconds / 3600);
