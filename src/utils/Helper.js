@@ -583,6 +583,22 @@ export const showPrice = (price) => {
   }
 };
 
+export const formatResponseTime = (seconds) => {
+  if (!seconds || seconds === "0" || seconds === "") return null;
+
+  const totalSeconds = parseInt(seconds, 10);
+  if (isNaN(totalSeconds)) return seconds;
+
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+
+  if (hours > 0) {
+    return `${hours}h ${minutes > 0 ? `${minutes}m` : ""}`;
+  } else {
+    return `${minutes > 0 ? minutes : 1} min`;
+  }
+};
+
 //  Cache for translations
 const translationCache = {};
 

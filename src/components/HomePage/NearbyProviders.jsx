@@ -12,28 +12,25 @@ const NearbyProviders = ({ data }) => {
   const isRTL = useRTL();
   const breakpoints = {
     320: {
-      slidesPerView: 1,
-    },
-    375: {
       slidesPerView: 1.2,
     },
     576: {
-      slidesPerView: 1.5,
+      slidesPerView: 2.2,
     },
     768: {
-      slidesPerView: 1.5,
+      slidesPerView: 3.2,
     },
     992: {
-      slidesPerView: 1.8,
+      slidesPerView: 4.2,
     },
     1200: {
-      slidesPerView: 1.8,
+      slidesPerView: 5.2,
     },
     1400: {
-      slidesPerView: 2.7,
+      slidesPerView: 6.2,
     },
     1600: {
-      slidesPerView: 3.5,
+      slidesPerView: 7.2,
     },
   };
 
@@ -55,7 +52,7 @@ const NearbyProviders = ({ data }) => {
             spaceBetween={20}
             loop={true}
             key={isRTL}
-            slidesPerView={3.5} // Set to 3.5
+            slidesPerView={5.2} 
             dir={isRTL ? "rtl" : "ltr"}
             autoplay={{ delay: 3000 }} // Autoplay functionality
             freeMode={true} // Enable free mode
@@ -71,6 +68,7 @@ const NearbyProviders = ({ data }) => {
                 <CustomLink
                   href={`/provider-details/${provider?.slug}`}
                   title={provider?.name}
+                  className="block w-full h-full"
                 >
                   <NearbyProviderCard provider={provider} />
                 </CustomLink>

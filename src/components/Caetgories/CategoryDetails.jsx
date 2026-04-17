@@ -144,9 +144,9 @@ const CategoryDetails = () => {
     576: { slidesPerView: 2 },
     768: { slidesPerView: 2.5 },
     992: { slidesPerView: 3 },
-    1200: { slidesPerView: 3.5 },
-    1400: { slidesPerView: 4 },
-    1600: { slidesPerView: 4.5 },
+    1200: { slidesPerView: 4.5 },
+    1400: { slidesPerView: 5.5 },
+    1600: { slidesPerView: 6.5 },
   };
 
   const isLoading = isLoadingSubCategories || isLoadingProviders;
@@ -223,7 +223,7 @@ const CategoryDetails = () => {
               </div>
               <div className="commanDataSec light_bg_color p-4 w-full mt-6">
                 <div className="container mx-auto py-6">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
                     {isLoadingProviders
                       ? Array.from({ length: 6 }).map((_, index) => (
                           <div key={`skeleton-${index}`}>
