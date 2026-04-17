@@ -64,7 +64,7 @@ const NearbyProviders = ({ data }) => {
             className="mySwiper"
           >
             {data?.partners?.map((provider) => (
-              <SwiperSlide key={provider.id}>
+              <SwiperSlide key={provider.id} className="h-auto flex">
                 <CustomLink
                   href={`/provider-details/${provider?.slug}`}
                   title={provider?.name}
