@@ -857,30 +857,33 @@ const AddCustomServiceForm = ({ close, fetchBookings }) => {
             {/* Step 2: Location, Timing, Budget */}
             <div className="space-y-5">
               <div className="space-y-2">
-                <h3 className="text-[13px] font-semibold uppercase tracking-widest text-gray-400 px-1">
-                  Service Location
-                </h3>
-                <div className="relative">
-                  <div className="bg-white border border-gray-100 rounded-lg p-4 flex items-center gap-4 transition-all focus-within:ring-2 focus-within:ring-blue-500/10 focus-within:border-blue-500 shadow-sm">
-                    <div className="p-2.5 bg-blue-50 rounded-lg text-blue-600">
-                      <MapPin size={18} />
+                <div className="flex items-center gap-2 px-1">
+                  <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400">
+                    Service Location
+                  </h3>
+                  <div className="h-[1px] flex-1 bg-gray-100/60" />
+                </div>
+                <div className="relative group/location">
+                  <div className="bg-white border-2 border-gray-100 rounded-lg p-4 flex items-center gap-4 transition-all duration-300 focus-within:border-blue-500 focus-within:shadow-lg focus-within:shadow-blue-500/5 hover:border-gray-200 shadow-sm">
+                    <div className="p-2.5 bg-blue-50 text-blue-600 rounded-lg shadow-sm transition-transform group-focus-within/location:scale-110">
+                      <MapPin size={20} />
                     </div>
                     <div className="flex-1 space-y-0.5">
-                      <label className="text-[13px] font-semibold text-gray-400 uppercase tracking-wider">
-                        {t("location") || "Address"}
+                      <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest block transition-colors group-focus-within/location:text-blue-500">
+                        {t("location") || "Service Address"}
                       </label>
                       <div className="flex items-center gap-2">
                         <input
                           type="text"
-                          placeholder="Enter your address..."
-                          className="w-full text-base font-semibold focus:outline-none placeholder:text-gray-200 bg-transparent text-gray-900"
+                          placeholder="Where do you need the service?"
+                          className="w-full text-base font-bold focus:outline-none placeholder:text-gray-200 bg-transparent text-gray-900"
                           onChange={(e) => handleLocationSearch(e.target.value)}
                           value={locationSearchInput}
                         />
                         {isSearchingLocation && (
                           <Loader2
                             className="animate-spin text-blue-500"
-                            size={16}
+                            size={18}
                           />
                         )}
                       </div>
@@ -888,7 +891,7 @@ const AddCustomServiceForm = ({ close, fetchBookings }) => {
                   </div>
 
                   {locationSuggestions.length > 0 && (
-                    <div className="absolute top-[calc(100%+8px)] left-0 w-full bg-white rounded-lg shadow-2xl border border-gray-100 p-1.5 z-[60] animate-in slide-in-from-top-2">
+                    <div className="absolute top-[calc(100%+8px)] left-0 w-full bg-white rounded-lg border border-gray-100 p-1.5 z-[60] animate-in slide-in-from-top-2">
                       {locationSuggestions.map((place) => (
                         <button
                           key={place.place_id}
@@ -914,31 +917,65 @@ const AddCustomServiceForm = ({ close, fetchBookings }) => {
               </div>
 
               <div className="space-y-2">
-                <h3 className="text-[13px] font-semibold uppercase tracking-widest text-gray-400 px-1">
-                  Scheduling
-                </h3>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                <div className="flex items-center gap-2 px-1">
+                  <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400">
+                    Scheduling
+                  </h3>
+                  <div className="h-[1px] flex-1 bg-gray-100/60" />
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                   {timeOptionCards.map((opt) => (
                     <button
                       key={opt.id}
                       onClick={() => handleTimeOptionSelect(opt.id)}
-                      className={`flex flex-col items-center justify-center p-3 rounded-lg border-2 transition-all relative
-                            ${timeOption === opt.id ? `${opt.border} bg-white shadow-md shadow-gray-100` : "bg-white border-transparent hover:border-gray-100"}
+                      className={`group flex flex-col items-center text-center p-3.5 rounded-lg border-2 transition-all duration-300 relative overflow-hidden active:scale-[0.97]
+                            ${
+                              timeOption === opt.id
+                                ? `${opt.border} bg-white shadow-xl shadow-gray-100 scale-[1.02] z-10`
+                                : "bg-white border-gray-100 hover:border-gray-200 hover:shadow-lg hover:shadow-gray-100/50"
+                            }
                           `}
                     >
-                      <div
-                        className={`p-2 ${opt.bg} ${opt.color} rounded-lg mb-2`}
-                      >
-                        <opt.icon size={16} />
-                      </div>
-                      <span
-                        className={`text-[11px] font-semibold uppercase ${timeOption === opt.id ? "text-gray-900" : "text-gray-600"}`}
-                      >
-                        {opt.title}
-                      </span>
+                      {/* Background accent glow for selected state */}
                       {timeOption === opt.id && (
                         <div
-                          className={`absolute top-2 right-2 w-1.5 h-1.5 rounded-full ${opt.color.replace("text-", "bg-")}`}
+                          className={`absolute -bottom-6 -right-6 w-16 h-16 ${opt.bg} opacity-20 rounded-full blur-2xl transition-all duration-500`}
+                        />
+                      )}
+
+                      <div
+                        className={`p-2.5 ${opt.bg} ${opt.color} rounded-lg mb-2.5 transition-all duration-500 group-hover:scale-110 shadow-sm`}
+                      >
+                        <opt.icon size={18} />
+                      </div>
+
+                      <div className="space-y-1 relative z-10">
+                        <span
+                          className={`block text-[11px] font-bold uppercase tracking-[0.05em] transition-colors duration-300 ${
+                            timeOption === opt.id
+                              ? "text-gray-900"
+                              : "text-gray-400 group-hover:text-gray-600"
+                          }`}
+                        >
+                          {opt.title}
+                        </span>
+                        <span
+                          className={`text-[9px] font-medium leading-tight block transition-colors duration-300 ${
+                            timeOption === opt.id
+                              ? "text-gray-500"
+                              : "text-gray-400/80"
+                          }`}
+                        >
+                          {opt.sub}
+                        </span>
+                      </div>
+
+                      {timeOption === opt.id && (
+                        <div
+                          className={`absolute top-3 right-3 w-2 h-2 rounded-full ${opt.color.replace(
+                            "text-",
+                            "bg-",
+                          )} animate-pulse shadow-[0_0_8px_rgba(0,0,0,0.1)]`}
                         />
                       )}
                     </button>
@@ -946,37 +983,80 @@ const AddCustomServiceForm = ({ close, fetchBookings }) => {
                 </div>
 
                 {timeOption === "choose" && (
-                  <div className="bg-white rounded-lg p-4 space-y-3 border border-gray-100 shadow-sm animate-in slide-in-from-top-2">
-                    <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-white rounded-lg p-5 space-y-4 border border-gray-100 shadow-gray-100/50 animate-in slide-in-from-top-4 duration-500">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <button
                         onClick={() => handleDateTimeClick("startDateTime")}
-                        className="p-3 bg-gray-50 hover:bg-white border-2 border-transparent hover:border-blue-500 rounded-lg text-left transition-all"
+                        className={`group p-4 rounded-lg text-left transition-all border-2 flex items-center gap-4 ${
+                          datePickerType === "startDateTime" && showDatePicker
+                            ? "border-blue-600 bg-blue-50/30 shadow-sm"
+                            : "border-gray-50 bg-gray-50/30 hover:bg-white hover:border-blue-200"
+                        }`}
                       >
-                        <p className="text-[9px] font-semibold text-gray-400 uppercase mb-0.5">
-                          Start
-                        </p>
-                        <p className="text-xs font-semibold text-gray-900">
-                          {formValues.startDateTime
-                            ? dayjs(formValues.startDateTime).format(
-                                "MMM D, HH:mm",
-                              )
-                            : "Select"}
-                        </p>
+                        <div
+                          className={`p-2.5 rounded-lg transition-all duration-300 ${
+                            datePickerType === "startDateTime" && showDatePicker
+                              ? "bg-blue-600 text-white shadow-lg shadow-blue-200"
+                              : "bg-white text-gray-400 group-hover:text-blue-500 shadow-sm"
+                          }`}
+                        >
+                          <Calendar size={20} />
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.1em] mb-0.5">
+                            Start Schedule
+                          </p>
+                          <p
+                            className={`text-sm font-bold transition-colors ${
+                              formValues.startDateTime
+                                ? "text-gray-900"
+                                : "text-gray-300"
+                            }`}
+                          >
+                            {formValues.startDateTime
+                              ? dayjs(formValues.startDateTime).format(
+                                  "ddd, MMM D • HH:mm",
+                                )
+                              : "Set start time"}
+                          </p>
+                        </div>
                       </button>
+
                       <button
                         onClick={() => handleDateTimeClick("endDateTime")}
-                        className="p-3 bg-gray-50 hover:bg-white border-2 border-transparent hover:border-orange-500 rounded-lg text-left transition-all"
+                        className={`group p-4 rounded-lg text-left transition-all border-2 flex items-center gap-4 ${
+                          datePickerType === "endDateTime" && showDatePicker
+                            ? "border-orange-500 bg-orange-50/30 shadow-sm"
+                            : "border-gray-50 bg-gray-50/30 hover:bg-white hover:border-orange-200"
+                        }`}
                       >
-                        <p className="text-[9px] font-semibold text-gray-400 uppercase mb-0.5">
-                          End
-                        </p>
-                        <p className="text-xs font-semibold text-gray-900">
-                          {formValues.endDateTime
-                            ? dayjs(formValues.endDateTime).format(
-                                "MMM D, HH:mm",
-                              )
-                            : "Select"}
-                        </p>
+                        <div
+                          className={`p-2.5 rounded-lg transition-all duration-300 ${
+                            datePickerType === "endDateTime" && showDatePicker
+                              ? "bg-orange-500 text-white shadow-lg shadow-orange-200"
+                              : "bg-white text-gray-400 group-hover:text-orange-500 shadow-sm"
+                          }`}
+                        >
+                          <Calendar size={20} />
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.1em] mb-0.5">
+                            End Schedule
+                          </p>
+                          <p
+                            className={`text-sm font-bold transition-colors ${
+                              formValues.endDateTime
+                                ? "text-gray-900"
+                                : "text-gray-300"
+                            }`}
+                          >
+                            {formValues.endDateTime
+                              ? dayjs(formValues.endDateTime).format(
+                                  "ddd, MMM D • HH:mm",
+                                )
+                              : "Set end time"}
+                          </p>
+                        </div>
                       </button>
                     </div>
                     {showDatePicker && (
@@ -998,41 +1078,44 @@ const AddCustomServiceForm = ({ close, fetchBookings }) => {
               </div>
 
               <div className="space-y-2">
-                <h3 className="text-[13px] font-semibold uppercase tracking-widest text-gray-400 px-1">
-                  Expected Budget ({currencySymbol})
-                </h3>
+                <div className="flex items-center gap-2 px-1">
+                  <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400">
+                    Expected Budget ({currencySymbol})
+                  </h3>
+                  <div className="h-[1px] flex-1 bg-gray-100/60" />
+                </div>
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-white rounded-lg p-4 border border-gray-100 focus-within:border-blue-500 shadow-sm transition-all">
-                    <label className="text-[13px] font-semibold text-gray-400 uppercase block mb-0.5">
-                      Min Price
+                  <div className="group bg-white rounded-lg p-4 border-2 border-gray-100 focus-within:border-blue-500 focus-within:bg-white transition-all shadow-sm hover:shadow-md">
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-1.5 transition-colors group-focus-within:text-blue-500">
+                      Min Budget
                     </label>
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-sm font-semibold text-gray-300">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 group-focus-within:bg-blue-50 group-focus-within:text-blue-600 transition-all font-bold text-base">
                         {currencySymbol}
-                      </span>
+                      </div>
                       <input
                         type="number"
                         name="minPrice"
                         placeholder="0"
-                        className="w-full text-base font-semibold focus:outline-none bg-transparent"
+                        className="w-full text-base font-bold focus:outline-none bg-transparent text-gray-900 placeholder:text-gray-200"
                         onChange={handleChange}
                         value={formValues.minPrice}
                       />
                     </div>
                   </div>
-                  <div className="bg-white rounded-lg p-4 border border-gray-100 focus-within:border-blue-500 shadow-sm transition-all">
-                    <label className="text-[13px] font-semibold text-gray-400 uppercase block mb-0.5">
-                      Max Price
+                  <div className="group bg-white rounded-lg p-4 border-2 border-gray-100 focus-within:border-emerald-500 focus-within:bg-white transition-all shadow-sm hover:shadow-md">
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-1.5 transition-colors group-focus-within:text-emerald-500">
+                      Max Budget
                     </label>
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-sm font-semibold text-gray-300">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 group-focus-within:bg-emerald-50 group-focus-within:text-emerald-600 transition-all font-bold text-base">
                         {currencySymbol}
-                      </span>
+                      </div>
                       <input
                         type="number"
                         name="maxPrice"
                         placeholder="0"
-                        className="w-full text-base font-semibold focus:outline-none bg-transparent"
+                        className="w-full text-base font-bold focus:outline-none bg-transparent text-gray-900 placeholder:text-gray-200"
                         onChange={handleChange}
                         value={formValues.maxPrice}
                       />
