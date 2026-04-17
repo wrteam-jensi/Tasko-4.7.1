@@ -1090,7 +1090,7 @@ const AddCustomServiceForm = ({ close, fetchBookings }) => {
                       Min Budget
                     </label>
                     <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 group-focus-within:bg-blue-50 group-focus-within:text-blue-600 transition-all font-bold text-base">
+                      <div className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400  transition-all font-bold text-base">
                         {currencySymbol}
                       </div>
                       <input
@@ -1108,7 +1108,7 @@ const AddCustomServiceForm = ({ close, fetchBookings }) => {
                       Max Budget
                     </label>
                     <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 group-focus-within:bg-emerald-50 group-focus-within:text-emerald-600 transition-all font-bold text-base">
+                      <div className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400   transition-all font-bold text-base">
                         {currencySymbol}
                       </div>
                       <input
