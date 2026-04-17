@@ -1130,7 +1130,7 @@ const AddCustomServiceForm = ({ close, fetchBookings }) => {
         {currentStep === 3 && (
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 text-left">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-[17px] font-bold text-gray-900 tracking-tight">
+              <h3 className="text-[17px] font-bold text-gray-900 tracking-tight"  >
                 Request Summary
               </h3>
             </div>
