@@ -36,7 +36,7 @@ const AccountDialog = ({ isVisible, onOpenChange, userData, handleLogout }) => {
   const GoChats = () => {
     dispatch(clearChatData());
     router.push("/chats");
-  }
+  };
 
   const locationData = useSelector((state) => state.location);
   const hasLatLong = locationData?.lat && locationData?.lng;
@@ -52,15 +52,16 @@ const AccountDialog = ({ isVisible, onOpenChange, userData, handleLogout }) => {
           <FaUser size={18} />
           <span>{t("account")}</span>
           <span
-            className={`transition-all duration-500 ${isVisible ? "rotate-180" : ""
-              }`}
+            className={`transition-all duration-500 ${
+              isVisible ? "rotate-180" : ""
+            }`}
           >
             <FaChevronDown size={14} />
           </span>
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        className={`w-80 p-4 cart-dropdown ${isRtl ? 'left-0 right-auto' : 'right-0 left-auto'}`}
+        className={`w-80 p-4 cart-dropdown ${isRtl ? "left-0 right-auto" : "right-0 left-auto"}`}
         align={isRtl ? "start" : "end"}
         sideOffset={5}
         onMouseEnter={() => onOpenChange(true)}
@@ -105,7 +106,10 @@ const AccountDialog = ({ isVisible, onOpenChange, userData, handleLogout }) => {
             <span className="text-lg font-normal">{t("bookings")}</span>
           </DropdownMenuItem>
         </CustomLink>
-        <DropdownMenuItem className="flex items-center justify-start gap-4 cursor-pointer" onClick={GoChats}>
+        <DropdownMenuItem
+          className="flex items-center justify-start gap-4 cursor-pointer"
+          onClick={GoChats}
+        >
           <span className="primary_text_color">
             <IoChatboxEllipsesOutline size={24} />
           </span>
@@ -128,16 +132,21 @@ const AccountDialog = ({ isVisible, onOpenChange, userData, handleLogout }) => {
             <span className="text-lg font-normal">{t("bookmarks")}</span>
           </DropdownMenuItem>
         </CustomLink>
-        {hasLatLong &&
-          <CustomLink href="/my-services-requests" title={t("myServiceRequests")}>
+        {hasLatLong && (
+          <CustomLink
+            href="/my-services-requests"
+            title={t("myServiceRequests")}
+          >
             <DropdownMenuItem className="flex items-center justify-start gap-4 cursor-pointer">
               <span className="primary_text_color">
                 <VscTools size={24} />
               </span>
-              <span className="text-lg font-normal">{t("myServiceRequests")}</span>
+              <span className="text-lg font-normal">
+                {t("myServiceRequests")}
+              </span>
             </DropdownMenuItem>
           </CustomLink>
-        }
+        )}
         <CustomLink href="/addresses" title={t("addresses")}>
           <DropdownMenuItem className="flex items-center justify-start gap-4 cursor-pointer">
             <span className="primary_text_color">

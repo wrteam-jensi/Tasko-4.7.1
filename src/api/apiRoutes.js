@@ -171,6 +171,8 @@ export const getProviders = async ({
   limit = "",
   offset = "",
   category_slug = "",
+  years_of_experience = "",
+  avg_response_time = "",
 }) => {
   try {
     const formData = new FormData();
@@ -205,6 +207,12 @@ export const getProviders = async ({
     // }
     if (category_slug) {
       formData?.append("category_slug", category_slug);
+    }
+    if (years_of_experience) {
+      formData.append("years_of_experience", years_of_experience);
+    }
+    if (avg_response_time) {
+      formData.append("avg_response_time", avg_response_time);
     }
 
     const response = await api.post(apiEndPoints.getProviders, formData);
