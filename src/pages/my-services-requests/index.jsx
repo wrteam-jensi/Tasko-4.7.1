@@ -10,7 +10,7 @@ const index = () => {
   return (
     <div>
       <MetaData
-        title={`My Service Requests - ${process.env.NEXT_PUBLIC_META_TITLE}`}
+        title={`My Request Quotes - ${process.env.NEXT_PUBLIC_META_TITLE}`}
         description={process.env.NEXT_PUBLIC_META_DESCRIPTION}
         keywords={process.env.NEXT_PUBLIC_META_KEYWORDS}
         pageName="/my-services-requests"
