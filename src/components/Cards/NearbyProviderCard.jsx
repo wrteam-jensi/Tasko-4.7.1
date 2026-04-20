@@ -66,15 +66,18 @@ const NearbyProviderCard = ({ provider }) => {
         </div>
 
         {/* Location + Rating */}
-        <div className="flex items-center gap-1 text-[14px] text-gray-500 font-medium">
-          <FaMapMarkerAlt size={12} className="text-gray-400" />
-          <span>{showDistance(provider?.distance)}</span>
-          <span className="mx-0.5 text-gray-300">•</span>
-          <FaStar className="text-amber-400" size={13} />
-          <span className="text-gray-900">
-            {Number(provider?.ratings || 0).toFixed(1)}
-          </span>
-          <span className="text-gray-400">({provider?.review_count || 0})</span>
+        <div className="flex items-center justify-between text-[14px] text-gray-500 font-medium">
+          <div className="flex items-center gap-1">
+            <FaMapMarkerAlt size={12} className="text-gray-400" />
+            <span>{showDistance(provider?.distance)}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <FaStar className="text-amber-400" size={13} />
+            <span className="text-gray-900">
+              {Number(provider?.ratings || 0).toFixed(1)}
+            </span>
+            <span className="text-gray-400">({provider?.review_count || 0})</span>
+          </div>
         </div>
 
         {/* Price Button */}
