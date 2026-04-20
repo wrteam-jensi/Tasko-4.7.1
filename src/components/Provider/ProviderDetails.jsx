@@ -6,13 +6,14 @@ import { FaStar } from "react-icons/fa6";
 import { IoLocationOutline } from "react-icons/io5";
 import { CiBookmarkPlus } from "react-icons/ci";
 import { HiOutlineChatBubbleOvalLeftEllipsis } from "react-icons/hi2";
+import { MdVerified, MdBolt } from "react-icons/md";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import ProviderServiceTab from "./ProviderServiceTab";
 import ProviderAboutTab from "./ProviderAboutTab";
 import ProviderReviewTab from "./ProviderReviewTab";
 import ProviderOfferTab from "./ProviderOfferTab";
 import { useDispatch, useSelector } from "react-redux";
-import { useIsLogin, showDistance } from "@/utils/Helper";
+import { useIsLogin, showDistance, formatResponseTime } from "@/utils/Helper";
 import CustomImageTag from "../ReUseableComponents/CustomImageTag";
 import { useRouter } from "next/router";
 import { allServices, bookmark, getProviders } from "@/api/apiRoutes";
@@ -107,6 +108,7 @@ const ProviderDetails = () => {
         longitude: locationData?.lng,
         slug: slug,
       });
+      console.log("getProviders API response:", response);
       return response?.data?.[0];
     },
     enabled: !!slug && router.isReady,
@@ -337,13 +339,32 @@ const ProviderDetails = () => {
               <div className="flex flex-col gap-4">
                 {/* Service Details */}
                 <div className="rounded-[18px] bg-[#F5FAFF] dark:card_bg shadow-sm border border-gray-200">
-                  <div className=" overflow-hidden p-6 pb-0">
+                  <div className=" overflow-hidden p-6 pb-0 relative">
                     <CustomImageTag
                       src={providerData?.banner_image}
                       alt={providerData?.company_name}
                       className=""
                       imgClassName="w-full aspect-provider-banner object-cover rounded-xl"
                     />
+
+                    {/* Verified Pro Badge */}
+                    {providerData?.is_verified && (
+                      <div className="absolute top-6 left-6 bg-[#007BFF] rounded-tl-xl rounded-br-2xl px-3 py-1.5 flex items-center gap-1.5 shadow-sm z-10 font-bold text-white text-[12px]">
+                        <MdVerified size={16} className="text-white" />
+                        <span>Verified Pro</span>
+                      </div>
+                    )}
+
+                    {/* Reply Badge */}
+                    {providerData?.avg_response_time &&
+                      formatResponseTime(providerData.avg_response_time) && (
+                        <div className="absolute bottom-3 right-9 bg-black/60 backdrop-blur-sm rounded-full px-2.5 py-1 flex items-center gap-1 shadow-sm border border-white/10 z-10">
+                          <MdBolt size={16} className="text-[#00F380]" />
+                          <span className="text-[11px] font-semibold text-white">
+                            Replies in {formatResponseTime(providerData.avg_response_time)}
+                          </span>
+                        </div>
+                      )}
                   </div>
                   <div className="p-5">
                     <div className="flex flex-col sm:flex-row items-start gap-3">
@@ -356,9 +377,12 @@ const ProviderDetails = () => {
                         />
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-1.5">
                           {providerData?.translated_company_name ||
                             providerData?.company_name}
+                          {providerData?.is_verified && (
+                            <MdVerified className="text-[#3B82F6]" size={18} />
+                          )}
                         </h3>
                         <div className="flex items-center gap-3 mt-1">
                           {providerData?.ratings > 0 && (
