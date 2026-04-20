@@ -399,10 +399,11 @@ const AllProviders = () => {
             ) : currentProviders > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {providersData?.data?.map((provider, index) => (
-                  <div key={provider.id || index}>
+                  <div key={provider.id || index} className="h-full flex flex-col">
                     <CustomLink
                       href={`/provider-details/${provider?.slug}`}
                       title={provider?.name}
+                      className="w-full h-full flex flex-col"
                     >
                       <NearbyProviderCard provider={provider} />
                     </CustomLink>

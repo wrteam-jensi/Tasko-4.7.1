@@ -71,11 +71,11 @@ const NearbyProviders = ({ data }) => {
             className="mySwiper"
           >
             {data?.partners?.map((provider) => (
-              <SwiperSlide key={provider.id} className="h-auto flex">
+              <SwiperSlide key={provider.id} className="!h-auto flex">
                 <CustomLink
                   href={`/provider-details/${provider?.slug}`}
                   title={provider?.name}
-                  className="block w-full h-full"
+                  className="w-full h-full flex flex-col"
                 >
                   <NearbyProviderCard provider={provider} />
                 </CustomLink>

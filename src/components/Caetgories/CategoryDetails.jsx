@@ -231,11 +231,11 @@ const CategoryDetails = () => {
                           </div>
                         ))
                       : providers.map((provider, index) => (
-                          <div key={provider.id || index} className="h-full">
+                          <div key={provider.id || index} className="h-full flex flex-col">
                             <CustomLink
                               href={`/provider-details/${provider?.slug}`}
                               title={provider?.name}
-                              className="h-full block"
+                              className="w-full h-full flex flex-col"
                             >
                               <NearbyProviderCard provider={provider} />
                             </CustomLink>

@@ -229,12 +229,12 @@ const Search = () => {
 
   const servicesData = useMemo(
     () => data?.pages?.flatMap((page) => page.services || []) || [],
-    [data?.pages]
+    [data?.pages],
   );
 
   const providersData = useMemo(
     () => data?.pages?.flatMap((page) => page.providers || []) || [],
-    [data?.pages]
+    [data?.pages],
   );
 
   const total = data?.pages?.[0]?.total || 0;
@@ -319,19 +319,21 @@ const Search = () => {
             <div className="col-span-12 lg:col-span-4 xl:col-span-3 order-2 sm:order-1">
               <div className="flex border p-3 rounded-xl w-full">
                 <button
-                  className={`w-full px-6 py-2 text-base transition-all duration-150 ${activeTabType === "service"
-                    ? "light_bg_color primary_text_color"
-                    : ""
-                    } rounded-lg`}
+                  className={`w-full px-6 py-2 text-base transition-all duration-150 ${
+                    activeTabType === "service"
+                      ? "light_bg_color primary_text_color"
+                      : ""
+                  } rounded-lg`}
                   onClick={() => handleTabChange("service")}
                 >
                   {t("services")}
                 </button>
                 <button
-                  className={`w-full px-6 py-2 text-base transition-all duration-150 ${activeTabType === "provider"
-                    ? "light_bg_color primary_text_color"
-                    : ""
-                    } rounded-lg`}
+                  className={`w-full px-6 py-2 text-base transition-all duration-150 ${
+                    activeTabType === "provider"
+                      ? "light_bg_color primary_text_color"
+                      : ""
+                  } rounded-lg`}
                   onClick={() => handleTabChange("provider")}
                 >
                   {t("providers")}
@@ -368,7 +370,11 @@ const Search = () => {
 
                   {/* Display the search icon on smaller screens */}
                   <span className="inline md:hidden">
-                    {isSearchSubmitting ? <MiniLoader /> : <FaSearch size={20} />}
+                    {isSearchSubmitting ? (
+                      <MiniLoader />
+                    ) : (
+                      <FaSearch size={20} />
+                    )}
                   </span>
                 </button>
               </div>
@@ -396,8 +402,14 @@ const Search = () => {
                     </div>
                   ) : servicesData?.length > 0 ? (
                     servicesData?.map((service, index) => {
-                      const translatedCompanyName = service?.provider?.translated_company_name ? service?.provider?.translated_company_name : service?.provider?.company_name;
-                      const translatedUsername = service?.provider?.translated_username ? service?.provider?.translated_username : service?.provider?.username;
+                      const translatedCompanyName = service?.provider
+                        ?.translated_company_name
+                        ? service?.provider?.translated_company_name
+                        : service?.provider?.company_name;
+                      const translatedUsername = service?.provider
+                        ?.translated_username
+                        ? service?.provider?.translated_username
+                        : service?.provider?.username;
                       return (
                         <>
                           <div
@@ -431,7 +443,7 @@ const Search = () => {
                                       onClick={() =>
                                         handleViewAll(
                                           service?.provider?.provider_slug,
-                                          "services"
+                                          "services",
                                         )
                                       }
                                     >
@@ -466,13 +478,11 @@ const Search = () => {
                                           <ProviderDetailsServiceCard
                                             slug={service?.provider_slug}
                                             data={service}
-                                            compnayName={
-                                              translatedCompanyName
-                                            }
+                                            compnayName={translatedCompanyName}
                                           />
                                         </SwiperSlide>
-                                      )
-                                    }
+                                      );
+                                    },
                                   )}
                                 </Swiper>
                               </div>
@@ -488,15 +498,14 @@ const Search = () => {
                                           compnayName={translatedCompanyName}
                                         />
                                       </div>
-                                    )
-                                  }
+                                    );
+                                  },
                                 )}
                               </div>
                             )}
-
                           </div>
                         </>
-                      )
+                      );
                     })
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
@@ -550,7 +559,8 @@ const Search = () => {
           <div className="flex items-center justify-center w-full mt-4">
             {hasNextPage &&
               ((activeTabType === "service" && servicesData?.length > 0) ||
-                (activeTabType === "provider" && providersData?.length > 0)) && (
+                (activeTabType === "provider" &&
+                  providersData?.length > 0)) && (
                 <div className="flex items-center justify-center w-full mt-4">
                   <button
                     onClick={handleLoadMore}

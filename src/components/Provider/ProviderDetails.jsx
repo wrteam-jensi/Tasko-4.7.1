@@ -384,7 +384,7 @@ const ProviderDetails = () => {
                             <MdVerified className="text-[#3B82F6]" size={18} />
                           )}
                         </h3>
-                        <div className="flex items-center gap-3 mt-1">
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 mt-1">
                           {providerData?.ratings > 0 && (
                             <div
                               className="flex items-center gap-1 cursor-pointer hover:underline"
@@ -414,6 +414,18 @@ const ProviderDetails = () => {
                               onClick={() => handleTabChange("services")}
                             >
                               {providerData?.total_services} {t("services")}
+                            </div>
+                          )}
+                          {providerData?.years_of_experience > 0 && (
+                            <div className="text-sm primary_text_color font-medium flex items-center gap-1.5">
+                              <span className="w-1 h-1 rounded-full bg-gray-300"></span>
+                              {parseInt(providerData.years_of_experience)} yrs exp.
+                            </div>
+                          )}
+                          {providerData?.avg_response_time && formatResponseTime(providerData.avg_response_time) && (
+                            <div className="text-sm primary_text_color font-medium flex items-center gap-1.5">
+                              <span className="w-1 h-1 rounded-full bg-gray-300"></span>
+                              Replies in {formatResponseTime(providerData.avg_response_time)}
                             </div>
                           )}
                         </div>
