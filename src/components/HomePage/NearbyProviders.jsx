@@ -13,24 +13,31 @@ const NearbyProviders = ({ data }) => {
   const breakpoints = {
     320: {
       slidesPerView: 1.2,
+      spaceBetween: 15,
     },
     576: {
       slidesPerView: 2.2,
+      spaceBetween: 20,
     },
     768: {
       slidesPerView: 3.2,
+      spaceBetween: 20,
     },
     992: {
       slidesPerView: 4.2,
+      spaceBetween: 20,
     },
     1200: {
       slidesPerView: 5.2,
+      spaceBetween: 20,
     },
-    1400: {
-      slidesPerView: 6.2,
+    1440: {
+      slidesPerView: 5.8,
+      spaceBetween: 20,
     },
     1600: {
-      slidesPerView: 7.2,
+      slidesPerView: 6.2,
+      spaceBetween: 20,
     },
   };
 
@@ -52,7 +59,7 @@ const NearbyProviders = ({ data }) => {
             spaceBetween={20}
             loop={true}
             key={isRTL}
-            slidesPerView={5.2} 
+            slidesPerView={1.1} 
             dir={isRTL ? "rtl" : "ltr"}
             autoplay={{ delay: 3000 }} // Autoplay functionality
             freeMode={true} // Enable free mode
