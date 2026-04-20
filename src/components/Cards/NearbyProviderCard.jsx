@@ -22,7 +22,10 @@ const NearbyProviderCard = ({ provider }) => {
   return (
     <div className="w-full rounded-xl overflow-hidden border border-gray-100 bg-white flex flex-col h-full">
       {/* Image Area */}
-      <div className="relative w-full shrink-0" style={{ height: "130px" }}>
+      <div
+        className="relative w-full shrink-0 bg-gray-50"
+        style={{ height: "200px" }}
+      >
         {provider?.image ? (
           <CustomImageTag
             src={provider.image}
@@ -32,7 +35,7 @@ const NearbyProviderCard = ({ provider }) => {
           />
         ) : (
           <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-            <BsImageFill size={28} className="text-gray-300" />
+            <BsImageFill size={36} className="text-gray-300" />
           </div>
         )}
 
