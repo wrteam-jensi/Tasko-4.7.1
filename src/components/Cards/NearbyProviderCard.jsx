@@ -11,9 +11,6 @@ const NearbyProviderCard = ({ provider }) => {
       icon: <FaMapMarkerAlt size={11} className="text-[#3B82F6]" />,
       label: showDistance(provider.distance),
     },
-    provider?.years_of_experience > 0 && {
-      label: `${parseInt(provider.years_of_experience)} yrs exp.`,
-    },
     provider?.total_services > 0 && {
       label: `${provider.total_services} Services`,
     },
