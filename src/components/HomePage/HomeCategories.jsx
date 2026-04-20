@@ -31,29 +31,29 @@ const HomeCategories = ({ categoriesData }) => {
   };
 
   return (
-    <div className="light_bg_color py-8">
+    <div className="bg-[#F4F8FD] dark:bg-[#1a1c1e] py-10 md:py-16">
       <div className="container mx-auto px-4 md:px-8">
 
         {/* Header row: title + View All */}
-        <div className="flex items-start justify-between mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 md:mb-14 gap-2">
           <div>
-            <h2 className="text-xl md:text-2xl font-semibold text-gray-900 dark:text-white leading-tight">
+            <h2 className="text-[22px] md:text-[32px] font-extrabold text-[#020D19] dark:text-white leading-tight">
               {t("chooseYourService")}
             </h2>
-            <p className="text-sm text-blue-500 mt-0.5">
+            <p className="text-[14px] md:text-[16px] text-[#378ADD] font-semibold mt-1.5 md:mt-2">
               {t("discoverServices")}
             </p>
           </div>
           <Link
             href="/services"
-            className="text-sm text-gray-700 dark:text-gray-300 hover:text-blue-500 transition-colors whitespace-nowrap mt-1"
+            className="text-[14px] md:text-[15px] font-bold text-[#4B5563] dark:text-gray-300 hover:text-[#378ADD] transition-colors whitespace-nowrap sm:mb-1"
           >
             {t("viewAll")}
           </Link>
         </div>
 
-        {/* Desktop grid — 8 columns */}
-        <div className="hidden md:grid grid-cols-8 gap-4">
+        {/* Desktop Container (Flex justify-between for even spacing) */}
+        <div className="hidden md:flex flex-wrap items-start justify-between gap-4 lg:gap-6">
           {categoriesData.slice(0, 8).map((category, index) => (
             <HomeCategoryCard
               key={index}
@@ -64,20 +64,19 @@ const HomeCategories = ({ categoriesData }) => {
         </div>
 
         {/* Mobile swiper */}
-        <div className="block md:hidden">
+        <div className="block md:hidden -mx-4 px-4 overflow-hidden">
           <Swiper
             modules={[Autoplay, FreeMode]}
-            spaceBetween={12}
-            slidesPerView={3.5}
+            spaceBetween={16}
+            slidesPerView={3.2}
             loop={true}
             dir={isRTL ? "rtl" : "ltr"}
             key={isRTL ? "rtl" : "ltr"}
-            autoplay={{ delay: 3000 }}
+            autoplay={{ delay: 3500 }}
             freeMode={true}
             breakpoints={{
-              0: { slidesPerView: 3.5 },
-              480: { slidesPerView: 4.5 },
-              640: { slidesPerView: 5.5 },
+              0: { slidesPerView: 3.2 },
+              480: { slidesPerView: 4.2 },
             }}
           >
             {categoriesData.slice(0, 8).map((category, index) => (

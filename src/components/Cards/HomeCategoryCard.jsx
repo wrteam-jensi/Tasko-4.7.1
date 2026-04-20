@@ -10,26 +10,26 @@ const HomeCategoryCard = ({ data, handleRouteCategory }) => {
 
   return (
     <div
-      className="flex flex-col items-center gap-2 cursor-pointer w-[90px] flex-shrink-0 group"
+      className="flex flex-col items-center gap-2 cursor-pointer w-[90px] md:w-[100px] flex-shrink-0 group"
       onClick={() => handleRouteCategory(data)}
     >
       {/* Square Image with Rounded Corners */}
-      <div className="w-[90px] h-[90px] rounded-2xl overflow-hidden bg-gray-100">
+      <div className="w-[80px] h-[80px] md:w-[100px] md:h-[100px] rounded-[24px] overflow-hidden bg-white border border-gray-100 flex items-center justify-center p-3 md:p-4 shadow-sm transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-md">
         <CustomImageTag
           src={data?.category_image}
           alt={translatedName}
           className="w-full h-full"
-          imgClassName="w-full h-full object-cover"
+          imgClassName="w-full h-full object-contain filter group-hover:scale-105 transition-transform duration-300"
         />
       </div>
 
       {/* Category Name */}
-      <span className="text-[13px] font-medium text-center leading-tight line-clamp-2 text-gray-900 dark:text-white">
+      <span className="text-[12px] md:text-[14px] font-bold text-center leading-tight line-clamp-2 text-[#020D19] dark:text-white mt-1">
         {translatedName}
       </span>
 
       {/* Provider Count */}
-      <span className="text-[11px] text-gray-500 text-center -mt-1">
+      <span className="text-[10px] md:text-[11px] text-gray-500 text-center -mt-1 font-medium">
         {data?.total_providers}+ {data?.total_providers === 1 ? t("provider") : t("pros")}
       </span>
     </div>

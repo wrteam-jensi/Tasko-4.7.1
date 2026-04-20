@@ -36,7 +36,13 @@ const CustomNavigation = ({ onPrev, onNext }) => (
   </>
 );
 
-const CustomPagination = ({ totalSlides, currentSlide, goToSlide, isRTL, isPaused }) => {
+const CustomPagination = ({
+  totalSlides,
+  currentSlide,
+  goToSlide,
+  isRTL,
+  isPaused,
+}) => {
   const [progress, setProgress] = useState(0);
   const [opacity, setOpacity] = useState(0);
   const animationRef = useRef(null);
@@ -90,8 +96,9 @@ const CustomPagination = ({ totalSlides, currentSlide, goToSlide, isRTL, isPause
         <button
           key={index}
           onClick={() => goToSlide(index)}
-          className={`rounded-full transition-all relative overflow-hidden light_bg_color border border-[#ebf4ff] ${index === currentSlide ? "w-6 h-3" : "w-3 h-3"
-            } ${isRTL ? "ml-2" : "mr-2"} last:m-0`}
+          className={`rounded-full transition-all relative overflow-hidden light_bg_color border border-[#ebf4ff] ${
+            index === currentSlide ? "w-6 h-3" : "w-3 h-3"
+          } ${isRTL ? "ml-2" : "mr-2"} last:m-0`}
           aria-label={`Go to slide ${index + 1}`}
         >
           {index === currentSlide && (
@@ -103,7 +110,7 @@ const CustomPagination = ({ totalSlides, currentSlide, goToSlide, isRTL, isPause
                 height: "12px",
                 opacity: opacity,
                 transition: "width 0.1s ease-in-out, opacity 0.1s ease-in-out",
-                transform: isRTL ? "scaleX(-1)" : "none"
+                transform: isRTL ? "scaleX(-1)" : "none",
               }}
             ></div>
           )}
@@ -159,12 +166,15 @@ const HeroSlider = ({ sliderData }) => {
       case "Category":
       case "Sub Category":
         // Handle both main categories and subcategories
-        let categoryRoute = '/service';
+        let categoryRoute = "/service";
 
         // If parent_category_slugs array exists and has items, use them to build the path
-        if (slide?.parent_category_slugs && slide?.parent_category_slugs.length > 0) {
+        if (
+          slide?.parent_category_slugs &&
+          slide?.parent_category_slugs.length > 0
+        ) {
           // Add all parent category slugs in order
-          categoryRoute += `/${slide.parent_category_slugs.join('/')}`;
+          categoryRoute += `/${slide.parent_category_slugs.join("/")}`;
           // Add the current category slug at the end
           categoryRoute += `/${slide.category_slug}`;
         } else {
@@ -222,13 +232,16 @@ const HeroSlider = ({ sliderData }) => {
       };
     }
   }, []);
-  const isSliderData = sliderData && sliderData?.length > 0
+  const isSliderData = sliderData && sliderData?.length > 0;
   return (
-    <div className={`relative ${isSliderData ? "md:pb-16" : ""} heroSliderSection`}>
-      <div className={`relative w-full group ${isSliderData
-        ? "aspect-slider"
-        : "h-full my-10"
-        }`}>
+    <div
+      className={`relative ${isSliderData ? "md:pb-16" : ""} heroSliderSection`}
+    >
+      <div
+        className={`relative w-full group ${
+          isSliderData ? "aspect-slider" : "h-full my-10"
+        }`}
+      >
         {isSliderData ? (
           <>
             <Swiper
@@ -281,7 +294,6 @@ const HeroSlider = ({ sliderData }) => {
                   />
                 </div>
 
-
                 {/* Custom pagination */}
                 <div className="!hidden md:!block">
                   <CustomPagination
@@ -297,15 +309,24 @@ const HeroSlider = ({ sliderData }) => {
           </>
         ) : null}
 
-
         {/* Location and Search Section - Always visible for users to change location */}
-        <div className={`light_bg_color ${isSliderData ? "pt-6 -mt-6 sm:mt-0 md:pt-0 md:bg-transparent" : "py-4 mt-0"} searchLocation`}>
+        <div
+          className={`light_bg_color ${isSliderData ? "pt-6 -mt-6 sm:mt-0 md:pt-0 md:bg-transparent" : "py-4 mt-0"} searchLocation`}
+        >
           <div className="container md:mx-auto">
-            <div className={`md:card_bg rounded-xl py-4 md:p-4 relative ${isSliderData ? " md:-mt-8" : "mt-0"} left-0 right-0 mx-auto z-10 max-w-full lg:max-w-4xl flex flex-row items-center justify-between md:border border-[#2121212e] gap-4`}>
+            <div
+              className={`md:card_bg rounded-xl py-4 md:p-4 relative ${isSliderData ? " md:-mt-8" : "mt-0"} left-0 right-0 mx-auto z-10 max-w-full lg:max-w-4xl flex flex-row items-center justify-between md:border border-[#2121212e] gap-4`}
+            >
               {/* Location Section */}
-              <div className="card_bg p-3 rounded-[6px] md:rounded-none md:p-0 location flex items-center w-max md:w-1/2 text-center md:text-left" onClick={() => setIsModalOpen(true)}>
+              <div
+                className="card_bg p-3 rounded-[6px] md:rounded-none md:p-0 location flex items-center w-max md:w-1/2 text-center md:text-left"
+                onClick={() => setIsModalOpen(true)}
+              >
                 <div className="flex flex-1 items-center justify-between  w-full">
-                  <IoLocationOutline size={24} className="primary_text_color max-w-6 w-full" />
+                  <IoLocationOutline
+                    size={24}
+                    className="primary_text_color max-w-6 w-full"
+                  />
                   <input
                     readOnly
                     className="hidden md:block ml-2 focus:outline-none w-full text-sm sm:text-base !bg-transparent"
