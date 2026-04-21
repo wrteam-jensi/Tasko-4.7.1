@@ -371,7 +371,7 @@ const SidebarContent = memo(
                           >
                             <VscTools size={24} />
                           </span>
-                          <span className="text-base">{t("myServiceRequests")}</span>
+                          <span className="text-base">{t("requestQuote")}</span>
                         </CustomLink>
                       )}
 

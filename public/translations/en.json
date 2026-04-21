@@ -184,7 +184,7 @@
   "bookings": "Bookings",
   "noBookings": "No Bookings Found",
   "noBookingText": "You haven't made any bookings yet. Start exploring and book your first service now!",
-  "myServiceRequests": "Request a quote",
+  "requestQuote": "Request a quote",
   "addService": "Add Service",
   "notifications": "Notifications",
   "paymentHistory": "Payment History",

@@ -2,9 +2,8 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import Layout from "../Layout/Layout";
 import BreadCrumb from "../ReUseableComponents/BreadCrumb";
-import { FaStar } from "react-icons/fa6";
+import { FaStar, FaHeart, FaRegHeart } from "react-icons/fa";
 import { IoLocationOutline } from "react-icons/io5";
-import { CiBookmarkPlus } from "react-icons/ci";
 import { HiOutlineChatBubbleOvalLeftEllipsis } from "react-icons/hi2";
 import { MdVerified, MdBolt } from "react-icons/md";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -18,7 +17,6 @@ import CustomImageTag from "../ReUseableComponents/CustomImageTag";
 import { useRouter } from "next/router";
 import { allServices, bookmark, getProviders } from "@/api/apiRoutes";
 import Lightbox from "../ReUseableComponents/CustomLightBox/LightBox";
-import { BsFillBookmarkCheckFill } from "react-icons/bs";
 import { toast } from "sonner";
 import {
   getChatData,
@@ -41,22 +39,18 @@ import {
 import { buildLanguageAwareKey } from "@/lib/react-query-client";
 
 const ProviderDetails = () => {
-  // All hooks must be called in the exact same order every time
   const t = useTranslation();
   const dispatch = useDispatch();
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  // All useSelector hooks together
   const activeTab = useSelector(selectActiveTab);
   const providerServicesLoadMap = useSelector(selectProviderServicesLoadMap);
   const locationRawData = useSelector((state) => state?.location);
   const settings = useSelector((state) => state.settingsData?.settings);
 
-  // All useRef hooks together
   const providerAboutRef = useRef(null);
 
-  // All useState hooks together
   const [isOpenInApp, setIsOpenInApp] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isOverflowing, setIsOverflowing] = useState(false);
@@ -64,20 +58,17 @@ const ProviderDetails = () => {
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  // All useMemo hooks together
   const locationData = useMemo(() => {
     return locationRawData || { lat: null, lng: null };
   }, [locationRawData]);
 
-  // Constants and derived values
-  const isLoggedIn = useIsLogin(); // Reactive hook - automatically updates when login state changes
+  const isLoggedIn = useIsLogin();
   const slug = router.query.slug?.[0];
   const isShare = router.query.share;
   const limit = 5;
   const storedServicesLoad = slug ? providerServicesLoadMap?.[slug] : 0;
   const [targetServicesCount, setTargetServicesCount] = useState(limit);
 
-  // Get location from URL if not in store
   useEffect(() => {
     if (!locationData.lat || !locationData.lng) {
       const urlParams = new URLSearchParams(window.location.search);
@@ -116,7 +107,11 @@ const ProviderDetails = () => {
     retryDelay: 1000,
   });
 
-  // Bookmark Mutation
+  // ─────────────────────────────────────────────────────────────────────────────
+  // BOOKMARK / FAVOURITE MUTATION
+  // Uses `is_favorite` from API response to determine heart icon state.
+  // The `type` sent to the API is "add" when not yet favorited, "remove" when already favorited.
+  // ─────────────────────────────────────────────────────────────────────────────
   const bookmarkMutation = useMutation({
     mutationFn: async ({ type, partnerId }) => {
       return await bookmark({
@@ -129,7 +124,6 @@ const ProviderDetails = () => {
     onSuccess: (data) => {
       if (data?.error === false) {
         toast.success(data?.message);
-        // Invalidate provider query to refresh bookmark status
         queryClient.invalidateQueries(
           buildLanguageAwareKey([
             "provider",
@@ -240,15 +234,33 @@ const ProviderDetails = () => {
     setTargetServicesCount((prev) => prev + limit);
   };
 
+  // ─────────────────────────────────────────────────────────────────────────────
+  // HANDLE BOOKMARK — uses `is_favorite` field from API
+  // is_favorite: "1" → already favorited → clicking removes it
+  // is_favorite: "0" → not favorited    → clicking adds it
+  // Falls back to `is_bookmarked` for backward compatibility.
+  // ─────────────────────────────────────────────────────────────────────────────
   const handleBookmark = async () => {
     if (!isLoggedIn) {
       dispatch(openLoginModal());
       return;
     }
 
-    const type = providerData?.is_bookmarked === "1" ? "remove" : "add";
+    // Prefer `is_favorite`, fall back to `is_bookmarked` for compatibility
+    const isFav =
+      providerData?.is_favorite !== undefined
+        ? providerData.is_favorite === "1"
+        : providerData?.is_bookmarked === "1";
+
+    const type = isFav ? "remove" : "add";
     bookmarkMutation.mutate({ type, partnerId: providerData?.partner_id });
   };
+
+  // Determine current favourite state for UI rendering
+  const isFavorited =
+    providerData?.is_favorite !== undefined
+      ? providerData.is_favorite === "1"
+      : providerData?.is_bookmarked === "1";
 
   const handleChat = (e) => {
     e.preventDefault();
@@ -289,7 +301,6 @@ const ProviderDetails = () => {
     setIsLightboxOpen(false);
   };
 
-  // Check if About Us section is overflowing
   useEffect(() => {
     if (providerAboutRef.current) {
       const lineHeight = parseFloat(
@@ -300,7 +311,6 @@ const ProviderDetails = () => {
     }
   }, [providerData]);
 
-  // Handle mobile app drawer
   useEffect(() => {
     const isMobileOrTablet = window.innerWidth <= 1024;
     if (isShare && isMobileOrTablet) {
@@ -337,9 +347,9 @@ const ProviderDetails = () => {
           <div className="col-span-12 lg:col-span-4">
             <div className="sticky top-36">
               <div className="flex flex-col gap-4">
-                {/* Service Details */}
+                {/* Service Details Card */}
                 <div className="rounded-[18px] bg-[#F5FAFF] dark:card_bg shadow-sm border border-gray-200">
-                  <div className=" overflow-hidden p-6 pb-0 relative">
+                  <div className="overflow-hidden p-6 pb-0 relative">
                     <CustomImageTag
                       src={providerData?.banner_image}
                       alt={providerData?.company_name}
@@ -361,19 +371,40 @@ const ProviderDetails = () => {
                         <div className="absolute bottom-3 right-9 bg-black/60 backdrop-blur-sm rounded-full px-2.5 py-1 flex items-center gap-1 shadow-sm border border-white/10 z-10">
                           <MdBolt size={16} className="text-[#00F380]" />
                           <span className="text-[11px] font-semibold text-white">
-                            Replies in {formatResponseTime(providerData.avg_response_time)}
+                            Replies in{" "}
+                            {formatResponseTime(providerData.avg_response_time)}
                           </span>
                         </div>
                       )}
+
+                    {/* ─────────────────────────────────────────────────────────
+                        HEART / FAVOURITE BUTTON — overlaid on banner (top-right)
+                        Shows filled red heart when is_favorite === "1",
+                        outline heart when is_favorite === "0".
+                    ───────────────────────────────────────────────────────── */}
+                    <button
+                      className="absolute top-8 right-8 z-20 w-9 h-9 flex items-center justify-center rounded-full bg-white/80 backdrop-blur-sm shadow-md transition-transform duration-200 hover:scale-110 active:scale-95 disabled:opacity-60"
+                      onClick={handleBookmark}
+                      disabled={bookmarkMutation.isPending}
+                      aria-label={
+                        isFavorited ? t("removeFromFavorites") : t("addToFavorites")
+                      }
+                    >
+                      {isFavorited ? (
+                        <FaHeart size={18} className="text-red-500" />
+                      ) : (
+                        <FaRegHeart size={18} className="text-gray-500" />
+                      )}
+                    </button>
                   </div>
+
                   <div className="p-5">
                     <div className="flex flex-col sm:flex-row items-start gap-3">
-                      <div className="w-14 h-14 rounded-xl overflow-hidden border border-gray-100">
+                      <div className="w-14 h-14 rounded-xl overflow-hidden border border-gray-100 shrink-0">
                         <CustomImageTag
                           src={providerData?.image}
                           alt={providerData?.company_name}
                           className="w-full aspect-square object-cover"
-
                         />
                       </div>
                       <div className="flex-1">
@@ -384,8 +415,10 @@ const ProviderDetails = () => {
                             <MdVerified className="text-[#3B82F6]" size={18} />
                           )}
                         </h3>
+
+                        {/* Meta row: rating · distance · services · experience · response time */}
                         <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 mt-1">
-                          {providerData?.ratings > 0 && (
+                          {Number(providerData?.ratings) > 0 && (
                             <div
                               className="flex items-center gap-1 cursor-pointer hover:underline"
                               onClick={() => handleTabChange("reviews")}
@@ -394,9 +427,15 @@ const ProviderDetails = () => {
                               <span className="text-sm font-medium">
                                 {providerData?.ratings}
                               </span>
+                              {Number(providerData?.number_of_ratings) > 0 && (
+                                <span className="text-xs text-gray-400">
+                                  ({providerData.number_of_ratings})
+                                </span>
+                              )}
                             </div>
                           )}
-                          {providerData?.distance > 0 && (
+
+                          {Number(providerData?.distance) > 0 && (
                             <div
                               className="flex items-center gap-1 cursor-pointer text-sm description_color hover:underline"
                               onClick={() => handleTabChange("about")}
@@ -408,7 +447,8 @@ const ProviderDetails = () => {
                               {showDistance(providerData?.distance)}
                             </div>
                           )}
-                          {providerData?.total_services > 0 && (
+
+                          {Number(providerData?.total_services) > 0 && (
                             <div
                               className="text-sm primary_text_color font-medium cursor-pointer hover:underline"
                               onClick={() => handleTabChange("services")}
@@ -416,54 +456,49 @@ const ProviderDetails = () => {
                               {providerData?.total_services} {t("services")}
                             </div>
                           )}
-                          {providerData?.years_of_experience > 0 && (
+
+                          {Number(providerData?.years_of_experience) > 0 && (
                             <div className="text-sm primary_text_color font-medium flex items-center gap-1.5">
-                              <span className="w-1 h-1 rounded-full bg-gray-300"></span>
-                              {parseInt(providerData.years_of_experience)} yrs exp.
+                              <span className="w-1 h-1 rounded-full bg-gray-300" />
+                              {parseInt(providerData.years_of_experience)}{" "}
+                              yrs exp.
                             </div>
                           )}
-                          {providerData?.avg_response_time && formatResponseTime(providerData.avg_response_time) && (
-                            <div className="text-sm primary_text_color font-medium flex items-center gap-1.5">
-                              <span className="w-1 h-1 rounded-full bg-gray-300"></span>
-                              Replies in {formatResponseTime(providerData.avg_response_time)}
-                            </div>
-                          )}
+
+                   
                         </div>
+
+                        {/* Starting price */}
+                        {providerData?.starting_price && (
+                          <div className="mt-1.5 text-sm font-semibold primary_text_color">
+                            From {providerData.starting_price}
+                          </div>
+                        )}
                       </div>
                     </div>
-                    <div className="mt-4 space-y-4">
+
+                    {/* About / description */}
+                    <div className="mt-4 space-y-2">
                       <p
                         ref={providerAboutRef}
-                        className={`text-sm description_color leading-relaxed ${!isExpanded ? "line-clamp-4" : ""
-                          } transition-all duration-300`}
+                        className={`text-sm description_color leading-relaxed ${
+                          !isExpanded ? "line-clamp-4" : ""
+                        } transition-all duration-300`}
                       >
                         {providerData?.translated_about || providerData?.about}
                       </p>
                       {isOverflowing && (
                         <button
-                          className="text-sm hover:underline"
+                          className="text-sm primary_text_color hover:underline"
                           onClick={() => setIsExpanded(!isExpanded)}
                         >
                           {isExpanded ? t("viewLess") : t("viewMore")}
                         </button>
                       )}
                     </div>
-                    <div className="flex items-center gap-3 mt-4">
-                      <button
-                        className={`${providerData?.is_bookmarked === "1"
-                          ? "card_bg dark:light_bg_color primary_text_color"
-                          : "card_bg dark:light_bg_color"
-                          } p-2 rounded-sm`}
-                        onClick={handleBookmark}
-                        disabled={bookmarkMutation.isPending}
-                      >
-                        {providerData?.is_bookmarked === "1" ? (
-                          <BsFillBookmarkCheckFill size={24} />
-                        ) : (
-                          <CiBookmarkPlus size={24} />
-                        )}
-                      </button>
 
+                    {/* Action buttons row: share + chat (heart is now on the banner) */}
+                    <div className="flex items-center gap-3 mt-4">
                       <Share title={translatedCompanyName} />
 
                       {isPreBookingChatAvailable &&
@@ -482,59 +517,55 @@ const ProviderDetails = () => {
                 {/* Photo Gallery section */}
                 {providerData?.other_images?.length > 0 && (
                   <div className="light_bg_color rounded-lg overflow-hidden mt-4 relative p-5">
-                    <div>
-                      <h2 className="text-[20px] font-semibold">
-                        {t("photos")}
-                      </h2>
-                      <div className="photos grid grid-cols-3 gap-4 mt-6">
-                        {providerData?.other_images
-                          ?.slice(0, 4)
-                          .map((image, index) => (
-                            <div
-                              className="photo cursor-pointer"
-                              key={index}
-                              onClick={() => openLightbox(index)}
-                            >
-                              <CustomImageTag
-                                src={image}
-                                alt={`other_image_${index}`}
-                                imgClassName="rounded-md w-full aspect-service-other object-cover"
-
-                              />
-                            </div>
-                          ))}
-
-                        {providerData?.other_images?.length >= 5 && (
-                          <div className="photo col-span-2 cursor-pointer">
-                            <div
-                              className="relative rounded-md overflow-hidden"
-                              onClick={() => openLightbox(4)}
-                            >
-                              <CustomImageTag
-                                src={providerData?.other_images[4]}
-                                alt={providerData?.company_name}
-                                imgClassName="w-full aspect-service-other2 object-cover"
-                              />
-                              {providerData?.other_images?.length > 5 && (
-                                <div className="absolute inset-0 bg-gray-900 bg-opacity-70 flex justify-center items-center">
-                                  <span className="text-md font-bold text-white">
-                                    +{providerData.other_images.length - 5}{" "}
-                                    {t("more")}
-                                  </span>
-                                </div>
-                              )}
-                            </div>
+                    <h2 className="text-[20px] font-semibold">{t("photos")}</h2>
+                    <div className="photos grid grid-cols-3 gap-4 mt-6">
+                      {providerData?.other_images
+                        ?.slice(0, 4)
+                        .map((image, index) => (
+                          <div
+                            className="photo cursor-pointer"
+                            key={index}
+                            onClick={() => openLightbox(index)}
+                          >
+                            <CustomImageTag
+                              src={image}
+                              alt={`other_image_${index}`}
+                              imgClassName="rounded-md w-full aspect-service-other object-cover"
+                            />
                           </div>
-                        )}
-                        {isLightboxOpen && (
-                          <Lightbox
-                            isLightboxOpen={isLightboxOpen}
-                            images={providerData.other_images}
-                            initialIndex={currentImageIndex}
-                            onClose={closeLightbox}
-                          />
-                        )}
-                      </div>
+                        ))}
+
+                      {providerData?.other_images?.length >= 5 && (
+                        <div className="photo col-span-2 cursor-pointer">
+                          <div
+                            className="relative rounded-md overflow-hidden"
+                            onClick={() => openLightbox(4)}
+                          >
+                            <CustomImageTag
+                              src={providerData?.other_images[4]}
+                              alt={providerData?.company_name}
+                              imgClassName="w-full aspect-service-other2 object-cover"
+                            />
+                            {providerData?.other_images?.length > 5 && (
+                              <div className="absolute inset-0 bg-gray-900 bg-opacity-70 flex justify-center items-center">
+                                <span className="text-md font-bold text-white">
+                                  +{providerData.other_images.length - 5}{" "}
+                                  {t("more")}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                      {isLightboxOpen && (
+                        <Lightbox
+                          isLightboxOpen={isLightboxOpen}
+                          images={providerData.other_images}
+                          initialIndex={currentImageIndex}
+                          onClose={closeLightbox}
+                        />
+                      )}
                     </div>
                   </div>
                 )}
@@ -542,7 +573,7 @@ const ProviderDetails = () => {
             </div>
           </div>
 
-          {/* Right Section */}
+          {/* Right Section — Tabs */}
           <div className="col-span-12 lg:col-span-8">
             <Tabs className="w-full" value={activeTab}>
               <TabsList className="light_bg_color rounded-md w-full h-full flex gap-2 p-2 overflow-x-auto md:overflow-x-hidden scrollbar-none justify-start md:justify-center">
@@ -556,46 +587,20 @@ const ProviderDetails = () => {
                   }
                 `}</style>
 
-                <TabsTrigger
-                  value="services"
-                  className={`${activeTab === "services"
-                    ? "primary_bg_color !text-white"
-                    : "bg-white text-black"
+                {["services", "about", "reviews", "offers"].map((tab) => (
+                  <TabsTrigger
+                    key={tab}
+                    value={tab}
+                    className={`${
+                      activeTab === tab
+                        ? "primary_bg_color !text-white"
+                        : "bg-white text-black"
                     } px-6 md:px-4 py-2 rounded-md font-medium w-full text-center`}
-                  onClick={() => handleTabChange("services")}
-                >
-                  {t("services")}
-                </TabsTrigger>
-                <TabsTrigger
-                  value="about"
-                  className={`${activeTab === "about"
-                    ? "primary_bg_color !text-white"
-                    : "bg-white text-black"
-                    } px-6 md:px-4 py-2 rounded-md font-medium w-full text-center`}
-                  onClick={() => handleTabChange("about")}
-                >
-                  {t("about")}
-                </TabsTrigger>
-                <TabsTrigger
-                  value="reviews"
-                  className={`${activeTab === "reviews"
-                    ? "primary_bg_color !text-white"
-                    : "bg-white text-black"
-                    } px-6 md:px-4 py-2 rounded-md font-medium w-full text-center`}
-                  onClick={() => handleTabChange("reviews")}
-                >
-                  {t("reviews")}
-                </TabsTrigger>
-                <TabsTrigger
-                  value="offers"
-                  className={`${activeTab === "offers"
-                    ? "primary_bg_color !text-white"
-                    : "bg-white text-black"
-                    } px-6 md:px-4 py-2 rounded-md font-medium w-full text-center`}
-                  onClick={() => handleTabChange("offers")}
-                >
-                  {t("offers")}
-                </TabsTrigger>
+                    onClick={() => handleTabChange(tab)}
+                  >
+                    {t(tab)}
+                  </TabsTrigger>
+                ))}
               </TabsList>
 
               <TabsContent value="services">
@@ -623,6 +628,7 @@ const ProviderDetails = () => {
           </div>
         </div>
       </section>
+
       <OpenInAppDrawer
         IsOpenInApp={isOpenInApp}
         OnHide={() => setIsOpenInApp(false)}

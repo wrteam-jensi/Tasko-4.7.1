@@ -101,7 +101,7 @@ const SideNavigation = () => {
       ...(hasLatLong
         ? [
           {
-            title: t("myServiceRequests"),
+            title: t("requestQuote"),
             icon: <VscTools size={18} />,
             route: ["/my-services-requests"],
             category: "",

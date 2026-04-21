@@ -133,17 +133,12 @@ const AccountDialog = ({ isVisible, onOpenChange, userData, handleLogout }) => {
           </DropdownMenuItem>
         </CustomLink>
         {hasLatLong && (
-          <CustomLink
-            href="/my-services-requests"
-            title={t("myServiceRequests")}
-          >
+          <CustomLink href="/my-services-requests" title={t("requestQuote")}>
             <DropdownMenuItem className="flex items-center justify-start gap-4 cursor-pointer">
               <span className="primary_text_color">
                 <VscTools size={24} />
               </span>
-              <span className="text-lg font-normal">
-                {t("myServiceRequests")}
-              </span>
+              <span className="text-lg font-normal">{t("requestQuote")}</span>
             </DropdownMenuItem>
           </CustomLink>
         )}

@@ -66,14 +66,14 @@ const MyServiceRequest = () => {
 
   return (
     <ProfileLayout
-      breadcrumbTitle={t("myServiceRequests")}
+      breadcrumbTitle={t("requestQuote")}
       breadcrumbLink="/my-services-requests"
       containerClassName="px-4 sm:px-6 lg:px-8"
     >
       <div className="flex flex-col gap-6">
         <div className="flex items-center justify-between w-full max-[350px]:flex-wrap max-[350px]:gap-2">
           <div className="page-headline max-[350px]:text-base text-lg md:text-2xl sm:text-3xl font-semibold">
-            <span>{open ? (t("requestQuote") || "Request a Quote") : t("myServiceRequests")}</span>
+            <span>{open ? (t("requestQuote") || "Request a Quote") : t("requestQuote")}</span>
           </div>
           <div>
             <button
