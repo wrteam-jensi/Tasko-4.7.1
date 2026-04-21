@@ -1,6 +1,6 @@
 import { miniDevider, parseAndCeil, showDistance, useRTL } from "@/utils/Helper";
 import React, { useState, useEffect } from "react";
-import { BsBookmarkCheckFill, BsBookmarkPlus } from "react-icons/bs";
+import { BsHeartFill, BsHeart } from "react-icons/bs";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import { FaStar } from "react-icons/fa6";
 import CustomImageTag from "../ReUseableComponents/CustomImageTag";
@@ -94,13 +94,13 @@ const TopRatedProviderCard = ({ provider }) => {
         )}
         <div className="absolute top-3 -right-10 card_bg text-black dark:text-white text-xs font-semibold px-2 py-1 rounded-[8px] transition-all duration-300 group-hover:right-3">
           {isBookMarked ? (
-            <BsBookmarkCheckFill
+            <BsHeartFill
               size={22}
               onClick={handleRemoveBookMark}
               className="cursor-pointer primary_text_color"
             />
           ) : (
-            <BsBookmarkPlus
+            <BsHeart
               size={22}
               onClick={handleAddBookMark}
               className="cursor-pointer transition-all duration-300 group-hover:right-3"
