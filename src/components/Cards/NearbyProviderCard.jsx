@@ -25,10 +25,10 @@ const NearbyProviderCard = ({ provider }) => {
       >
         {provider?.image ? (
           <CustomImageTag
-            src={provider.image}
+            src={provider.banner_image}
             alt={provider?.company_name}
             className="w-full h-full"
-            imgClassName="w-full h-full object-contain"
+            imgClassName="w-full h-full object-cover"
           />
         ) : (
           <div className="w-full h-full bg-gray-100 flex items-center justify-center">
