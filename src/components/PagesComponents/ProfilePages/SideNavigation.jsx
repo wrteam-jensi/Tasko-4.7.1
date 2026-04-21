@@ -93,7 +93,7 @@ const SideNavigation = () => {
         category: "",
       },
       {
-        title: t("bookmarks"),
+        title: t("myfavriout"),
         icon: <BsBookmarkCheck size={18} />,
         route: ["/bookmarks"],
         category: "",

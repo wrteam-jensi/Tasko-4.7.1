@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { FaChevronDown, FaRegCalendarCheck, FaUser } from "react-icons/fa";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-
+import { BsHeart } from "react-icons/bs";
 import {
   IoCardOutline,
   IoChatboxEllipsesOutline,
@@ -124,12 +124,12 @@ const AccountDialog = ({ isVisible, onOpenChange, userData, handleLogout }) => {
             <span className="text-lg font-normal">{t("notifications")}</span>
           </DropdownMenuItem>
         </CustomLink>
-        <CustomLink href="/bookmarks" title={t("bookmarks")}>
+        <CustomLink href="/bookmarks" title={t("myfavriout")}>
           <DropdownMenuItem className="flex items-center justify-start gap-4 cursor-pointer">
             <span className="primary_text_color">
-              <CiBookmarkCheck size={24} />
+              <BsHeart size={24} />
             </span>
-            <span className="text-lg font-normal">{t("bookmarks")}</span>
+            <span className="text-lg font-normal">{t("myfavriout")}</span>
           </DropdownMenuItem>
         </CustomLink>
         {hasLatLong && (

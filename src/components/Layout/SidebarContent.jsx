@@ -351,7 +351,7 @@ const SidebarContent = memo(
                         >
                           <CiBookmarkCheck size={24} />
                         </span>
-                        <span className="text-base">{t("bookmarks")}</span>
+                        <span className="text-base">{t("myfavriout")}</span>
                       </CustomLink>
 
                       {hasLatLong && (

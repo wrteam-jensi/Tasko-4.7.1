@@ -155,7 +155,7 @@ const BookMarks = () => {
     >
       <div className="flex flex-col gap-6">
         <div className="page-headline text-2xl sm:text-3xl font-semibold">
-          <span>{t("bookmarks")}</span>
+          <span>{t("myfavriout")}</span>
         </div>
 
         {/* Show Loading State */}
