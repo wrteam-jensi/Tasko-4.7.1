@@ -251,18 +251,49 @@ const AddCustomServiceForm = ({ close, fetchBookings }) => {
     setShowDatePicker(false);
   };
 
+  const requestQuoteSettings = settingsData?.request_quote_settings;
+
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
-    const validFiles = files.filter((file) => file.size <= 10 * 1024 * 1024); // 10MB limit
+    
+    // Get limits with safe fallbacks
+    const maxFilesAllowed = parseInt(requestQuoteSettings?.max_files_allowed) ;
+    const maxSizeImages = (parseInt(requestQuoteSettings?.max_file_size_images)) * 1024 * 1024;
+    const maxSizeVideo = (parseInt(requestQuoteSettings?.max_file_size_video)) * 1024 * 1024;
+    const maxSizeAudio = (parseInt(requestQuoteSettings?.max_file_size_audio)) * 1024 * 1024;
+    const maxSizeOther = (parseInt(requestQuoteSettings?.max_file_size_other)) * 1024 * 1024;
 
+    // Check total files count limit
+    if (attachments.length + files.length > maxFilesAllowed) {
+      toast.error(
+        `${t("maxFilesAllowed") || "Maximum files allowed is"} ${maxFilesAllowed}`
+      );
+      e.target.value = "";
+      return;
+    }
+
+    // Filter files based on individual size limits (MB to Bytes)
+    const validFiles = files.filter((file) => {
+      let maxSize = maxSizeOther;
+      if (file.type.startsWith("image/")) {
+        maxSize = maxSizeImages;
+      } else if (file.type.startsWith("video/")) {
+        maxSize = maxSizeVideo;
+      } else if (file.type.startsWith("audio/")) {
+        maxSize = maxSizeAudio;
+      }
+      return file.size <= maxSize;
+    });
+
+    // Notify user if any files were rejected due to size
     if (validFiles.length < files.length) {
       toast.error(
-        t("someFilesTooLarge") || "Some files were too large (max 10MB)",
+        t("someFilesTooLarge") || "Some files were too large for their respective type limits (MB)."
       );
     }
 
     setAttachments((prev) => [...prev, ...validFiles]);
-    e.target.value = ""; // Reset input so same file can be selected again
+    e.target.value = ""; // Reset input
   };
 
   const removeAttachment = (index) => {
