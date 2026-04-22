@@ -846,6 +846,6 @@
   "whatDoYouNeedToday": "What do you need today?",
   "findTheRightPro": "Find the right pro in minutes",
   "getQuotes": "Get quotes",
-  "maxFilesAllowed": "Maximum files allowed is {max}",
+  "maxFilesAllowed": "Maximum files allowed is",
   "someFilesTooLarge": "Some files were too large for their respective type limits (MB)."
 }
