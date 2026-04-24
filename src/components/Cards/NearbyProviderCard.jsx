@@ -11,7 +11,7 @@ import CustomImageTag from "../ReUseableComponents/CustomImageTag";
 
 const NearbyProviderCard = ({ provider }) => {
   const metaItems = [
-     provider?.service_title && {
+    provider?.service_title && {
       label: provider.service_title,
     },
     provider?.distance && {
@@ -21,7 +21,6 @@ const NearbyProviderCard = ({ provider }) => {
     provider?.total_services > 0 && {
       label: `${provider.total_services} Services`,
     },
-   
   ].filter(Boolean);
 
   return (
@@ -68,47 +67,46 @@ const NearbyProviderCard = ({ provider }) => {
 
       {/* Card Body */}
       <div className="px-3 py-3 flex flex-col flex-1 gap-1.5">
-        {/* Name + Rating */}
+        {/* Name + Verified Badge */}
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-1 min-w-0">
-            <h2 className="text-[13px] font-semibold text-gray-900 truncate uppercase tracking-wide">
+            <h2 className="text-[14px] font-bold text-gray-900 truncate uppercase tracking-wide">
               {provider?.translated_company_name || provider?.company_name}
             </h2>
             {provider?.is_verified && (
-              <MdVerified className="text-[#3B82F6] shrink-0" size={13} />
+              <MdVerified className="text-[#3B82F6] shrink-0" size={14} />
             )}
-          </div>
-
-          {/* Rating */}
-          <div className="flex items-center gap-1 shrink-0 bg-amber-50 border border-amber-100 px-1.5 py-0.5 rounded text-[11px]">
-            <FaStar className="text-amber-400" size={10} />
-            <span className="font-semibold text-gray-900">
-              {Number(provider?.ratings || 0).toFixed(1)}
-            </span>
           </div>
         </div>
 
-        {/* Category */}
-        {/* {(provider?.translated_category_name || provider?.category_name) && (
-          <div className="text-[12px] text-gray-500 leading-snug line-clamp-2">
-            {provider.translated_category_name || provider.category_name}
-          </div>
-        )} */}
+        {/* Row 1: Category & Total Services */}
+        <div className="flex items-center gap-2 text-[12px] text-gray-500 font-medium">
+          <span className="truncate">
+            {provider?.translated_category_name || provider?.category_name || provider?.service_title || "Service"}
+          </span>
+          <span className="text-gray-300">•</span>
+          <span className="shrink-0">
+            {provider?.total_services || 0} Services
+          </span>
+        </div>
 
-        {/* Meta: Distance / Experience / Services */}
-        {metaItems.length > 0 && (
-          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] text-gray-500">
-            {metaItems.map((item, index) => (
-              <div key={index} className="flex items-center gap-x-2">
-              
-                <span className="flex items-center gap-1">
-                  {item.icon && item.icon}
-                  {item.label}
-                </span>
-              </div>
-            ))}
+        {/* Row 2: Distance & Reviews */}
+        <div className="flex items-center gap-2 text-[12px] text-gray-500 font-medium">
+          <div className="flex items-center gap-1">
+            <FaMapMarkerAlt size={12} className="text-[#3B82F6]" />
+            <span>{showDistance(provider?.distance)}</span>
           </div>
-        )}
+          <span className="text-gray-300">•</span>
+          <div className="flex items-center gap-1">
+            <FaStar className="text-amber-400" size={12} />
+            <span className="text-gray-900 font-semibold">
+              {Number(provider?.ratings || 0).toFixed(1)}
+            </span>
+            <span className="text-gray-400">
+              ({provider?.number_of_ratings || 0})
+            </span>
+          </div>
+        </div>
 
         {/* Price Button — pinned to bottom */}
         <div className="mt-auto pt-2 border-t border-gray-100">
