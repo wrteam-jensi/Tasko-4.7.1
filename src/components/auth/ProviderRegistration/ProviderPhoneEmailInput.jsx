@@ -178,7 +178,6 @@ const ProviderPhoneEmailInput = ({
           <PhoneInput
             inputStyle={{ direction: isRtl ? "rtl" : "ltr" }}
             country={effectiveCountryCode}
-            masks={{ ci: ".. .. .. .. .." }}
             value={phone}
             onChange={handlePhoneInputChange}
             onlyCountries={

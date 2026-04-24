@@ -178,12 +178,6 @@ const EditProfile = ({ open, close, isEditProfile, userData }) => {
       return false;
     }
 
-    // Strict 10-digit validation for Ivory Coast
-    if (countryCode === "225" && phone.length !== 10) {
-      toast.error(t("phoneNumberMustBe10Digits") || "Phone number must be 10 digits");
-      return false;
-    }
-
     // Email validation (empty first, then format)
     if (!email || email.trim() === "") {
       toast.error(t("pleaseEnterEmail"));
@@ -426,7 +420,6 @@ const EditProfile = ({ open, close, isEditProfile, userData }) => {
                   }
                   country={effectiveCountryCode}
                   countryCodeEditable={false}
-                  masks={{ ci: ".. .. .. .. .." }}
                   disabled={userAuthData?.type === "phone" || userData?.login_type === "phone"}
                   onChange={(value, data) => {
                     setCountryCode(data?.dialCode || "");

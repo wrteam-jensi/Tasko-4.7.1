@@ -463,6 +463,7 @@ const LoginModal = ({ open, close, setOpenProfileModal, setOpenSetPasswordModal 
                         onGoogleSignIn={() => handleGoogleSignIn(state.loading)}
                         isGoogleAuthInProgress={state.isGoogleAuthInProgress}
                         popupFailedCount={state.popupFailedCount}
+                        enableLongNumbers={true}
                         t={t}
                     />
                 );

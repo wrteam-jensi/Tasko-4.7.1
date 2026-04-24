@@ -81,9 +81,9 @@ const NearbyProviderCard = ({ provider }) => {
         </div>
 
         {/* Category */}
-        {(provider?.translated_category_name || provider?.category_name || provider?.service_title) && (
+        {(provider?.category_name || provider?.service_title) && (
           <div className="text-[12px] text-gray-500 leading-snug line-clamp-2">
-            {provider.translated_category_name || provider.category_name || provider.service_title}
+            {provider.category_name || provider.service_title}
           </div>
         )}
 

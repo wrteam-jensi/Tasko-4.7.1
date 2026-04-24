@@ -106,7 +106,6 @@ const ProviderDetailsScreen = ({
                         <PhoneInput
                             inputStyle={{ direction: isRtl ? "rtl" : "ltr" }}
                             country={effectiveCountryCode}
-                            masks={{ ci: ".. .. .. .. .." }}
                             value={formPhoneFullValue}
                             onChange={(value, data) => {
                                 setFormPhoneFullValue(value);
