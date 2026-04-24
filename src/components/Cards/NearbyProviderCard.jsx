@@ -100,9 +100,7 @@ const NearbyProviderCard = ({ provider }) => {
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] text-gray-500">
             {metaItems.map((item, index) => (
               <div key={index} className="flex items-center gap-x-2">
-                {index > 0 && (
-                  <span className="w-1 h-1 rounded-full bg-gray-300 inline-block" />
-                )}
+              
                 <span className="flex items-center gap-1">
                   {item.icon && item.icon}
                   {item.label}
