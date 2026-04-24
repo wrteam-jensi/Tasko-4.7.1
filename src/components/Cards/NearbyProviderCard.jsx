@@ -44,14 +44,14 @@ const NearbyProviderCard = ({ provider }) => {
         )}
 
         {/* Verified Pro Badge */}
-        {/* {provider?.is_verified && (
+        {provider?.verified_pro && (
           <div className="absolute top-0 left-0 bg-[#007BFF] rounded-tl-xl rounded-br-xl px-2.5 py-1 flex items-center gap-1 z-10">
             <MdVerified size={13} className="text-white" />
             <span className="text-white text-[11px] font-semibold">
               Verified Pro
             </span>
           </div>
-        )} */}
+        )}
 
         {/* Reply Badge */}
         {provider?.avg_response_time &&
@@ -73,8 +73,8 @@ const NearbyProviderCard = ({ provider }) => {
             <h2 className="text-[14px] font-bold text-gray-900 truncate uppercase tracking-wide">
               {provider?.translated_company_name || provider?.company_name}
             </h2>
-            {provider?.is_verified && (
-              <MdVerified className="text-[#3B82F6] shrink-0" size={14} />
+            {provider?.verified_pro && (
+                <MdVerified className="text-[#3B82F6] shrink-0" size={14} />
             )}
           </div>
         </div>
