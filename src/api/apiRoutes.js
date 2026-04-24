@@ -1319,13 +1319,13 @@ export const makeCustomJobRequestApi = async ({
   service_short_description,
   min_price,
   max_price,
-  requested_start_date,
-  requested_start_time,
-  requested_end_date,
-  requested_end_time,
+  type,
   latitude,
   longitude,
-  images,
+  provider_id,
+  files,
+  requested_start_date_time,
+  requested_end_date_time,
 }) => {
   const formData = new FormData();
   if (category_id) {
@@ -1343,17 +1343,8 @@ export const makeCustomJobRequestApi = async ({
   if (max_price) {
     formData.append("max_price", max_price);
   }
-  if (requested_start_date) {
-    formData.append("requested_start_date", requested_start_date);
-  }
-  if (requested_start_time) {
-    formData.append("requested_start_time", requested_start_time);
-  }
-  if (requested_end_date) {
-    formData.append("requested_end_date", requested_end_date);
-  }
-  if (requested_end_time) {
-    formData.append("requested_end_time", requested_end_time);
+  if (type) {
+    formData.append("type", type);
   }
   if (latitude) {
     formData.append("latitude", latitude);
@@ -1361,9 +1352,18 @@ export const makeCustomJobRequestApi = async ({
   if (longitude) {
     formData.append("longitude", longitude);
   }
-  if (Array.isArray(images)) {
-    images.forEach((image, index) => {
-      formData.append(`images[${index}]`, image);
+  if (provider_id) {
+    formData.append("provider_id", provider_id);
+  }
+  if (requested_start_date_time) {
+    formData.append("requested_start_date_time", requested_start_date_time);
+  }
+  if (requested_end_date_time) {
+    formData.append("requested_end_date_time", requested_end_date_time);
+  }
+  if (Array.isArray(files)) {
+    files.forEach((file) => {
+      formData.append("files[]", file);
     });
   }
   try {
@@ -2096,6 +2096,54 @@ export const getUserInfoApi = async () => {
     throw error;
   }
 };
+// 75. get provider custom job requests api
+export const getProviderCustomJobRequestsApi = async ({ id }) => {
+  const formData = new FormData();
+  if (id) {
+    formData.append("id", id);
+  }
+  try {
+    const response = await api.post(
+      apiEndPoints.getProviderCustomJobRequests,
+      formData,
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error in getProviderCustomJobRequests:", error);
+    throw error;
+  }
+};
 
-
-
+// 76. apply for custom job api
+export const applyForCustomJobApi = async (payload) => {
+  const formData = new FormData();
+  Object.entries(payload).forEach(([key, value]) => {
+    formData.append(key, value);
+  });
+  try {
+    const response = await api.post(
+      apiEndPoints.applyForCustomJob,
+      formData,
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error in applyForCustomJob:", error);
+    throw error;
+  }
+};
+// 77. enhance custom job request api
+export const enhanceCustomJobRequestApi = async ({ service_title, service_short_description }) => {
+  const formData = new FormData();
+  formData.append("service_title", service_title);
+  formData.append("service_short_description", service_short_description);
+  try {
+    const response = await api.post(
+      apiEndPoints.enhanceCustomJobRequest,
+      formData,
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error in enhanceCustomJobRequest:", error);
+    throw error;
+  }
+};

@@ -64,6 +64,9 @@ export const getProvidersOnMap = "get_providers_on_map";
 export const getLanguageList = "get_language_list";
 export const getLanguageJsonData = "get_language_json_data";
 export const getPageSettings = "get_page_setting";
+export const getProviderCustomJobRequests = "get_custom_job_requests";
+export const applyForCustomJob = "apply_for_custom_job";
+export const enhanceCustomJobRequest = "enhance_custom_job_request";
 
 // register provider apis
 export const registerProvider = "register_provider";

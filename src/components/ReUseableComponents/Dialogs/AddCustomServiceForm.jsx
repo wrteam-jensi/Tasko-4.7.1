@@ -49,6 +49,7 @@ import {
   makeCustomJobRequestApi,
   getPlacesForWebApi,
   getPlacesDetailsForWebApi,
+  enhanceCustomJobRequestApi,
 } from "@/api/apiRoutes";
 import { useSelector, useDispatch } from "react-redux";
 import { toast } from "sonner";
@@ -59,7 +60,7 @@ import {
 } from "@/components/ui/popover";
 import { useRef } from "react";
 
-const AddCustomServiceForm = ({ close, fetchBookings }) => {
+const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
   const t = useTranslation();
   const locationData = useSelector((state) => state?.location);
   const settingsData = useSelector((state) => state?.settingsData?.settings);
@@ -341,30 +342,32 @@ const AddCustomServiceForm = ({ close, fetchBookings }) => {
       !formValues.serviceDescription ||
       formValues.serviceDescription.length < 10
     ) {
-      toast.error(
-        t("pleaseProvideMoreDetails") ||
-          "Please describe your problem in more detail first.",
-      );
+      toast.error(t("pleaseProvideMoreDetails"));
       return;
     }
 
     try {
       setIsImproving(true);
-      // In a real app: const response = await improveWithAIApi(formValues.serviceDescription);
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const response = await enhanceCustomJobRequestApi({
+        service_title: formValues.serviceTitle,
+        service_short_description: formValues.serviceDescription,
+      });
 
-      const improvedText = `Professional request regarding ${formValues.serviceTitle || "the service"}: ${formValues.serviceDescription}. I am looking for a high-quality solution with attention to detail. Please provide a quote including estimated timeline.`;
-
-      setFormValues((prev) => ({
-        ...prev,
-        serviceDescription: improvedText,
-      }));
-
-      toast.success(
-        t("aiImprovedDescription") || "AI has enhanced your description!",
-      );
+      if (response?.error === false) {
+        setFormValues((prev) => ({
+          ...prev,
+          serviceTitle: response.data?.service_title || response.service_title,
+          serviceDescription:
+            response.data?.service_short_description ||
+            response.service_short_description,
+        }));
+        toast.success(t("aiImprovedDescription"));
+      } else {
+        toast.error(response?.message || t("somethingWentWrongTitle"));
+      }
     } catch (error) {
       console.error(error);
+      toast.error(t("somethingWentWrongTitle"));
     } finally {
       setIsImproving(false);
     }
@@ -429,6 +432,10 @@ const AddCustomServiceForm = ({ close, fetchBookings }) => {
         );
         return;
       }
+      if (!formValues.category) {
+        toast.error(t("selectServiceCategory"));
+        return;
+      }
     }
     setCurrentStep((prev) => prev + 1);
   };
@@ -441,35 +448,40 @@ const AddCustomServiceForm = ({ close, fetchBookings }) => {
     try {
       setLoading(true);
 
-      const startDate = formValues.startDateTime
-        ? dayjs(formValues.startDateTime).format("YYYY-MM-DD")
-        : dayjs().format("YYYY-MM-DD");
-      const startTime = formValues.startDateTime
-        ? dayjs(formValues.startDateTime).format("HH:mm:ss")
-        : dayjs().format("HH:mm:ss");
-      const endDate = formValues.endDateTime
-        ? dayjs(formValues.endDateTime).format("YYYY-MM-DD")
-        : dayjs().add(1, "month").format("YYYY-MM-DD");
-      const endTime = formValues.endDateTime
-        ? dayjs(formValues.endDateTime).format("HH:mm:ss")
-        : dayjs().format("HH:mm:ss");
+      const typeMap = {
+        today: "one_day",
+        week: "week",
+        flexible: "flexible",
+        choose: "custom",
+      };
+      const type = typeMap[timeOption] || "flexible";
 
-      const response = await makeCustomJobRequestApi({
+      const toUTC = (date) =>
+        new Date(date).toISOString().replace("T", " ").slice(0, 19);
+
+      const payload = {
         category_id: formValues.category || categories[0]?.id || "1",
+        service_title: formValues.serviceTitle,
         service_short_description: formValues.serviceDescription,
-        end_date_time:
-          formValues.endDateTime || dayjs().add(1, "month").toDate(),
         min_price: formValues.minPrice || "0",
         max_price: formValues.maxPrice || "0",
-        requested_start_date: startDate,
-        requested_start_time: startTime,
-        requested_end_date: endDate,
-        requested_end_time: endTime,
-        service_title: formValues.serviceTitle,
+        type,
         latitude: selectedLocation.lat || 0,
         longitude: selectedLocation.lng || 0,
-        images: attachments,
-      });
+        provider_id: provider_id || "",
+        files: attachments,
+      };
+
+      if (type === "custom") {
+        if (formValues.startDateTime) {
+          payload.requested_start_date_time = toUTC(formValues.startDateTime);
+        }
+        if (formValues.endDateTime) {
+          payload.requested_end_date_time = toUTC(formValues.endDateTime);
+        }
+      }
+
+      const response = await makeCustomJobRequestApi(payload);
 
       if (response?.error === false) {
         toast.success(response?.message);

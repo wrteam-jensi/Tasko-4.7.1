@@ -847,5 +847,10 @@
   "findTheRightPro": "Find the right pro in minutes",
   "getQuotes": "Get quotes",
   "maxFilesAllowed": "Maximum files allowed is",
-  "someFilesTooLarge": "Some files were too large for their respective type limits (MB)."
+  "someFilesTooLarge": "Some files were too large for their respective type limits (MB).",
+  "pleaseProvideMoreDetails":"Please provide more details",
+  "selectServiceCategory":"Please select service category",
+  "aiImprovedDescription":"AI Improved Description",
+  "improveWithSmartAI": "Improve with Smart AI",
+  "refiningDetails": "Refining Details..."
 }

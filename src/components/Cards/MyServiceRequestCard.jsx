@@ -7,7 +7,7 @@ import CustomLink from "../ReUseableComponents/CustomLink";
 const MyServiceRequestCard = ({ data }) => {
   const t = useTranslation();
 
-  const statusName = customJobStatusNames[data?.status];
+  const statusName = data?.translated_status ? data?.translated_status : t(customJobStatusNames[data?.status]);
   const statusColor =
     customJobStatusColors[data?.status?.toLowerCase()] || "#6b7280";
   const remainingBidsCount = data?.total_bids > 3 ? data?.total_bids - 3 : 0;
@@ -24,7 +24,7 @@ const MyServiceRequestCard = ({ data }) => {
           </span>
         </div>
         <span className="text-sm font-medium" style={{ color: statusColor }}>
-          {t(statusName)}
+          {statusName}
         </span>
       </div>
 
@@ -44,12 +44,12 @@ const MyServiceRequestCard = ({ data }) => {
 
       {/* Bids */}
       <div className="flex md:items-center justify-between flex-col md:flex-row gap-3">
-        {data?.bidders.length > 0 ? (
+        {Array.isArray(data?.bidders) && data.bidders.length > 0 ? (
           <div className="flex items-center gap-2">
             <p className="text-sm primary_text_color font-medium">{t("bids")}</p>
             <div className="flex items-center -space-x-2">
               {/* Display up to 4 images */}
-              {data?.bidders.slice(0, 3).map((bid, index) => (
+              {data.bidders.slice(0, 3).map((bid, index) => (
                 <CustomImageTag
                   key={index}
                   src={bid?.provider_image}

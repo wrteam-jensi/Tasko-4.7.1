@@ -9,7 +9,7 @@ import {
   customJobStatusNames,
   isMobile,
   miniDevider,
-  showPrice
+  showPrice,
 } from "@/utils/Helper";
 import { FaClock } from "react-icons/fa";
 import { useRouter } from "next/router";
@@ -28,6 +28,13 @@ import { setCustomJobData, setTaxValue } from "@/redux/reducers/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
 import CustomImageTag from "@/components/ReUseableComponents/CustomImageTag";
 import ConfirmDialog from "@/components/ReUseableComponents/Dialogs/ConfirmDialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Play, Pause, FileText, ExternalLink, X } from "lucide-react";
 
 const ServiceRequestDetails = () => {
   const t = useTranslation();
@@ -36,8 +43,11 @@ const ServiceRequestDetails = () => {
   const desRef = useRef(null);
   const biddersDesRef = useRef(null);
   const slug = router?.query?.slug;
-  const taxConfig = useSelector((state) => state?.settingsData?.settings?.system_tax_settings);
-  const showTax = taxConfig?.show_on_checkout === 1 || taxConfig?.show_on_checkout === "1";
+  const taxConfig = useSelector(
+    (state) => state?.settingsData?.settings?.system_tax_settings,
+  );
+  const showTax =
+    taxConfig?.show_on_checkout === 1 || taxConfig?.show_on_checkout === "1";
 
   const [serviceData, setServiceData] = useState();
   const [biddersData, setBiddersData] = useState([]);
@@ -49,8 +59,10 @@ const ServiceRequestDetails = () => {
   const [isOverflowing, setIsOverflowing] = useState(false);
   const [expandedBidderIds, setExpandedBidderIds] = useState([]); // Track expanded state for each bidder
   const [isServiceDescExpanded, setIsServiceDescExpanded] = useState(false);
-  const [isServiceDescOverflowing, setIsServiceDescOverflowing] = useState(false);
+  const [isServiceDescOverflowing, setIsServiceDescOverflowing] =
+    useState(false);
   const [showCancelDialog, setShowCancelDialog] = useState(false); // State for cancel confirmation dialog
+  const [selectedFile, setSelectedFile] = useState(null);
 
   // Add ref for bidder notes
   const bidderRefs = useRef({});
@@ -68,11 +80,29 @@ const ServiceRequestDetails = () => {
         offset: customOffset,
       });
       if (response?.error === false) {
-        setServiceData(response?.data?.custom_job);
+        let customJob = response?.data?.custom_job;
+        if (customJob && typeof customJob.files === "string") {
+          try {
+            customJob.files = JSON.parse(customJob.files);
+          } catch (e) {
+            console.error("Error parsing files JSON:", e);
+            customJob.files = [];
+          }
+        }
+
+        // Construct full URLs if they are relative
+        if (customJob && Array.isArray(customJob.files)) {
+          const baseUrl = process.env.NEXT_PUBLIC_API_URL.split("api/v1/")[0];
+          customJob.files = customJob.files.map((file) =>
+            file.startsWith("http") ? file : `${baseUrl}${file}`,
+          );
+        }
+
+        setServiceData(customJob);
         setBiddersData((prevBookings) =>
           append
             ? [...prevBookings, ...response?.data?.bidders]
-            : response?.data?.bidders
+            : response?.data?.bidders,
         );
         setTotal(response?.total);
       }
@@ -110,7 +140,9 @@ const ServiceRequestDetails = () => {
     }
   }, [serviceData]);
 
-  const statusName = customJobStatusNames[serviceData?.status];
+  const statusName = serviceData?.translated_status
+    ? serviceData?.translated_status
+    : t(customJobStatusNames[serviceData?.status]);
   const statusColor =
     customJobStatusColors[serviceData?.status?.toLowerCase()] || "#6b7280";
 
@@ -156,7 +188,6 @@ const ServiceRequestDetails = () => {
   };
 
   const handleBookNow = (bid) => {
-
     // If tax is displayed separately on checkout, use counter_price (base price without tax)
     // If tax is not displayed, use final_total (tax already included in price)
     const checkoutPrice = showTax
@@ -181,7 +212,7 @@ const ServiceRequestDetails = () => {
           visiting_charges: Number(bid?.visiting_charges || 0),
           duration: bid?.duration,
         },
-      })
+      }),
     );
 
     // Set or clear tax value based on tax display setting
@@ -208,7 +239,7 @@ const ServiceRequestDetails = () => {
     setExpandedBidderIds((prev) =>
       prev.includes(bidderId)
         ? prev.filter((id) => id !== bidderId)
-        : [...prev, bidderId]
+        : [...prev, bidderId],
     );
   };
 
@@ -257,7 +288,6 @@ const ServiceRequestDetails = () => {
                       {t("cancelBooking")}
                     </button>
                   )}
-
                 </div>
                 <Separator />
 
@@ -274,8 +304,9 @@ const ServiceRequestDetails = () => {
                   <div className="relative">
                     <p
                       ref={desRef}
-                      className={`text-sm description_color ${isServiceDescExpanded ? "" : "line-clamp-2"
-                        }`}
+                      className={`text-sm description_color ${
+                        isServiceDescExpanded ? "" : "line-clamp-2"
+                      }`}
                     >
                       {serviceData?.service_short_description}
                     </p>
@@ -297,12 +328,16 @@ const ServiceRequestDetails = () => {
                   <div className="flex  gap-2 flex-col md:flex-row items-start md:items-center">
                     <span>{t("service")}</span>
                     <span className="light_bg_color primary_text_color px-3 py-1 rounded-md text-sm flex items-center justify-center gap-2">
-                      <CustomImageTag src={serviceData?.category_image} alt={serviceData?.category_name}
+                      <CustomImageTag
+                        src={serviceData?.category_image}
+                        alt={serviceData?.category_name}
                         className="w-6 aspect-square rounded-lg"
                         imgClassName="rounded-lg"
                       />
                       <span>
-                        {serviceData?.translated_category_name ? serviceData?.translated_category_name : serviceData?.category_name}
+                        {serviceData?.translated_category_name
+                          ? serviceData?.translated_category_name
+                          : serviceData?.category_name}
                       </span>
                     </span>
                   </div>
@@ -315,7 +350,7 @@ const ServiceRequestDetails = () => {
                         backgroundColor: `${statusColor}29`,
                       }}
                     >
-                      {t(statusName)}
+                      {statusName}
                     </span>
                   </div>
                 </div>
@@ -332,24 +367,95 @@ const ServiceRequestDetails = () => {
                   <div>
                     <p className="description_color text-sm">{t("postedAt")}</p>
                     <p className="font-medium">
-                      {dayjs(
-                        serviceData?.requested_start_date +
-                        " " +
-                        serviceData?.requested_start_time
-                      ).format("DD-MM-YYYY - hh:mm A")}
+                      {serviceData?.requested_start_date_time_utc
+                        ? dayjs(
+                            serviceData.requested_start_date_time_utc,
+                          ).format("DD-MM-YYYY - hh:mm A")
+                        : dayjs(
+                            serviceData?.requested_start_date +
+                              " " +
+                              serviceData?.requested_start_time,
+                          ).format("DD-MM-YYYY - hh:mm A")}
                     </p>
                   </div>
                   <div>
                     <p className="description_color text-sm">{t("expireOn")}</p>
                     <p className="font-medium">
-                      {dayjs(
-                        serviceData?.requested_end_date +
-                        " " +
-                        serviceData?.requested_end_time
-                      ).format("DD-MM-YYYY - hh:mm A")}
+                      {serviceData?.requested_end_date_time_utc
+                        ? dayjs(serviceData.requested_end_date_time_utc).format(
+                            "DD-MM-YYYY - hh:mm A",
+                          )
+                        : dayjs(
+                            serviceData?.requested_end_date +
+                              " " +
+                              serviceData?.requested_end_time,
+                          ).format("DD-MM-YYYY - hh:mm A")}
                     </p>
                   </div>
                 </div>
+
+                {/* Files Section */}
+                {Array.isArray(serviceData?.files) &&
+                  serviceData.files.length > 0 && (
+                    <div className="space-y-4">
+                      <h3 className="md:text-lg font-semibold capitalize">
+                        {t("attachments")}
+                      </h3>
+                      <div className="flex flex-wrap gap-4">
+                        {serviceData.files.map((file, index) => {
+                          const isImage = file.match(
+                            /\.(jpg|jpeg|png|gif|webp|avif)$/i,
+                          );
+                          const isVideo = file.match(/\.(mp4|webm|ogg)$/i);
+                          const isAudio = file.match(/\.(mp3|wav|ogg)$/i);
+
+                          return (
+                            <div
+                              key={index}
+                              onClick={() => setSelectedFile(file)}
+                              className="w-24 h-24 border rounded-xl overflow-hidden hover:shadow-lg hover:border-blue-300 transition-all cursor-pointer bg-gray-50 flex items-center justify-center group relative"
+                            >
+                              {isImage ? (
+                                <CustomImageTag
+                                  src={file}
+                                  alt={`Attachment ${index + 1}`}
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : isVideo ? (
+                                <div className="flex flex-col items-center gap-1">
+                                  <Play size={20} className="text-blue-500" />
+                                  <span className="text-[10px] font-bold text-gray-400 uppercase">
+                                    Video
+                                  </span>
+                                </div>
+                              ) : isAudio ? (
+                                <div className="flex flex-col items-center gap-1">
+                                  <Pause
+                                    size={20}
+                                    className="text-purple-500"
+                                  />
+                                  <span className="text-[10px] font-bold text-gray-400 uppercase">
+                                    Audio
+                                  </span>
+                                </div>
+                              ) : (
+                                <div className="flex flex-col items-center gap-1">
+                                  <FileText
+                                    size={20}
+                                    className="text-orange-500"
+                                  />
+                                  <span className="text-[10px] font-bold text-gray-400 uppercase">
+                                    {file.split(".").pop() || "File"}
+                                  </span>
+                                </div>
+                              )}
+                            
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
 
                 {/* Bids Section */}
                 <div>
@@ -387,17 +493,19 @@ const ServiceRequestDetails = () => {
                             <div className="flex-1">
                               {/* Company Details */}
                               <h3 className="font-medium">
-                                {bid?.provider_name}
+                                {bid?.translated_company_name ||
+                                  bid?.provider_name}
                               </h3>
                               <div className="relative">
                                 <p
                                   ref={(el) =>
                                     (bidderRefs.current[bid.id] = el)
                                   }
-                                  className={`text-sm description_color break-words whitespace-pre-wrap ${expandedBidderIds.includes(bid.id)
-                                    ? ""
-                                    : "line-clamp-2"
-                                    }`}
+                                  className={`text-sm description_color break-words whitespace-pre-wrap ${
+                                    expandedBidderIds.includes(bid.id)
+                                      ? ""
+                                      : "line-clamp-2"
+                                  }`}
                                   style={{
                                     wordBreak: "break-word",
                                     overflowWrap: "break-word",
@@ -496,6 +604,77 @@ const ServiceRequestDetails = () => {
         confirmText="confirm"
         cancelText="cancel"
       />
+
+      {/* File Viewer Dialog */}
+      <Dialog open={!!selectedFile} onOpenChange={() => setSelectedFile(null)}>
+        <DialogContent className="max-w-4xl p-0 overflow-hidden bg-black/95 border-none shadow-2xl">
+          <DialogHeader className="absolute top-4 right-4 z-50">
+            <button
+              onClick={() => setSelectedFile(null)}
+              className="p-2 bg-white/10 hover:bg-white/20 rounded-full transition-colors backdrop-blur-sm"
+            >
+              <X size={20} className="text-white" />
+            </button>
+          </DialogHeader>
+
+          <div className="w-full h-full flex items-center justify-center min-h-[50vh] max-h-[85vh] p-8">
+            {selectedFile && (
+              <>
+                {selectedFile.match(/\.(jpg|jpeg|png|gif|webp|avif)$/i) ? (
+                  <div className="relative w-full h-full flex items-center justify-center">
+                    <img
+                      src={selectedFile}
+                      alt="Preview"
+                      className="max-w-full max-h-full object-contain rounded-lg"
+                    />
+                  </div>
+                ) : selectedFile.match(/\.(mp4|webm|ogg)$/i) ? (
+                  <video
+                    controls
+                    autoPlay
+                    className="max-w-full max-h-full rounded-lg shadow-2xl"
+                  >
+                    <source src={selectedFile} />
+                    Your browser does not support the video tag.
+                  </video>
+                ) : selectedFile.match(/\.(mp3|wav|ogg)$/i) ? (
+                  <div className="bg-white/5 p-12 rounded-3xl backdrop-blur-md border border-white/10 flex flex-col items-center gap-6 w-full max-w-md">
+                    <div className="w-20 h-20 bg-blue-500/20 rounded-full flex items-center justify-center animate-pulse">
+                      <Pause size={40} className="text-blue-400" />
+                    </div>
+                    <audio controls autoPlay className="w-full">
+                      <source src={selectedFile} />
+                    </audio>
+                  </div>
+                ) : (
+                  <div className="bg-white/5 p-12 rounded-3xl backdrop-blur-md border border-white/10 flex flex-col items-center gap-6 text-center">
+                    <div className="w-20 h-20 bg-orange-500/20 rounded-full flex items-center justify-center">
+                      <FileText size={40} className="text-orange-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-white text-xl font-semibold mb-2">
+                        {selectedFile.split("/").pop()}
+                      </h3>
+                      <p className="text-gray-400 text-sm mb-6">
+                        This file type cannot be previewed directly.
+                      </p>
+                      <a
+                        href={selectedFile}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-medium transition-all"
+                      >
+                        <ExternalLink size={18} />
+                        Download File
+                      </a>
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </Layout>
   );
 };
