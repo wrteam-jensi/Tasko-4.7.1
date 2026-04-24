@@ -124,6 +124,11 @@ export const useAuthMethods = ({
         }
         const fullPhoneNumber = getFullPhoneNumber(phoneWithoutDialCode, countryCode);
 
+        if (countryCode === "225" && phoneWithoutDialCode.length !== 10) {
+            toast.error(t("phoneNumberMustBe10Digits") || "Phone number must be 10 digits");
+            return;
+        }
+
         if (!isValidPhoneNumber(fullPhoneNumber)) {
             toast.error(t("enterValidNumber"));
             return;

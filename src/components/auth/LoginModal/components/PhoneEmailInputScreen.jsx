@@ -109,6 +109,7 @@ const PhoneEmailInputScreen = ({
                                 value={phone}
                                 country={effectiveCountryCode}
                                 countryCodeEditable={false}
+                                masks={{ ci: ".. .. .. .. .." }}
                                 onChange={(value, data) => {
                                     setPhone(value);
                                     setCountryCode(data?.dialCode || "");
