@@ -587,14 +587,14 @@ export const formatStartingPrice = (startingPrice) => {
 export const formatResponseTime = (seconds) => {
   if (!seconds || seconds === "0" || seconds === "") return null;
 
-  const totalSeconds = parseInt(seconds, 10) / 60;
-  if (isNaN(totalSeconds)) return seconds;
+  const totalSeconds = parseInt(seconds, 10);
+  if (isNaN(totalSeconds) || totalSeconds <= 0) return null;
 
   const hours = Math.floor(totalSeconds / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);
 
   if (hours > 0) {
-    return `${hours}h ${minutes > 0 ? `${minutes}m` : ""}`;
+    return `${hours}h${minutes > 0 ? ` ${minutes}m` : ""}`;
   } else {
     return `${minutes > 0 ? minutes : 1} min`;
   }
