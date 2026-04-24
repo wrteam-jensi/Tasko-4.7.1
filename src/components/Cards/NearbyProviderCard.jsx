@@ -1,5 +1,9 @@
 "use client";
-import { formatResponseTime, showDistance, formatStartingPrice } from "@/utils/Helper";
+import {
+  formatResponseTime,
+  showDistance,
+  formatStartingPrice,
+} from "@/utils/Helper";
 import { FaMapMarkerAlt, FaStar } from "react-icons/fa";
 import { MdBolt, MdVerified } from "react-icons/md";
 import { BsImageFill } from "react-icons/bs";
@@ -7,6 +11,9 @@ import CustomImageTag from "../ReUseableComponents/CustomImageTag";
 
 const NearbyProviderCard = ({ provider }) => {
   const metaItems = [
+     provider?.service_title && {
+      label: provider.service_title,
+    },
     provider?.distance && {
       icon: <FaMapMarkerAlt size={11} className="text-[#3B82F6]" />,
       label: showDistance(provider.distance),
@@ -14,6 +21,7 @@ const NearbyProviderCard = ({ provider }) => {
     provider?.total_services > 0 && {
       label: `${provider.total_services} Services`,
     },
+   
   ].filter(Boolean);
 
   return (
@@ -37,14 +45,14 @@ const NearbyProviderCard = ({ provider }) => {
         )}
 
         {/* Verified Pro Badge */}
-        {provider?.is_verified && (
+        {/* {provider?.is_verified && (
           <div className="absolute top-0 left-0 bg-[#007BFF] rounded-tl-xl rounded-br-xl px-2.5 py-1 flex items-center gap-1 z-10">
             <MdVerified size={13} className="text-white" />
             <span className="text-white text-[11px] font-semibold">
               Verified Pro
             </span>
           </div>
-        )}
+        )} */}
 
         {/* Reply Badge */}
         {provider?.avg_response_time &&
@@ -81,11 +89,11 @@ const NearbyProviderCard = ({ provider }) => {
         </div>
 
         {/* Category */}
-        {(provider?.category_name || provider?.service_title) && (
+        {/* {(provider?.translated_category_name || provider?.category_name) && (
           <div className="text-[12px] text-gray-500 leading-snug line-clamp-2">
-            {provider.category_name || provider.service_title}
+            {provider.translated_category_name || provider.category_name}
           </div>
-        )}
+        )} */}
 
         {/* Meta: Distance / Experience / Services */}
         {metaItems.length > 0 && (
