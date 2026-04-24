@@ -86,12 +86,12 @@ const ProviderCard = ({ provider }) => {
           className="flex flex-wrap gap-2 max-h-[5rem] overflow-hidden w-full border-t py-5"
         >
           {servicesToDisplay.map((service, index) => {
-            const translatedServiceName = service?.translated_title ? service?.translated_title : service?.title;
-            return translatedServiceName &&<span
+            const displayTitle = service?.translated_category_name || service?.category_name || (service?.translated_title ? service?.translated_title : service?.title);
+            return displayTitle && <span
               key={index}
               className="text-xs description_color background_color px-2 py-1 rounded"
             >
-              {translatedServiceName}
+              {displayTitle}
             </span>
           })}
         </div>

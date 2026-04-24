@@ -540,47 +540,48 @@ export const showPrice = (price) => {
       throw new Error("Invalid currency code format");
     }
 
-    // Format number using Intl.NumberFormat with locale
-    // This ensures proper number formatting (thousand separators, decimal separators) based on locale
-    // Similar to Flutter: uses locale for formatting rules, custom symbol for display
-    const formatter = new Intl.NumberFormat(navigator.language, {
+    // Format number using Intl.NumberFormat with a locale that uses space as thousand separator
+    // 'fr-FR' is a common one, but we'll force it manually to be sure
+    const formatter = new Intl.NumberFormat("fr-FR", {
       minimumFractionDigits: decimalDigits,
       maximumFractionDigits: decimalDigits,
     });
 
     // Format the number - this gives us locale-specific number formatting
-    const formattedNumber = formatter.format(numericPrice);
-
-    // Determine symbol position based on locale conventions for the currency code
-    // Check how the currency is typically formatted in this locale
-    const currencyFormatter = new Intl.NumberFormat(navigator.language, {
-      style: "currency",
-      currency: currencyCode,
-      currencyDisplay: "symbol",
-    });
-    const sampleFormatted = currencyFormatter.format(1);
-
-    // Check if symbol is prefix or suffix by looking at the position relative to the number
-    // If the formatted string starts with a non-digit, symbol is prefix
-    const isSymbolPrefix = /^[^\d]/.test(sampleFormatted);
+    let formattedNumber = formatter.format(numericPrice);
+    
+    // Ensure it uses a regular space or non-breaking space as thousand separator
+    // fr-FR uses a non-breaking space (U+00A0)
+    // The user requested a space.
+    formattedNumber = formattedNumber.replace(/\u00A0/g, " ");
 
     // Return formatted price with custom symbol in correct position
-    // This matches Flutter's behavior: locale formatting + custom symbol
-    return isSymbolPrefix
-      ? `${currencySymbol}${formattedNumber}`
-      : `${formattedNumber} ${currencySymbol}`;
+    // User specifically requested currency on the right: "4 000 CFA"
+    return `${formattedNumber} ${currencySymbol}`;
   } catch (error) {
-    // Fallback formatting if currency code is invalid
-    // Format number according to locale, then add custom symbol as prefix
-    const numberFormatter = new Intl.NumberFormat(navigator.language, {
-      minimumFractionDigits: decimalDigits,
-      maximumFractionDigits: decimalDigits,
-    });
-    const formattedNumber = numberFormatter.format(numericPrice);
-
-    // Use prefix position (most common)
-    return `${currencySymbol}${formattedNumber}`;
+    // Fallback formatting
+    const formattedNumber = numericPrice.toFixed(decimalDigits).replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    return `${formattedNumber} ${currencySymbol}`;
   }
+};
+
+export const formatStartingPrice = (startingPrice) => {
+  if (!startingPrice || startingPrice === "null" || startingPrice === "") return startingPrice;
+
+  // Extract digits
+  const numericMatch = startingPrice.match(/\d+/);
+  if (!numericMatch) return startingPrice;
+
+  const amount = numericMatch[0];
+
+  // Extract currency (everything else)
+  // Remove "From" or other prefixes if they exist in the string from API
+  let currency = startingPrice.replace(amount, "").replace(/from/i, "").trim();
+  
+  // Format amount with spaces
+  const formattedAmount = amount.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+
+  return `${formattedAmount} ${currency}`;
 };
 
 export const formatResponseTime = (seconds) => {

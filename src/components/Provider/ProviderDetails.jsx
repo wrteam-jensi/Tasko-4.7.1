@@ -12,7 +12,7 @@ import ProviderAboutTab from "./ProviderAboutTab";
 import ProviderReviewTab from "./ProviderReviewTab";
 import ProviderOfferTab from "./ProviderOfferTab";
 import { useDispatch, useSelector } from "react-redux";
-import { useIsLogin, showDistance, formatResponseTime } from "@/utils/Helper";
+import { useIsLogin, showDistance, formatResponseTime, formatStartingPrice } from "@/utils/Helper";
 import CustomImageTag from "../ReUseableComponents/CustomImageTag";
 import { useRouter } from "next/router";
 import { allServices, bookmark, getProviders } from "@/api/apiRoutes";
@@ -471,7 +471,7 @@ const ProviderDetails = () => {
                         {/* Starting price */}
                         {providerData?.starting_price && (
                           <div className="mt-1.5 text-sm font-semibold primary_text_color">
-                            From {providerData.starting_price}
+                            From {formatStartingPrice(providerData.starting_price)}
                           </div>
                         )}
                       </div>

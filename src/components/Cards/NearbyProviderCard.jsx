@@ -1,5 +1,5 @@
 "use client";
-import { formatResponseTime, showDistance } from "@/utils/Helper";
+import { formatResponseTime, showDistance, formatStartingPrice } from "@/utils/Helper";
 import { FaMapMarkerAlt, FaStar } from "react-icons/fa";
 import { MdBolt, MdVerified } from "react-icons/md";
 import { BsImageFill } from "react-icons/bs";
@@ -81,9 +81,9 @@ const NearbyProviderCard = ({ provider }) => {
         </div>
 
         {/* Category */}
-        {(provider?.service_title || provider?.category_name) && (
+        {(provider?.translated_category_name || provider?.category_name || provider?.service_title) && (
           <div className="text-[12px] text-gray-500 leading-snug line-clamp-2">
-            {provider.service_title || provider.category_name}
+            {provider.translated_category_name || provider.category_name || provider.service_title}
           </div>
         )}
 
@@ -109,7 +109,7 @@ const NearbyProviderCard = ({ provider }) => {
           <div className="w-full bg-gray-100 hover:bg-gray-200 transition-colors rounded-lg py-2 flex items-center justify-center cursor-pointer">
             <span className="text-[12px] font-semibold text-gray-900">
               {provider?.starting_price
-                ? `From ${provider.starting_price}`
+                ? `From ${formatStartingPrice(provider.starting_price)}`
                 : "Contact For Price"}
             </span>
           </div>
