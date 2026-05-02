@@ -857,5 +857,10 @@
   "improveWithSmartAI": "Improve with Smart AI",
   "refiningDetails": "Refining Details...",
   "minBudgetExceedsMax": "Min budget cannot be greater than max budget",
-  "someFilesInvalid":"Some files were too large or have unsupported formats."
+  "someFilesInvalid":"Some files were too large or have unsupported formats.",
+  "needACustomService": "Need a custom service?",
+  "sentToThisProvider": "Sent to this provider",
+  "fastResponses": "Fast responses",
+  "requestAQuote": "Request a Quote",
+  "quoteFooterText": "Your request will be sent to this provider and other available professionals."
 }

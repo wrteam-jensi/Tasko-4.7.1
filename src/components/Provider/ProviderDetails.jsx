@@ -12,7 +12,12 @@ import ProviderAboutTab from "./ProviderAboutTab";
 import ProviderReviewTab from "./ProviderReviewTab";
 import ProviderOfferTab from "./ProviderOfferTab";
 import { useDispatch, useSelector } from "react-redux";
-import { useIsLogin, showDistance, formatResponseTime, formatStartingPrice } from "@/utils/Helper";
+import {
+  useIsLogin,
+  showDistance,
+  formatResponseTime,
+  formatStartingPrice,
+} from "@/utils/Helper";
 import CustomImageTag from "../ReUseableComponents/CustomImageTag";
 import { useRouter } from "next/router";
 import { allServices, bookmark, getProviders } from "@/api/apiRoutes";
@@ -30,6 +35,14 @@ import { useTranslation } from "../Layout/TranslationContext";
 import Share from "../ReUseableComponents/Share/Share";
 import OpenInAppDrawer from "../ReUseableComponents/Drawers/OpenInAppDrawer";
 import ProviderDetailsSkeleton from "../Skeletons/ProviderDetailsSkeleton";
+import AddCustomServiceForm from "../ReUseableComponents/Dialogs/AddCustomServiceForm";
+import { Send, Zap, CheckCircle2 } from "lucide-react";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/drawer";
 import {
   useQuery,
   useInfiniteQuery,
@@ -57,6 +70,7 @@ const ProviderDetails = () => {
   const [visibleSpecIndex, setVisibleSpecIndex] = useState(0);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isQuoteDrawerOpen, setIsQuoteDrawerOpen] = useState(false);
 
   const locationData = useMemo(() => {
     return locationRawData || { lat: null, lng: null };
@@ -130,7 +144,7 @@ const ProviderDetails = () => {
             locationData?.lat,
             locationData?.lng,
             slug,
-          ])
+          ]),
         );
       } else {
         toast.error(data?.message);
@@ -175,7 +189,7 @@ const ProviderDetails = () => {
 
   const aggregatedServices = useMemo(
     () => servicesData?.pages?.flatMap((page) => page.data) || [],
-    [servicesData?.pages]
+    [servicesData?.pages],
   );
 
   const totalServices = servicesData?.pages?.[0]?.total || 0;
@@ -214,7 +228,7 @@ const ProviderDetails = () => {
         setProviderServicesLoad({
           slug,
           loadedCount: aggregatedServices.length,
-        })
+        }),
       );
     }
   }, [
@@ -279,7 +293,7 @@ const ProviderDetails = () => {
           image: providerData?.image,
           order_status: "",
           is_pre_booking: true,
-        })
+        }),
       );
       router.push("/chats");
     } catch (error) {
@@ -304,7 +318,7 @@ const ProviderDetails = () => {
   useEffect(() => {
     if (providerAboutRef.current) {
       const lineHeight = parseFloat(
-        getComputedStyle(providerAboutRef.current).lineHeight
+        getComputedStyle(providerAboutRef.current).lineHeight,
       );
       const maxLinesHeight = lineHeight * 4;
       setIsOverflowing(providerAboutRef.current.scrollHeight > maxLinesHeight);
@@ -387,7 +401,9 @@ const ProviderDetails = () => {
                       onClick={handleBookmark}
                       disabled={bookmarkMutation.isPending}
                       aria-label={
-                        isFavorited ? t("removeFromFavorites") : t("addToFavorites")
+                        isFavorited
+                          ? t("removeFromFavorites")
+                          : t("addToFavorites")
                       }
                     >
                       {isFavorited ? (
@@ -460,18 +476,17 @@ const ProviderDetails = () => {
                           {Number(providerData?.years_of_experience) > 0 && (
                             <div className="text-sm primary_text_color font-medium flex items-center gap-1.5">
                               <span className="w-1 h-1 rounded-full bg-gray-300" />
-                              {parseInt(providerData.years_of_experience)}{" "}
-                              yrs exp.
+                              {parseInt(providerData.years_of_experience)} yrs
+                              exp.
                             </div>
                           )}
-
-                   
                         </div>
 
                         {/* Starting price */}
                         {providerData?.starting_price && (
                           <div className="mt-1.5 text-sm font-semibold primary_text_color">
-                            From {formatStartingPrice(providerData.starting_price)}
+                            From{" "}
+                            {formatStartingPrice(providerData.starting_price)}
                           </div>
                         )}
                       </div>
@@ -512,6 +527,47 @@ const ProviderDetails = () => {
                         )}
                     </div>
                   </div>
+                </div>
+
+                {/* Request a Quote Section */}
+                <div className="mt-6 bg-[#1E1E1E] rounded-3xl p-6 text-center space-y-5 shadow-2xl relative overflow-hidden group">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600/10 rounded-full blur-3xl -translate-y-12 translate-x-12" />
+
+                  <h3 className="text-white text-lg md:text-xl font-bold tracking-tight">
+                    {t("needACustomService") || "Need a custom service?"}
+                  </h3>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col items-center gap-2 transition-colors hover:bg-white/10">
+                      <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500">
+                        <Send size={20} />
+                      </div>
+                      <span className="text-[11px] font-bold text-gray-300 uppercase leading-tight tracking-wide">
+                        {t("sentToThisProvider") || "Sent to this provider"}
+                      </span>
+                    </div>
+                    <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col items-center gap-2 transition-colors hover:bg-white/10">
+                      <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500">
+                        <CheckCircle2 size={20} />
+                      </div>
+                      <span className="text-[11px] font-bold text-gray-300 uppercase leading-tight tracking-wide">
+                        {t("fastResponses") || "Fast responses"}
+                      </span>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => setIsQuoteDrawerOpen(true)}
+                    className="w-full h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-extrabold text-[16px] flex items-center justify-center gap-3 transition-all active:scale-[0.98] shadow-xl shadow-blue-600/20"
+                  >
+                    <Send size={20} className="rotate-[-10deg]" />
+                    {t("requestAQuote") || "Request a Quote"}
+                  </button>
+
+                  <p className="text-[11px] text-gray-400 font-medium leading-relaxed px-2">
+                    {t("quoteFooterText") ||
+                      "Your request will be sent to this provider and other available professionals."}
+                  </p>
                 </div>
 
                 {/* Photo Gallery section */}
@@ -634,6 +690,21 @@ const ProviderDetails = () => {
         OnHide={() => setIsOpenInApp(false)}
         systemSettingsData={settings}
       />
+
+      {/* Quote Request Drawer */}
+      <Drawer open={isQuoteDrawerOpen} onOpenChange={setIsQuoteDrawerOpen}>
+        <DrawerContent className="max-w-4xl mx-auto rounded-t-[32px] border-none shadow-2xl">
+          <DrawerHeader className="hidden">
+            <DrawerTitle>{t("requestAQuote")}</DrawerTitle>
+          </DrawerHeader>
+          <div className="overflow-y-auto max-h-[85vh] scrollbar-none">
+            <AddCustomServiceForm
+              close={() => setIsQuoteDrawerOpen(false)}
+              provider_id={providerData?.partner_id}
+            />
+          </div>
+        </DrawerContent>
+      </Drawer>
     </Layout>
   );
 };
