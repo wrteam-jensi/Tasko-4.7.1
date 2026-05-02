@@ -60,6 +60,11 @@ import {
 } from "@/components/ui/popover";
 import { useRef } from "react";
 
+const quoteAllowedDocExtensions = ["pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx", "txt", "rtf"];
+const quoteAllowedImageExtensions = ["jpg", "jpeg", "png", "webp", "gif", "bmp", "heic", "heif"];
+const quoteAllowedVideoExtensions = ["mp4", "mov", "avi", "mkv", "webm", "m4v", "3gp"];
+const quoteAllowedAudioExtensions = ["m4a", "mp3", "wav", "aac", "ogg", "flac"];
+
 const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
   const t = useTranslation();
   const locationData = useSelector((state) => state?.location);
@@ -74,7 +79,6 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
   const [categoriesLoading, setCategoriesLoading] = useState(false);
   const [timeOption, setTimeOption] = useState("flexible");
   const [isImproving, setIsImproving] = useState(false);
-
 
 
   const [isManualCategory, setIsManualCategory] = useState(false);
@@ -280,23 +284,33 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
       return;
     }
 
-    // Filter files based on individual size limits (MB to Bytes)
+    // Filter files based on individual size limits and allowed extensions
     const validFiles = files.filter((file) => {
+      const extension = file.name.split(".").pop().toLowerCase();
       let maxSize = maxSizeOther;
-      if (file.type.startsWith("image/")) {
+      let isAllowed = false;
+
+      if (quoteAllowedImageExtensions.includes(extension)) {
+        isAllowed = true;
         maxSize = maxSizeImages;
-      } else if (file.type.startsWith("video/")) {
+      } else if (quoteAllowedVideoExtensions.includes(extension)) {
+        isAllowed = true;
         maxSize = maxSizeVideo;
-      } else if (file.type.startsWith("audio/")) {
+      } else if (quoteAllowedAudioExtensions.includes(extension)) {
+        isAllowed = true;
         maxSize = maxSizeAudio;
+      } else if (quoteAllowedDocExtensions.includes(extension)) {
+        isAllowed = true;
+        maxSize = maxSizeOther;
       }
-      return file.size <= maxSize;
+
+      return isAllowed && file.size <= maxSize;
     });
 
-    // Notify user if any files were rejected due to size
+    // Notify user if any files were rejected due to size or type
     if (validFiles.length < files.length) {
       toast.error(
-        t("someFilesTooLarge") || "Some files were too large for their respective type limits (MB)."
+        t("someFilesInvalid") || "Some files were too large or have unsupported formats."
       );
     }
 
@@ -381,44 +395,7 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
     }
   };
 
-  const handleLocationSearch = async (val) => {
-    setLocationSearchInput(val);
-    if (!val.trim() || val.length < 3) {
-      setLocationSuggestions([]);
-      return;
-    }
 
-    try {
-      setIsSearchingLocation(true);
-      const response = await getPlacesForWebApi({ input: val });
-      const data = response?.data?.data || response?.data;
-      setLocationSuggestions(data?.predictions || []);
-    } catch (error) {
-      console.error("Location search error:", error);
-    } finally {
-      setIsSearchingLocation(false);
-    }
-  };
-
-  const handleLocationSelect = async (place) => {
-    setLocationSearchInput(place.description);
-    setLocationSuggestions([]);
-
-    try {
-      setIsSearchingLocation(true);
-      const response = await getPlacesDetailsForWebApi({
-        place_id: place.place_id,
-      });
-      const details =
-        response?.data?.data?.result || response?.data?.data?.results?.[0];
-
-  
-    } catch (error) {
-      console.error("Location details error:", error);
-    } finally {
-      setIsSearchingLocation(false);
-    }
-  };
 
   const handleNext = () => {
     if (currentStep === 1) {
@@ -928,8 +905,7 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
           <div className="space-y-5 animate-in fade-in slide-in-from-bottom-2 duration-300">
             {/* Step 2: Location, Timing, Budget */}
             <div className="space-y-5">
-           
-
+             
               <div className="space-y-2">
                 <div className="flex items-center gap-2 px-1">
                   <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400">
@@ -1215,7 +1191,7 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
                 </div>
               </div>
 
-        
+             
 
               {/* Description */}
               <div className="bg-blue-50/30 rounded-lg p-5 border border-blue-50 relative group transition-all">
