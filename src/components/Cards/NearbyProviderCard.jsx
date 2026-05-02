@@ -4,12 +4,12 @@ import {
   showDistance,
   formatStartingPrice,
 } from "@/utils/Helper";
-import { FaMapMarkerAlt, FaStar } from "react-icons/fa";
+import { FaMapMarkerAlt, FaStar, FaHeart, FaRegHeart } from "react-icons/fa";
 import { MdBolt, MdVerified } from "react-icons/md";
 import { BsImageFill } from "react-icons/bs";
 import CustomImageTag from "../ReUseableComponents/CustomImageTag";
 
-const NearbyProviderCard = ({ provider }) => {
+const NearbyProviderCard = ({ provider, isBookmark, handleRemoveBookMark }) => {
   const metaItems = [
     provider?.service_title && {
       label: provider.service_title,
@@ -63,6 +63,20 @@ const NearbyProviderCard = ({ provider }) => {
               </span>
             </div>
           )}
+
+        {/* Bookmark Button */}
+        {handleRemoveBookMark && (
+          <button
+            onClick={(e) => handleRemoveBookMark(e, provider)}
+            className="absolute top-2 right-2 z-20 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-red-500 hover:scale-110 active:scale-90 transition-all shadow-md"
+          >
+            {isBookmark ? (
+              <FaHeart size={15} />
+            ) : (
+              <FaRegHeart size={15} />
+            )}
+          </button>
+        )}
       </div>
 
       {/* Card Body */}
