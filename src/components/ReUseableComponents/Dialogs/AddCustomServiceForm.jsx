@@ -75,17 +75,7 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
   const [timeOption, setTimeOption] = useState("flexible");
   const [isImproving, setIsImproving] = useState(false);
 
-  // Location search states
-  const [locationSearchInput, setLocationSearchInput] = useState(
-    locationData?.address || "",
-  );
-  const [locationSuggestions, setLocationSuggestions] = useState([]);
-  const [isSearchingLocation, setIsSearchingLocation] = useState(false);
-  const [selectedLocation, setSelectedLocation] = useState({
-    address: locationData?.address || "",
-    lat: locationData?.lat || 0,
-    lng: locationData?.lng || 0,
-  });
+
 
   const [isManualCategory, setIsManualCategory] = useState(false);
   const [formValues, setFormValues] = useState({
@@ -422,13 +412,7 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
       const details =
         response?.data?.data?.result || response?.data?.data?.results?.[0];
 
-      if (details) {
-        setSelectedLocation({
-          address: details.formatted_address,
-          lat: details.geometry?.location?.lat,
-          lng: details.geometry?.location?.lng,
-        });
-      }
+  
     } catch (error) {
       console.error("Location details error:", error);
     } finally {
@@ -944,65 +928,7 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
           <div className="space-y-5 animate-in fade-in slide-in-from-bottom-2 duration-300">
             {/* Step 2: Location, Timing, Budget */}
             <div className="space-y-5">
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 px-1">
-                  <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400">
-                    Service Location
-                  </h3>
-                  <div className="h-[1px] flex-1 bg-gray-100/60" />
-                </div>
-                <div className="relative group/location">
-                  <div className="bg-white border-2 border-gray-100 rounded-lg p-4 flex items-center gap-4 transition-all duration-300 focus-within:border-blue-500 focus-within:shadow-lg focus-within:shadow-blue-500/5 hover:border-gray-200 shadow-sm">
-                    <div className="p-2.5 bg-blue-50 text-blue-600 rounded-lg shadow-sm transition-transform group-focus-within/location:scale-110">
-                      <MapPin size={20} />
-                    </div>
-                    <div className="flex-1 space-y-0.5">
-                      <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest block transition-colors group-focus-within/location:text-blue-500">
-                        {t("location") || "Service Address"}
-                      </label>
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="text"
-                          placeholder="Where do you need the service?"
-                          className="w-full text-base font-bold focus:outline-none placeholder:text-gray-200 bg-transparent text-gray-900"
-                          onChange={(e) => handleLocationSearch(e.target.value)}
-                          value={locationSearchInput}
-                        />
-                        {isSearchingLocation && (
-                          <Loader2
-                            className="animate-spin text-blue-500"
-                            size={18}
-                          />
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  {locationSuggestions.length > 0 && (
-                    <div className="absolute top-[calc(100%+8px)] left-0 w-full bg-white rounded-lg border border-gray-100 p-1.5 z-[60] animate-in slide-in-from-top-2">
-                      {locationSuggestions.map((place) => (
-                        <button
-                          key={place.place_id}
-                          onClick={() => handleLocationSelect(place)}
-                          className="w-full flex items-center gap-3 p-3 hover:bg-blue-50 rounded-lg transition-all text-left group"
-                        >
-                          <div className="p-1.5 bg-gray-50 group-hover:bg-white rounded-lg text-gray-400 group-hover:text-blue-500">
-                            <MapPin size={14} />
-                          </div>
-                          <div className="truncate">
-                            <p className="text-xs font-semibold text-gray-900 group-hover:text-blue-600 truncate">
-                              {place.structured_formatting.main_text}
-                            </p>
-                            <p className="text-[10px] text-gray-400 truncate">
-                              {place.structured_formatting.secondary_text}
-                            </p>
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
+           
 
               <div className="space-y-2">
                 <div className="flex items-center gap-2 px-1">
@@ -1289,21 +1215,7 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
                 </div>
               </div>
 
-              {/* Location if present */}
-              <div className="bg-blue-50/30 rounded-lg p-5 border border-blue-50 relative group transition-all">
-                <div className="absolute top-4 left-0 w-1 h-6 bg-blue-500 rounded-r-full" />
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <MapPin size={14} className="text-blue-500" />
-                    <span className="text-[13px] font-semibold text-gray-400 uppercase tracking-widest">
-                      Location
-                    </span>
-                  </div>
-                  <p className="text-sm font-semibold text-gray-900 leading-relaxed truncate">
-                    {selectedLocation.address || "No address provided"}
-                  </p>
-                </div>
-              </div>
+        
 
               {/* Description */}
               <div className="bg-blue-50/30 rounded-lg p-5 border border-blue-50 relative group transition-all">
