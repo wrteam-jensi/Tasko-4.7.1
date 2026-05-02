@@ -1,81 +1,68 @@
 "use client";
-import { useRTL } from "@/utils/Helper";
+import { useIsDarkMode, useRTL } from "@/utils/Helper";
 import React from "react";
+import { FaArrowRightLong } from "react-icons/fa6";
 import CustomImageTag from "../ReUseableComponents/CustomImageTag";
 import { useTranslation } from "../Layout/TranslationContext";
+import { usePathname } from "next/navigation";
 
 const HomeCategoryCard = ({ data, handleRouteCategory }) => {
+  const pathName = usePathname();
   const t = useTranslation();
-  const translatedName = data?.translated_name ? data?.translated_name : data?.name;
+  const isRTL = useRTL();
+  const darkMode = useIsDarkMode();
+
+  const imageBgColor = darkMode
+    ? data?.dark_color || "var(--primary-color)"
+    : data?.light_color || "var(--primary-color)";
+
+  const translatedName = data?.translated_name
+    ? data?.translated_name
+    : data?.name;
 
   return (
     <div
-      className="flex flex-col items-center gap-2 cursor-pointer w-[90px] md:w-[100px] flex-shrink-0 group"
+      className={`relative border border-transparent custom-shadow card_bg px-[18px] py-[24px] rounded-[16px] flex ${pathName === "/" ? "" : "flex-col"} md:flex-row items-center justify-start gap-4 group hover:border_color cursor-pointer w-full`}
       onClick={() => handleRouteCategory(data)}
     >
-      {/* Square Image with Rounded Corners */}
-      <div className="w-[80px] h-[80px] md:w-[100px] md:h-[100px] rounded-[24px] overflow-hidden bg-white border border-gray-100 flex items-center justify-center p-3 md:p-4 shadow-sm transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-md">
+      {/* Icon/Image Container */}
+      <div
+        className={`h-auto aspect-square w-[60px] rounded-full flex items-center justify-center`}
+        style={{ backgroundColor: imageBgColor }}
+      >
         <CustomImageTag
           src={data?.category_image}
           alt={translatedName}
-          className="w-full h-full"
-          imgClassName="w-full h-full object-contain filter group-hover:scale-105 transition-transform duration-300"
+          className="w-full h-full rounded-full"
+          imgClassName="rounded-full"
         />
       </div>
 
-      {/* Category Name */}
-      <span className="text-[12px] md:text-[14px] font-bold text-center leading-tight line-clamp-2 text-[#020D19] dark:text-white mt-1">
-        {translatedName}
-      </span>
+      {/* Content Section */}
+      <div className="relative flex flex-col items-start justify-start gap-1">
+        <span className=" md:text-lg font-semibold line-clamp-1">
+          {translatedName}
+        </span>
 
-      {/* Provider Count */}
-      <span className="text-[10px] md:text-[11px] text-gray-500 text-center -mt-1 font-medium">
-        {data?.total_providers}+ {data?.total_providers === 1 ? t("provider") : t("pros")}
-      </span>
+        {/* Provider Count / View More Section */}
+        <div className="relative h-[24px] overflow-hidden flex flex-col">
+          {" "}
+          {/* Set a fixed height to avoid layout shift */}
+          <span className="text-base font-normal description_color dark:text-white group-hover:mt-12 transition-all duration-500">
+            {data?.total_providers}{" "}
+            {data?.total_providers === 1 ? t("provider") : t("providers")}
+          </span>
+          {/* View More with Animation */}
+          <button className="text-sm md:text-base font-normal primary_text_color -mt-12 group-hover:-mt-[72px] transition-all duration-500 flex items-center justify-start gap-2">
+            <span>{t("viewMore")}</span>
+            <span className={` ${isRTL ? "rotate-180" : "rotate-0"}`}>
+              <FaArrowRightLong size={16} />
+            </span>
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
 
 export default HomeCategoryCard;
-
-
-// ─── SeeAll Card (use alongside HomeCategoryCard) ───────────────────────────
-
-export const SeeAllCard = ({ onClick }) => {
-  const t = useTranslation();
-
-  return (
-    <div
-      className="flex flex-col items-center gap-2 cursor-pointer w-[90px] flex-shrink-0"
-      onClick={onClick}
-    >
-      {/* Grid icon box */}
-      <div className="w-[90px] h-[90px] rounded-2xl bg-[#eef0f5] dark:bg-gray-700 flex items-center justify-center">
-        <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="4" y="4" width="12" height="12" rx="3" fill="#378ADD" />
-          <rect x="20" y="4" width="12" height="12" rx="3" fill="#378ADD" />
-          <rect x="4" y="20" width="12" height="12" rx="3" fill="#378ADD" />
-          <rect x="20" y="20" width="12" height="12" rx="3" fill="#378ADD" />
-        </svg>
-      </div>
-
-      <span className="text-[13px] font-medium text-center text-gray-900 dark:text-white">
-        {t("seeAll")}
-      </span>
-    </div>
-  );
-};
-
-
-// ─── Parent usage example ────────────────────────────────────────────────────
-//
-// <div className="flex gap-3 overflow-x-auto scrollbar-hide px-4 py-4">
-//   {categories.map((cat) => (
-//     <HomeCategoryCard
-//       key={cat.id}
-//       data={cat}
-//       handleRouteCategory={handleRouteCategory}
-//     />
-//   ))}
-//   <SeeAllCard onClick={() => router.push("/categories")} />
-// </div>

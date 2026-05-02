@@ -4,7 +4,10 @@ import React from "react";
 import CommanHeadline from "../ReUseableComponents/CommanHeadline";
 import HomeCategoryCard from "../Cards/HomeCategoryCard";
 import { useDispatch } from "react-redux";
-import { addCategory, clearCategories } from "../../redux/reducers/multiCategoriesSlice";
+import {
+  addCategory,
+  clearCategories,
+} from "../../redux/reducers/multiCategoriesSlice";
 import { useRouter } from "next/router";
 import { useTranslation } from "../Layout/TranslationContext";
 import { useRTL } from "@/utils/Helper";
@@ -33,7 +36,6 @@ const HomeCategories = ({ categoriesData }) => {
   return (
     <div className="bg-[#F4F8FD] dark:bg-[#1a1c1e] py-10 md:py-16">
       <div className="container mx-auto px-4 md:px-8">
-
         {/* Header row: title + View All */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 md:mb-14 gap-2">
           <div>
@@ -52,8 +54,8 @@ const HomeCategories = ({ categoriesData }) => {
           </Link>
         </div>
 
-        {/* Desktop Container (Flex justify-between for even spacing) */}
-        <div className="hidden md:flex flex-wrap items-start justify-between gap-4 lg:gap-6">
+        {/* Desktop Container (Grid for perfect alignment) */}
+        <div className="hidden md:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
           {categoriesData.slice(0, 8).map((category, index) => (
             <HomeCategoryCard
               key={index}
@@ -89,7 +91,6 @@ const HomeCategories = ({ categoriesData }) => {
             ))}
           </Swiper>
         </div>
-
       </div>
     </div>
   );
