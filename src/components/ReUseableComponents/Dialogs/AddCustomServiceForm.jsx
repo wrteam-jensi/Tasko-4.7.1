@@ -36,9 +36,6 @@ import {
   Check,
   Play,
   Pause,
-  MapPin,
-  Search,
-  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import CustomDateTimePicker from "../CustomDateTimePicker/CustomDateTimePicker";
@@ -47,8 +44,6 @@ import dayjs from "dayjs";
 import {
   getAllCategoriesApi,
   makeCustomJobRequestApi,
-  getPlacesForWebApi,
-  getPlacesDetailsForWebApi,
   enhanceCustomJobRequestApi,
 } from "@/api/apiRoutes";
 import { useSelector, useDispatch } from "react-redux";
@@ -67,7 +62,6 @@ const quoteAllowedAudioExtensions = ["m4a", "mp3", "wav", "aac", "ogg", "flac"];
 
 const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
   const t = useTranslation();
-  const locationData = useSelector((state) => state?.location);
   const settingsData = useSelector((state) => state?.settingsData?.settings);
   const currencySymbol = settingsData?.general_settings?.currency || "";
 
@@ -477,8 +471,7 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
         min_price: formValues.minPrice || "0",
         max_price: formValues.maxPrice || "0",
         type,
-        latitude: selectedLocation.lat || 0,
-        longitude: selectedLocation.lng || 0,
+     
         provider_id: provider_id || "",
         files: attachments,
       };
@@ -909,9 +902,8 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
 
         {currentStep === 2 && (
           <div className="space-y-5 animate-in fade-in slide-in-from-bottom-2 duration-300">
-            {/* Step 2: Location, Timing, Budget */}
+            {/* Step 2: Timing, Budget */}
             <div className="space-y-5">
-             
               <div className="space-y-2">
                 <div className="flex items-center gap-2 px-1">
                   <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400">
@@ -1196,8 +1188,6 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
                   </p>
                 </div>
               </div>
-
-             
 
               {/* Description */}
               <div className="bg-blue-50/30 rounded-lg p-5 border border-blue-50 relative group transition-all">
