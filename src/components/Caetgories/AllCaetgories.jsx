@@ -281,25 +281,29 @@ const AllCategories = () => {
   return (
     <Layout>
       <BreadCrumb firstEle={t("allServices")} firstEleLink="/services" />
-      <section className="all-categories">
-        <div className="commanSec mt-12 flex flex-col items-start justify-center gap-6 w-full container mx-auto">
-          <div className="Headlines flex flex-col w-full">
-            <span className="text-2xl font-semibold">{t("allServices")}</span>
-            <span className="description_color">
-              {total} {total === 1 ? t("service") : t("services")}
-            </span>
+      <section className="all-categories bg-[#F4F8FD] dark:bg-[#1a1c1e] min-h-screen">
+        <div className="container mx-auto px-4 md:px-8 py-10 md:py-16">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 md:mb-14 gap-2">
+            <div>
+              <h2 className="text-[22px] md:text-[32px] font-extrabold text-[#020D19] dark:text-white leading-tight">
+                {t("allServices")}
+              </h2>
+              <p className="text-[14px] md:text-[16px] text-[#378ADD] font-semibold mt-1.5 md:mt-2">
+                {total} {total === 1 ? t("service") : t("services")}
+              </p>
+            </div>
           </div>
-        </div>
 
-        <div className="commanDataSec light_bg_color md:p-4 w-full mt-6">
-          <div className="container mx-auto py-6">
+          <div className="w-full">
             {shouldShowSkeleton ? (
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                {Array(12).fill(0).map((_, index) => (
-                  <div key={index}>
-                    <HomeCategoryCardSkeleton />
-                  </div>
-                ))}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
+                {Array(12)
+                  .fill(0)
+                  .map((_, index) => (
+                    <div key={index}>
+                      <HomeCategoryCardSkeleton />
+                    </div>
+                  ))}
               </div>
             ) : isError ? (
               <div className="w-full h-[60vh] flex items-center justify-center">
@@ -309,7 +313,7 @@ const AllCategories = () => {
                 />
               </div>
             ) : displayedCategories.length > 0 ? (
-              <div className="grid grid-cols-2 lg:grid-cols-6 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
                 {displayedCategories.map((category, index) => (
                   <div key={category.id || index}>
                     <HomeCategoryCard
@@ -328,19 +332,23 @@ const AllCategories = () => {
               </div>
             )}
           </div>
-        </div>
 
-        {displayedCategories.length < total && (
-          <div className="loadmore my-6 flex items-center justify-center">
-            <button
-              onClick={handleLoadMore}
-              className="light_bg_color primary_text_color py-3 px-8 rounded-xl"
-              disabled={isLoading || isFetching}
-            >
-              {isLoading || isFetching ? <MiniLoader /> : t("loadMore")}
-            </button>
-          </div>
-        )}
+          {displayedCategories.length < total && (
+            <div className="mt-12 md:mt-16 flex items-center justify-center">
+              <button
+                onClick={handleLoadMore}
+                className="h-11 px-10 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-bold rounded-lg hover:bg-blue-100 transition-all duration-300 active:scale-95 shadow-sm border border-blue-100/50"
+                disabled={isLoading || isFetching}
+              >
+                {isLoading || isFetching ? (
+                  <div className="w-5 h-5 border-2 border-blue-600/30 border-t-blue-600 rounded-full animate-spin" />
+                ) : (
+                  t("loadMore")
+                )}
+              </button>
+            </div>
+          )}
+        </div>
       </section>
     </Layout>
   );
