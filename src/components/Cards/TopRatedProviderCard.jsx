@@ -13,6 +13,8 @@ import CustomLink from "../ReUseableComponents/CustomLink";
 import { useDispatch } from "react-redux";
 import { openLoginModal } from "@/redux/reducers/helperSlice";
 
+import { MdVerified } from "react-icons/md";
+
 const TopRatedProviderCard = ({ provider }) => {
   const t = useTranslation();
   const isRTL = useRTL();
@@ -87,8 +89,19 @@ const TopRatedProviderCard = ({ provider }) => {
           alt={`${translatedCompanyName} cover`}
           imgClassName="object-cover"
         />
+
+        {/* Verified Pro Badge */}
+        {(provider?.verified_pro === true) && (
+          <div className="absolute top-0 left-0 bg-[#3B82F6] rounded-br-lg px-2 py-1 flex items-center gap-1 z-10 shadow-sm">
+            <MdVerified size={14} className="text-white" />
+            <span className="text-white text-[10px] font-bold tracking-tight">
+              Verified Pro
+            </span>
+          </div>
+        )}
+
         {provider?.discount > 0 && (
-          <div className="absolute top-3 left-3 card_bg text-green-500 text-xs font-semibold px-2 py-1 rounded-[8px]">
+          <div className="absolute top-3 right-3 card_bg text-green-500 text-xs font-semibold px-2 py-1 rounded-[8px]">
             {provider?.discount}% {t("off")}
           </div>
         )}
@@ -117,10 +130,15 @@ const TopRatedProviderCard = ({ provider }) => {
             alt={`${translatedCompanyName} logo`}
             imgClassName="rounded-xl"
           />
-          <div>
-            <h2 className="font-semibold text-lg leading-tight line-clamp-1">
-              {translatedCompanyName}
-            </h2>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-1.5">
+              <h2 className="font-semibold text-lg leading-tight line-clamp-1">
+                {translatedCompanyName}
+              </h2>
+              {(provider?.is_verified === "1" || provider?.is_verified === true) && (
+                <MdVerified className="text-[#3B82F6] shrink-0" size={16} />
+              )}
+            </div>
             {provider?.total_services > 0 && (
               <span className="text-sm primary_text_color font-medium">
                 {provider?.total_services} {provider?.total_services > 1 ? t("services") : t("service")}

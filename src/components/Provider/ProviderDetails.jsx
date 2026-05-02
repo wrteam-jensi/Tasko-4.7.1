@@ -358,7 +358,7 @@ const ProviderDetails = () => {
                     />
 
                     {/* Verified Pro Badge */}
-                    {providerData?.is_verified && (
+                    {providerData?.verified_pro && (
                       <div className="absolute top-6 left-6 bg-[#007BFF] rounded-tl-xl rounded-br-2xl px-3 py-1.5 flex items-center gap-1.5 shadow-sm z-10 font-bold text-white text-[12px]">
                         <MdVerified size={16} className="text-white" />
                         <span>Verified Pro</span>
