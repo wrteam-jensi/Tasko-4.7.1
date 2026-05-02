@@ -36,7 +36,7 @@ import Share from "../ReUseableComponents/Share/Share";
 import OpenInAppDrawer from "../ReUseableComponents/Drawers/OpenInAppDrawer";
 import ProviderDetailsSkeleton from "../Skeletons/ProviderDetailsSkeleton";
 import AddCustomServiceForm from "../ReUseableComponents/Dialogs/AddCustomServiceForm";
-import { Send, Zap, CheckCircle2 } from "lucide-react";
+import { Send, Zap, CheckCircle2, Clock3 } from "lucide-react";
 import {
   Drawer,
   DrawerContent,
@@ -512,25 +512,29 @@ const ProviderDetails = () => {
                       )}
                     </div>
                     {/* Request a Quote Section */}
-                    <div className="mt-8 space-y-6 relative">
-                      <h3 className="text-gray-900 text-xl md:text-2xl font-bold tracking-tight text-center">
-                        {t("needACustomService") || "Need a custom service?"}
-                      </h3>
+                    <div className="mt-8 space-y-4 relative">
+                      <div className="flex items-center justify-between px-1">
+                        <h3 className="text-gray-900 dark:text-white text-2xl font-bold tracking-tight">
+                          {t("needACustomService") || "Need a custom service?"}
+                        </h3>
+            
+                      </div>
 
                       <div className="grid grid-cols-2 gap-4">
-                        <div className="bg-blue-50/50 border border-blue-100/50 rounded-2xl p-4 flex flex-col items-center gap-3 transition-all hover:bg-blue-50">
-                          <div className="w-12 h-12 rounded-xl bg-blue-600/10 flex items-center justify-center text-blue-600">
-                            <Send size={24} />
+                        <div className="bg-white dark:bg-black/20 border border-gray-100 dark:border-white/10 rounded-[20px] p-4 flex flex-col items-center gap-3 transition-all hover:shadow-sm">
+                          <div className="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-blue-600">
+                            <Send size={24} strokeWidth={1.5} />
                           </div>
-                          <span className="text-[10px] font-black text-gray-400 uppercase leading-tight tracking-[0.1em] text-center">
+                          <span className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest text-center">
                             {t("sentToThisProvider") || "Sent to this provider"}
                           </span>
                         </div>
-                        <div className="bg-blue-50/50 border border-blue-100/50 rounded-2xl p-4 flex flex-col items-center gap-3 transition-all hover:bg-blue-50">
-                          <div className="w-12 h-12 rounded-xl bg-blue-600/10 flex items-center justify-center text-blue-600">
-                            <CheckCircle2 size={24} />
+
+                        <div className="bg-white dark:bg-black/20 border border-gray-100 dark:border-white/10 rounded-[20px] p-4 flex flex-col items-center gap-3 transition-all hover:shadow-sm">
+                          <div className="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-blue-600">
+                            <CheckCircle2 size={24} strokeWidth={1.5} />
                           </div>
-                          <span className="text-[10px] font-black text-gray-400 uppercase leading-tight tracking-[0.1em] text-center">
+                          <span className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest text-center">
                             {t("fastResponses") || "Fast responses"}
                           </span>
                         </div>
@@ -538,16 +542,11 @@ const ProviderDetails = () => {
 
                       <button
                         onClick={() => setIsQuoteDrawerOpen(true)}
-                        className="w-full h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-black text-lg flex items-center justify-center gap-3 transition-all active:scale-[0.98] shadow-lg shadow-blue-600/20"
+                        className="w-full h-14 primary_bg_color hover:opacity-90 text-white rounded-xl font-bold text-lg flex items-center justify-center gap-3 transition-all active:scale-[0.98] shadow-md"
                       >
                         <Send size={22} className="rotate-[-10deg]" />
                         {t("requestAQuote") || "Request a Quote"}
                       </button>
-
-                      <p className="text-[12px] text-gray-500 font-medium leading-relaxed px-4 text-center">
-                        {t("quoteFooterText") ||
-                          "Your request will be sent to this provider and other available professionals."}
-                      </p>
                     </div>
 
                     {/* Action buttons row: share + chat (heart is now on the banner) */}
