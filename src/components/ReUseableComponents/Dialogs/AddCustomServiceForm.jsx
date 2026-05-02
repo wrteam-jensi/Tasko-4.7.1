@@ -80,7 +80,6 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
   const [timeOption, setTimeOption] = useState("flexible");
   const [isImproving, setIsImproving] = useState(false);
 
-
   const [isManualCategory, setIsManualCategory] = useState(false);
   const [formValues, setFormValues] = useState({
     serviceTitle: "",
@@ -100,11 +99,21 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
     // unless the title is completely cleared, which might suggest a fresh start.
     if (isManualCategory && formValues.serviceTitle.length > 0) return;
 
-    if (categories.length > 0 && formValues.serviceTitle && formValues.serviceTitle.length >= 3) {
+    // Trigger auto-detection starting from 1 character as requested
+    if (categories.length > 0 && formValues.serviceTitle && formValues.serviceTitle.length >= 1) {
       const title = formValues.serviceTitle.toLowerCase();
       const detectedCategory = categories.find((cat) => {
         const catName = (cat.translated_name || cat.name).toLowerCase();
-        return title.includes(catName) || (catName.length > 3 && catName.includes(title));
+        const catWords = catName.split(/\s+/);
+        
+        // Match if:
+        // 1. The title contains the category name (e.g., "urgent fridge repair" -> "Fridge repair")
+        // 2. The category name starts with the title (e.g., "Fri" -> "Fridge repair")
+        // 3. Any word in the category name starts with the title, but only for 3+ chars to avoid "f" -> "fridge"
+        //    UNLESS the title is an exact word match.
+        return title.includes(catName) || 
+               catName.startsWith(title) || 
+               catWords.some(word => (title.length >= 3 && word.startsWith(title)) || word === title);
       });
 
       if (detectedCategory) {
@@ -113,15 +122,12 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
         // If no match found and it wasn't a manual selection, reset the category
         setFormValues((prev) => ({ ...prev, category: "" }));
       }
-    } else if (formValues.serviceTitle.length < 3) {
-      // Clear auto-detected category if title is too short or cleared
-      if (!isManualCategory) {
-        setFormValues((prev) => ({ ...prev, category: "" }));
-      } else if (formValues.serviceTitle.length === 0) {
-        // Even if manual, clearing the title resets the manual flag for a fresh start
+    } else if (formValues.serviceTitle.length === 0) {
+      // Clear category and reset manual flag if title is emptied
+      if (isManualCategory) {
         setIsManualCategory(false);
-        setFormValues((prev) => ({ ...prev, category: "" }));
       }
+      setFormValues((prev) => ({ ...prev, category: "" }));
     }
   }, [formValues.serviceTitle, categories, isManualCategory]);
 
