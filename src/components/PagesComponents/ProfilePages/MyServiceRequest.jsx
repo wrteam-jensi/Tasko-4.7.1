@@ -73,7 +73,7 @@ const MyServiceRequest = () => {
       <div className="flex flex-col gap-6">
         <div className="flex items-center justify-between w-full max-[350px]:flex-wrap max-[350px]:gap-2">
           <div className="page-headline max-[350px]:text-base text-lg md:text-2xl sm:text-3xl font-semibold">
-            <span>{open ? (t("requestQuote") || "Request a Quote") : t("requestQuote")}</span>
+            <span>{open ? (t("requestQuote") || "Request a Quote") : t("quote")}</span>
           </div>
           <div>
             <button
@@ -84,7 +84,7 @@ const MyServiceRequest = () => {
               <span className="flex items-center gap-1.5">
                 {open ? <X size={18} strokeWidth={2.5} /> : <FaPlus size={14} />}
                 <span className="font-black uppercase text-[11px] md:text-xs">
-                  {open ? t("addService") : t("addService")}
+                  {open ? t("requestQuote") : t("requestQuote")}
                 </span>
               </span>
             </button>

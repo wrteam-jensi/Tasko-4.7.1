@@ -277,7 +277,7 @@ const ServiceRequestDetails = () => {
                     </button>
 
                     <h1 className="text-lg font-semibold sm:text-2xl lg:text-3xl">
-                      {t("myServiceReqDetails")}
+                      {t("myrequestaQuotation")}
                     </h1>
                   </div>
                   {serviceData?.status === "pending" && (
