@@ -852,5 +852,6 @@
   "selectServiceCategory":"Please select service category",
   "aiImprovedDescription":"AI Improved Description",
   "improveWithSmartAI": "Improve with Smart AI",
-  "refiningDetails": "Refining Details..."
+  "refiningDetails": "Refining Details...",
+  "minBudgetExceedsMax": "Min budget cannot be greater than max budget"
 }

@@ -437,6 +437,20 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
         return;
       }
     }
+
+    if (currentStep === 2) {
+      const min = Number(formValues.minPrice) || 0;
+      const max = Number(formValues.maxPrice) || 0;
+
+      if (max > 0 && min > max) {
+        toast.error(
+          t("minBudgetExceedsMax") ||
+            "Min budget cannot be greater than max budget",
+        );
+        return;
+      }
+    }
+
     setCurrentStep((prev) => prev + 1);
   };
 
@@ -445,6 +459,18 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
   };
 
   const handleSubmit = async () => {
+    // Budget Validation
+    const min = Number(formValues.minPrice) || 0;
+    const max = Number(formValues.maxPrice) || 0;
+
+    if (max > 0 && min > max) {
+      toast.error(
+        t("minBudgetExceedsMax") ||
+          "Min budget cannot be greater than max budget",
+      );
+      return;
+    }
+
     try {
       setLoading(true);
 
@@ -1139,6 +1165,7 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
                       <input
                         type="number"
                         name="minPrice"
+                        min="0"
                         placeholder="0"
                         className="w-full text-base font-bold focus:outline-none bg-transparent text-gray-900 placeholder:text-gray-200"
                         onChange={handleChange}
@@ -1157,6 +1184,7 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
                       <input
                         type="number"
                         name="maxPrice"
+                        min="0"
                         placeholder="0"
                         className="w-full text-base font-bold focus:outline-none bg-transparent text-gray-900 placeholder:text-gray-200"
                         onChange={handleChange}
