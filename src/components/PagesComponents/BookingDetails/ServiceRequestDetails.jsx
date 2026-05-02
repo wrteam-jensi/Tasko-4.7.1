@@ -599,8 +599,8 @@ const ServiceRequestDetails = () => {
         open={showCancelDialog}
         onOpenChange={setShowCancelDialog}
         onConfirm={confirmCancelBooking}
-        title="cancelBooking"
-        description="areYouSureYouWantToCancelThisBooking"
+        title="cancelRequest"
+        description="areYouSureYouWantToCancelThisRequest"
         confirmText="confirm"
         cancelText="cancel"
       />
