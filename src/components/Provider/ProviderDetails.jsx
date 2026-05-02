@@ -511,6 +511,44 @@ const ProviderDetails = () => {
                         </button>
                       )}
                     </div>
+                    {/* Request a Quote Section */}
+                    <div className="mt-8 space-y-6 relative">
+                      <h3 className="text-gray-900 text-xl md:text-2xl font-bold tracking-tight text-center">
+                        {t("needACustomService") || "Need a custom service?"}
+                      </h3>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="bg-blue-50/50 border border-blue-100/50 rounded-2xl p-4 flex flex-col items-center gap-3 transition-all hover:bg-blue-50">
+                          <div className="w-12 h-12 rounded-xl bg-blue-600/10 flex items-center justify-center text-blue-600">
+                            <Send size={24} />
+                          </div>
+                          <span className="text-[10px] font-black text-gray-400 uppercase leading-tight tracking-[0.1em] text-center">
+                            {t("sentToThisProvider") || "Sent to this provider"}
+                          </span>
+                        </div>
+                        <div className="bg-blue-50/50 border border-blue-100/50 rounded-2xl p-4 flex flex-col items-center gap-3 transition-all hover:bg-blue-50">
+                          <div className="w-12 h-12 rounded-xl bg-blue-600/10 flex items-center justify-center text-blue-600">
+                            <CheckCircle2 size={24} />
+                          </div>
+                          <span className="text-[10px] font-black text-gray-400 uppercase leading-tight tracking-[0.1em] text-center">
+                            {t("fastResponses") || "Fast responses"}
+                          </span>
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => setIsQuoteDrawerOpen(true)}
+                        className="w-full h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-black text-lg flex items-center justify-center gap-3 transition-all active:scale-[0.98] shadow-lg shadow-blue-600/20"
+                      >
+                        <Send size={22} className="rotate-[-10deg]" />
+                        {t("requestAQuote") || "Request a Quote"}
+                      </button>
+
+                      <p className="text-[12px] text-gray-500 font-medium leading-relaxed px-4 text-center">
+                        {t("quoteFooterText") ||
+                          "Your request will be sent to this provider and other available professionals."}
+                      </p>
+                    </div>
 
                     {/* Action buttons row: share + chat (heart is now on the banner) */}
                     <div className="flex items-center gap-3 mt-4">
@@ -527,47 +565,6 @@ const ProviderDetails = () => {
                         )}
                     </div>
                   </div>
-                </div>
-
-                {/* Request a Quote Section */}
-                <div className="mt-6 bg-[#1E1E1E] rounded-3xl p-6 text-center space-y-5 shadow-2xl relative overflow-hidden group">
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600/10 rounded-full blur-3xl -translate-y-12 translate-x-12" />
-
-                  <h3 className="text-white text-lg md:text-xl font-bold tracking-tight">
-                    {t("needACustomService") || "Need a custom service?"}
-                  </h3>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col items-center gap-2 transition-colors hover:bg-white/10">
-                      <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500">
-                        <Send size={20} />
-                      </div>
-                      <span className="text-[11px] font-bold text-gray-300 uppercase leading-tight tracking-wide">
-                        {t("sentToThisProvider") || "Sent to this provider"}
-                      </span>
-                    </div>
-                    <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col items-center gap-2 transition-colors hover:bg-white/10">
-                      <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500">
-                        <CheckCircle2 size={20} />
-                      </div>
-                      <span className="text-[11px] font-bold text-gray-300 uppercase leading-tight tracking-wide">
-                        {t("fastResponses") || "Fast responses"}
-                      </span>
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={() => setIsQuoteDrawerOpen(true)}
-                    className="w-full h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-extrabold text-[16px] flex items-center justify-center gap-3 transition-all active:scale-[0.98] shadow-xl shadow-blue-600/20"
-                  >
-                    <Send size={20} className="rotate-[-10deg]" />
-                    {t("requestAQuote") || "Request a Quote"}
-                  </button>
-
-                  <p className="text-[11px] text-gray-400 font-medium leading-relaxed px-2">
-                    {t("quoteFooterText") ||
-                      "Your request will be sent to this provider and other available professionals."}
-                  </p>
                 </div>
 
                 {/* Photo Gallery section */}

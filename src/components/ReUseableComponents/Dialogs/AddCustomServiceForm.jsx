@@ -55,9 +55,36 @@ import {
 } from "@/components/ui/popover";
 import { useRef } from "react";
 
-const quoteAllowedDocExtensions = ["pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx", "txt", "rtf"];
-const quoteAllowedImageExtensions = ["jpg", "jpeg", "png", "webp", "gif", "bmp", "heic", "heif"];
-const quoteAllowedVideoExtensions = ["mp4", "mov", "avi", "mkv", "webm", "m4v", "3gp"];
+const quoteAllowedDocExtensions = [
+  "pdf",
+  "doc",
+  "docx",
+  "xls",
+  "xlsx",
+  "ppt",
+  "pptx",
+  "txt",
+  "rtf",
+];
+const quoteAllowedImageExtensions = [
+  "jpg",
+  "jpeg",
+  "png",
+  "webp",
+  "gif",
+  "bmp",
+  "heic",
+  "heif",
+];
+const quoteAllowedVideoExtensions = [
+  "mp4",
+  "mov",
+  "avi",
+  "mkv",
+  "webm",
+  "m4v",
+  "3gp",
+];
 const quoteAllowedAudioExtensions = ["m4a", "mp3", "wav", "aac", "ogg", "flac"];
 
 const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
@@ -95,20 +122,29 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
     if (isManualCategory && formValues.serviceTitle.length > 0) return;
 
     // Trigger auto-detection starting from 1 character as requested
-    if (categories.length > 0 && formValues.serviceTitle && formValues.serviceTitle.length >= 1) {
+    if (
+      categories.length > 0 &&
+      formValues.serviceTitle &&
+      formValues.serviceTitle.length >= 1
+    ) {
       const title = formValues.serviceTitle.toLowerCase();
       const detectedCategory = categories.find((cat) => {
         const catName = (cat.translated_name || cat.name).toLowerCase();
         const catWords = catName.split(/\s+/);
-        
+
         // Match if:
         // 1. The title contains the category name (e.g., "urgent fridge repair" -> "Fridge repair")
         // 2. The category name starts with the title (e.g., "Fri" -> "Fridge repair")
         // 3. Any word in the category name starts with the title, but only for 3+ chars to avoid "f" -> "fridge"
         //    UNLESS the title is an exact word match.
-        return title.includes(catName) || 
-               catName.startsWith(title) || 
-               catWords.some(word => (title.length >= 3 && word.startsWith(title)) || word === title);
+        return (
+          title.includes(catName) ||
+          catName.startsWith(title) ||
+          catWords.some(
+            (word) =>
+              (title.length >= 3 && word.startsWith(title)) || word === title,
+          )
+        );
       });
 
       if (detectedCategory) {
@@ -268,18 +304,22 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
-    
+
     // Get limits with safe fallbacks
-    const maxFilesAllowed = parseInt(requestQuoteSettings?.max_files_allowed) ;
-    const maxSizeImages = (parseInt(requestQuoteSettings?.max_file_size_images)) * 1024 * 1024;
-    const maxSizeVideo = (parseInt(requestQuoteSettings?.max_file_size_video)) * 1024 * 1024;
-    const maxSizeAudio = (parseInt(requestQuoteSettings?.max_file_size_audio)) * 1024 * 1024;
-    const maxSizeOther = (parseInt(requestQuoteSettings?.max_file_size_other)) * 1024 * 1024;
+    const maxFilesAllowed = parseInt(requestQuoteSettings?.max_files_allowed);
+    const maxSizeImages =
+      parseInt(requestQuoteSettings?.max_file_size_images) * 1024 * 1024;
+    const maxSizeVideo =
+      parseInt(requestQuoteSettings?.max_file_size_video) * 1024 * 1024;
+    const maxSizeAudio =
+      parseInt(requestQuoteSettings?.max_file_size_audio) * 1024 * 1024;
+    const maxSizeOther =
+      parseInt(requestQuoteSettings?.max_file_size_other) * 1024 * 1024;
 
     // Check total files count limit
     if (attachments.length + files.length > maxFilesAllowed) {
       toast.error(
-        `${t("maxFilesAllowed") || "Maximum files allowed is"} ${maxFilesAllowed}`
+        `${t("maxFilesAllowed") || "Maximum files allowed is"} ${maxFilesAllowed}`,
       );
       e.target.value = "";
       return;
@@ -311,7 +351,8 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
     // Notify user if any files were rejected due to size or type
     if (validFiles.length < files.length) {
       toast.error(
-        t("someFilesInvalid") || "Some files were too large or have unsupported formats."
+        t("someFilesInvalid") ||
+          "Some files were too large or have unsupported formats.",
       );
     }
 
@@ -395,8 +436,6 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
       setIsImproving(false);
     }
   };
-
-
 
   const handleNext = () => {
     if (currentStep === 1) {
@@ -1122,7 +1161,7 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
         {currentStep === 3 && (
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 text-left">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-[17px] font-bold text-gray-900 tracking-tight"  >
+              <h3 className="text-[17px] font-bold text-gray-900 tracking-tight">
                 Request Summary
               </h3>
             </div>
@@ -1275,8 +1314,12 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
                     <ShieldCheck size={20} />
                   </div>
                   <div className="space-y-0.5">
-                    <h4 className="text-[12px] font-bold text-gray-900">{t("verifiedPros") || "Verified pros"}</h4>
-                    <p className="text-[11px] text-gray-500">{t("qualityAssured") || "Quality assured"}</p>
+                    <h4 className="text-[12px] font-bold text-gray-900">
+                      {t("verifiedPros") || "Verified pros"}
+                    </h4>
+                    <p className="text-[11px] text-gray-500">
+                      {t("qualityAssured") || "Quality assured"}
+                    </p>
                   </div>
                 </div>
 
@@ -1287,8 +1330,12 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
                     <Zap size={20} />
                   </div>
                   <div className="space-y-0.5">
-                    <h4 className="text-[12px] font-bold text-gray-900">{t("fastResponses") || "Fast responses"}</h4>
-                    <p className="text-[11px] text-gray-500">{t("usuallyWithin1Hour") || "Usually within 1 hour"}</p>
+                    <h4 className="text-[12px] font-bold text-gray-900">
+                      {t("fastResponses") || "Fast responses"}
+                    </h4>
+                    <p className="text-[11px] text-gray-500">
+                      {t("usuallyWithin1Hour") || "Usually within 1 hour"}
+                    </p>
                   </div>
                 </div>
 
@@ -1299,8 +1346,12 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
                     <Lock size={20} />
                   </div>
                   <div className="space-y-0.5">
-                    <h4 className="text-[12px] font-bold text-gray-900">{t("freeToUse") || "Free to use"}</h4>
-                    <p className="text-[11px] text-gray-500">{t("noCommitment") || "No commitment"}</p>
+                    <h4 className="text-[12px] font-bold text-gray-900">
+                      {t("freeToUse") || "Free to use"}
+                    </h4>
+                    <p className="text-[11px] text-gray-500">
+                      {t("noCommitment") || "No commitment"}
+                    </p>
                   </div>
                 </div>
               </div>
