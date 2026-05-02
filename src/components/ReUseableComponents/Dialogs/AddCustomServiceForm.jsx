@@ -112,6 +112,10 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
     startDateTime: null,
     endDateTime: null,
   });
+  const [customDates, setCustomDates] = useState({
+    startDateTime: dayjs().toDate(),
+    endDateTime: dayjs().add(1, "day").toDate(),
+  });
   const [attachments, setAttachments] = useState([]);
   const fileInputRef = useRef(null);
 
@@ -284,6 +288,12 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
         startDateTime: now.toDate(),
         endDateTime: now.add(1, "month").toDate(),
       }));
+    } else if (option === "choose") {
+      setFormValues((prev) => ({
+        ...prev,
+        startDateTime: customDates.startDateTime,
+        endDateTime: customDates.endDateTime,
+      }));
     }
   };
 
@@ -294,6 +304,10 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
 
   const handleDateTimeSelect = (value) => {
     setFormValues((prev) => ({
+      ...prev,
+      [datePickerType]: value,
+    }));
+    setCustomDates((prev) => ({
       ...prev,
       [datePickerType]: value,
     }));
