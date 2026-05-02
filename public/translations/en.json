@@ -856,5 +856,6 @@
   "aiImprovedDescription":"AI Improved Description",
   "improveWithSmartAI": "Improve with Smart AI",
   "refiningDetails": "Refining Details...",
-  "minBudgetExceedsMax": "Min budget cannot be greater than max budget"
+  "minBudgetExceedsMax": "Min budget cannot be greater than max budget",
+  "someFilesInvalid":"Some files were too large or have unsupported formats."
 }

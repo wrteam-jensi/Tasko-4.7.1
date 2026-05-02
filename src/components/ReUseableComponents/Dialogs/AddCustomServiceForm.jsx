@@ -63,6 +63,7 @@ const quoteAllowedAudioExtensions = ["m4a", "mp3", "wav", "aac", "ogg", "flac"];
 const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
   const t = useTranslation();
   const settingsData = useSelector((state) => state?.settingsData?.settings);
+  const locationData = useSelector((state) => state?.location);
   const currencySymbol = settingsData?.general_settings?.currency || "";
 
   const [currentStep, setCurrentStep] = useState(1);
@@ -471,7 +472,8 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
         min_price: formValues.minPrice || "0",
         max_price: formValues.maxPrice || "0",
         type,
-     
+        latitude: locationData?.lat || "",
+        longitude: locationData?.lng || "",
         provider_id: provider_id || "",
         files: attachments,
       };
