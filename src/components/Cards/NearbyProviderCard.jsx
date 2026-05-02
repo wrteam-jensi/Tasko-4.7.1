@@ -87,7 +87,7 @@ const NearbyProviderCard = ({ provider, isBookmark, handleRemoveBookMark }) => {
             <h2 className="text-[14px] font-bold text-gray-900 truncate uppercase tracking-wide">
               {provider?.translated_company_name || provider?.company_name}
             </h2>
-            {provider?.verified_pro && (
+            {provider?.is_verified && (
                 <MdVerified className="text-[#3B82F6] shrink-0" size={14} />
             )}
           </div>
