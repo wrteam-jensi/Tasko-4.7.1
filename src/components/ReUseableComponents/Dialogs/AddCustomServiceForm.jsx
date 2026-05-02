@@ -87,6 +87,7 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
     lng: locationData?.lng || 0,
   });
 
+  const [isManualCategory, setIsManualCategory] = useState(false);
   const [formValues, setFormValues] = useState({
     serviceTitle: "",
     serviceDescription: "",
@@ -101,18 +102,34 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
 
   // Auto-category detection logic
   useEffect(() => {
-    if (categories.length > 0 && formValues.serviceTitle) {
+    // If the user has manually selected a category, we don't override it automatically
+    // unless the title is completely cleared, which might suggest a fresh start.
+    if (isManualCategory && formValues.serviceTitle.length > 0) return;
+
+    if (categories.length > 0 && formValues.serviceTitle && formValues.serviceTitle.length >= 3) {
       const title = formValues.serviceTitle.toLowerCase();
       const detectedCategory = categories.find((cat) => {
         const catName = (cat.translated_name || cat.name).toLowerCase();
-        return title.includes(catName) || catName.includes(title);
+        return title.includes(catName) || (catName.length > 3 && catName.includes(title));
       });
 
-      if (detectedCategory && !formValues.category) {
+      if (detectedCategory) {
         setFormValues((prev) => ({ ...prev, category: detectedCategory.id }));
+      } else {
+        // If no match found and it wasn't a manual selection, reset the category
+        setFormValues((prev) => ({ ...prev, category: "" }));
+      }
+    } else if (formValues.serviceTitle.length < 3) {
+      // Clear auto-detected category if title is too short or cleared
+      if (!isManualCategory) {
+        setFormValues((prev) => ({ ...prev, category: "" }));
+      } else if (formValues.serviceTitle.length === 0) {
+        // Even if manual, clearing the title resets the manual flag for a fresh start
+        setIsManualCategory(false);
+        setFormValues((prev) => ({ ...prev, category: "" }));
       }
     }
-  }, [formValues.serviceTitle, categories]);
+  }, [formValues.serviceTitle, categories, isManualCategory]);
 
   // Voice Recording State
   const [isRecording, setIsRecording] = useState(false);
@@ -335,6 +352,7 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
     setTimeOption("flexible");
     setAttachments([]);
     setCurrentStep(1);
+    setIsManualCategory(false);
   };
 
   const handleAIImprove = async () => {
@@ -703,12 +721,13 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
                   {t("category") || "Category"}
                 </label>
                 <Select
-                  onValueChange={(value) =>
+                  onValueChange={(value) => {
+                    setIsManualCategory(true);
                     setFormValues((prevValues) => ({
                       ...prevValues,
                       category: value,
-                    }))
-                  }
+                    }));
+                  }}
                   value={formValues.category}
                 >
                   <SelectTrigger className="w-full border-none p-0 h-auto focus:ring-0 shadow-none text-left bg-transparent">
