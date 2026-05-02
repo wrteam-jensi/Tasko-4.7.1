@@ -572,7 +572,7 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
   const steps = [
     { id: 1, title: t("serviceInfo") || "Service Info", icon: Pencil },
     { id: 2, title: t("detailsContext") || "Details & Context", icon: Info },
-    { id: 3, title: t("summary") || "Summary", icon: Check },
+    { id: 3, title: t("review") || "Review", icon: Check },
   ];
 
   return (
@@ -1362,6 +1362,43 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
                   </div>
                 </div>
               )}
+
+              {/* Trust Signals Section */}
+              <div className="mt-8 p-6 bg-gray-50/50 rounded-2xl border border-gray-100/50 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-4 overflow-hidden relative">
+                <div className="flex items-center gap-4 flex-1">
+                  <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-blue-600 shadow-sm border border-blue-50">
+                    <ShieldCheck size={20} />
+                  </div>
+                  <div className="space-y-0.5">
+                    <h4 className="text-[12px] font-bold text-gray-900">{t("verifiedPros") || "Verified pros"}</h4>
+                    <p className="text-[11px] text-gray-500">{t("qualityAssured") || "Quality assured"}</p>
+                  </div>
+                </div>
+
+                <div className="hidden md:block w-px h-8 bg-gray-200/60" />
+
+                <div className="flex items-center gap-4 flex-1">
+                  <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-orange-500 shadow-sm border border-orange-50">
+                    <Zap size={20} />
+                  </div>
+                  <div className="space-y-0.5">
+                    <h4 className="text-[12px] font-bold text-gray-900">{t("fastResponses") || "Fast responses"}</h4>
+                    <p className="text-[11px] text-gray-500">{t("usuallyWithin1Hour") || "Usually within 1 hour"}</p>
+                  </div>
+                </div>
+
+                <div className="hidden md:block w-px h-8 bg-gray-200/60" />
+
+                <div className="flex items-center gap-4 flex-1">
+                  <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-emerald-500 shadow-sm border border-emerald-50">
+                    <Lock size={20} />
+                  </div>
+                  <div className="space-y-0.5">
+                    <h4 className="text-[12px] font-bold text-gray-900">{t("freeToUse") || "Free to use"}</h4>
+                    <p className="text-[11px] text-gray-500">{t("noCommitment") || "No commitment"}</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         )}
