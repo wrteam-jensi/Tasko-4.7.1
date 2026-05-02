@@ -64,7 +64,7 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
   const t = useTranslation();
   const locationData = useSelector((state) => state?.location);
   const settingsData = useSelector((state) => state?.settingsData?.settings);
-  const currencySymbol = settingsData?.currency_symbol || "XOF";
+  const currencySymbol = settingsData?.general_settings?.currency || "";
 
   const [currentStep, setCurrentStep] = useState(1);
   const [showDatePicker, setShowDatePicker] = useState(false);
