@@ -37,11 +37,12 @@ const DrawerContent = React.forwardRef(({ className, children, ...props }, ref) 
         // Ensure touch scrolling works on mobile (iOS Safari needs momentum scrolling)
         "overflow-y-auto overscroll-contain touch-pan-y [-webkit-overflow-scrolling:touch]",
         "scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-400 scrollbar-thumb-rounded",
+        "after:hidden",
         className
       )}
       {...props}>
       <div className="mx-auto mt-4 h-2 w-[100px] rounded-full bg-muted sticky top-0 z-10" />
-      <div className="min-h-[100px]">
+      <div className="flex-1">
         {children}
       </div>
     </DrawerPrimitive.Content>
