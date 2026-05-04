@@ -864,5 +864,6 @@
   "sentToThisProvider": "Sent to this provider",
   "fastResponses": "Fast responses",
   "requestAQuote": "Request a Quote",
-  "quoteFooterText": "Your request will be sent to this provider and other available professionals."
+  "quoteFooterText": "Your request will be sent to this provider and other available professionals.",
+  "microphoneError": "Microphone access denied. Please enable microphone in browser settings to use voice notes."
 }
