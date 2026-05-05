@@ -5,24 +5,12 @@ import {
   formatStartingPrice,
 } from "@/utils/Helper";
 import { FaMapMarkerAlt, FaStar, FaHeart, FaRegHeart } from "react-icons/fa";
+
 import { MdBolt, MdVerified } from "react-icons/md";
 import { BsImageFill } from "react-icons/bs";
 import CustomImageTag from "../ReUseableComponents/CustomImageTag";
 
 const NearbyProviderCard = ({ provider, isBookmark, handleRemoveBookMark }) => {
-  const metaItems = [
-    provider?.service_title && {
-      label: provider.service_title,
-    },
-    provider?.distance && {
-      icon: <FaMapMarkerAlt size={11} className="text-[#3B82F6]" />,
-      label: showDistance(provider.distance),
-    },
-    provider?.total_services > 0 && {
-      label: `${provider.total_services} Services`,
-    },
-  ].filter(Boolean);
-
   return (
     <div className="w-full rounded-xl overflow-hidden border border-gray-100 dark:border-white/10 bg-white dark:bg-[#1A1C1E] flex flex-col h-full transition-colors duration-300">
       {/* Image Area */}
@@ -30,9 +18,9 @@ const NearbyProviderCard = ({ provider, isBookmark, handleRemoveBookMark }) => {
         className="relative w-full shrink-0 bg-gray-50 dark:bg-gray-900"
         style={{ height: "200px" }}
       >
-        {provider?.image ? (
+        {provider?.banner_image ||provider?.image ?  (
           <CustomImageTag
-            src={provider.banner_image}
+            src={provider.banner_image ||provider?.image}
             alt={provider?.company_name}
             className="w-full h-full"
             imgClassName="w-full h-full object-cover"
