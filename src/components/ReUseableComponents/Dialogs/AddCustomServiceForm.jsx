@@ -548,7 +548,11 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
         if (fetchBookings) fetchBookings();
         clearForm();
       } else {
-        toast.error(response?.message);
+        const msg =
+          typeof response?.message === "object" && response?.message !== null
+            ? Object.values(response.message).flat().join(", ")
+            : response?.message;
+        toast.error(msg);
       }
     } catch (error) {
       console.error(error);
