@@ -70,15 +70,15 @@ const HomeCategories = ({ categoriesData }) => {
           <Swiper
             modules={[Autoplay, FreeMode]}
             spaceBetween={16}
-            slidesPerView={3.2}
+            slidesPerView={2}
             loop={true}
             dir={isRTL ? "rtl" : "ltr"}
             key={isRTL ? "rtl" : "ltr"}
             autoplay={{ delay: 3500 }}
             freeMode={true}
             breakpoints={{
-              0: { slidesPerView: 3.2 },
-              480: { slidesPerView: 4.2 },
+              0: { slidesPerView: 2 },
+              480: { slidesPerView: 2.5 },
             }}
           >
             {categoriesData.slice(0, 8).map((category, index) => (
