@@ -1341,29 +1341,65 @@ const BookingDetails = () => {
 
                 <Separator />
               </>
-              {Boolean(bookingData?.services?.[0]?.service_short_description || bookingData?.remarks) && (
+              {/* Custom Job Details (Request Desc & Bid Note) or standard notes */}
+              
+              {bookingData?.custom_job_request_id ? (
                 <>
-                  <section className="space-y-4" aria-labelledby="provider-notes">
-                    <div className="flex flex-col gap-4">
-                      <h2 id="provider-notes" className="description_color">
-                        {bookingData?.custom_job_request_id ? t("providerNotes") : t("notes")}
-                      </h2>
-                      <div className="flex items-center gap-3">
-                        <CgNotes
-                          size={22}
-                          className="primary_text_color min-w-[22px]"
-                          aria-hidden="true"
-                        />
-                        <div>
+                  {(bookingData?.services?.[0]?.service_short_description || bookingData?.services?.[0]?.note) && (
+                    <>
+                      <section className="space-y-6">
+                        {/* Client Request Description */}
+                        {bookingData?.services?.[0]?.service_short_description && (
+                          <div className="flex flex-col gap-3">
+                            <h2 className="description_color flex items-center gap-2">
+                              {t("requestDescription") || "Request Description"}
+                            </h2>
+                            <div className="flex items-start gap-3 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm">
+                              <CgNotes size={22} className="primary_text_color mt-0.5 min-w-[22px]" />
+                              <p className="text-lg font-normal break-words leading-relaxed text-gray-700 dark:text-gray-300">
+                                {bookingData?.services?.[0]?.service_short_description}
+                              </p>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Bid Note (Provider's Note) */}
+                        {bookingData?.services?.[0]?.note && (
+                          <div className="flex flex-col gap-3">
+                            <h2 className="description_color flex items-center gap-2">
+                              {t("bidNote") || "Bid Note"}
+                            </h2>
+                            <div className="flex items-start gap-3 p-4 bg-blue-50/50 dark:bg-blue-900/10 rounded-xl border border-blue-100 dark:border-blue-900/30 shadow-sm">
+                              <CgNotes size={22} className="text-blue-600 dark:text-blue-400 mt-0.5 min-w-[22px]" />
+                              <p className="text-lg font-normal break-words leading-relaxed text-gray-700 dark:text-gray-300">
+                                {bookingData?.services?.[0]?.note}
+                              </p>
+                            </div>
+                          </div>
+                        )}
+                      </section>
+                      <Separator />
+                    </>
+                  )}
+                </>
+              ) : (
+                /* Standard Booking Notes */
+                Boolean(bookingData?.remarks) && (
+                  <>
+                    <section className="space-y-4">
+                      <div className="flex flex-col gap-4">
+                        <h2 className="description_color">{t("notes")}</h2>
+                        <div className="flex items-center gap-3">
+                          <CgNotes size={22} className="primary_text_color min-w-[22px]" />
                           <h3 className="text-lg font-normal break-all">
-                            {bookingData?.services?.[0]?.service_short_description || bookingData?.remarks || ''}
+                            {bookingData?.remarks}
                           </h3>
                         </div>
                       </div>
-                    </div>
-                  </section>
-                  <Separator />
-                </>
+                    </section>
+                    <Separator />
+                  </>
+                )
               )}
 
               {/* Booked Services Details  */}
