@@ -285,7 +285,7 @@ const ServiceRequestDetails = () => {
                       className="p-1 sm:p-3 border rounded-lg description_color"
                       onClick={(e) => handleCanceleBooking(e)}
                     >
-                      {t("cancelBooking")}
+                      {t("cancelRequest")}
                     </button>
                   )}
                 </div>
