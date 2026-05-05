@@ -1043,8 +1043,8 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
                         <div
                           className={`p-2.5 rounded-lg transition-all duration-300 ${
                             datePickerType === "startDateTime" && showDatePicker
-                              ? "bg-blue-600 text-white shadow-lg shadow-blue-200"
-                              : "bg-white dark:bg-gray-700 text-gray-400 group-hover:text-blue-500 shadow-sm"
+                              ? "bg-blue-600 text-white  "
+                              : "bg-white dark:bg-gray-700 text-gray-400 "
                           }`}
                         >
                           <Calendar size={20} />
@@ -1073,15 +1073,15 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
                         onClick={() => handleDateTimeClick("endDateTime")}
                         className={`group p-4 rounded-lg text-left transition-all border-2 flex items-center gap-4 ${
                           datePickerType === "endDateTime" && showDatePicker
-                            ? "border-orange-500 bg-orange-50/30 dark:bg-orange-900/20 shadow-sm"
-                            : "border-gray-50 dark:border-gray-700 bg-gray-50/30 dark:bg-gray-700/30 hover:bg-white dark:hover:bg-gray-700 hover:border-orange-200 dark:hover:border-orange-700"
+                            ? "border-orange-500 bg-orange-50/30 dark:bg-orange-900/20 "
+                            : "border-gray-50 dark:border-gray-700 bg-gray-50/30 dark:bg-gray-700/30 "
                         }`}
                       >
                         <div
                           className={`p-2.5 rounded-lg transition-all duration-300 ${
                             datePickerType === "endDateTime" && showDatePicker
-                              ? "bg-orange-500 text-white shadow-lg shadow-orange-200"
-                              : "bg-white dark:bg-gray-700 text-gray-400 group-hover:text-orange-500 shadow-sm"
+                              ? "bg-orange-500 text-white "
+                              : "bg-white dark:bg-gray-700 text-gray-400 "
                           }`}
                         >
                           <Calendar size={20} />

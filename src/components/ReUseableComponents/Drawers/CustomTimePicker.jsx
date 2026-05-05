@@ -113,7 +113,7 @@ const CustomTimePicker = ({ value, onChange, setSelectedTimeSlot }) => {
                   <button
                     key={hour}
                     onClick={() => handleTimeSelection("hour", hour)}
-                    className={`w-full p-2 text-center hover:bg-blue-100 ${tempSelection.hour === hour ? "primary_bg_color text-white" : ""
+                    className={`w-full p-2 text-center ${tempSelection.hour === hour ? "primary_bg_color text-white" : ""
                       }`}
                   >
                     {hour}

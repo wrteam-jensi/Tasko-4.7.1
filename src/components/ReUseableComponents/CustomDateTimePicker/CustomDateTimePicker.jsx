@@ -184,7 +184,7 @@ const CustomDateTimePicker = ({ value, onChange, onClose, minDateTime = null, ty
                   onClick={() => handleTimeSelection("hour", hour)}
                   disabled={isTimeDisabled(hour, selectedMinute, selectedPeriod)}
                   className={cn(
-                    "w-full py-2 text-sm hover:bg-gray-100 rounded",
+                    "w-full py-2 text-sm rounded",
                     selectedHour === hour && "primary_bg_color text-white",
                     isTimeDisabled(hour, selectedMinute, selectedPeriod) && "opacity-50 cursor-not-allowed"
                   )}
@@ -220,7 +220,7 @@ const CustomDateTimePicker = ({ value, onChange, onClose, minDateTime = null, ty
                   onClick={() => handleTimeSelection("period", period)}
                   disabled={isTimeDisabled(selectedHour, selectedMinute, period)}
                   className={cn(
-                    "w-full py-2 text-sm hover:bg-gray-100 rounded",
+                    "w-full py-2 text-sm rounded",
                     selectedPeriod === period && "primary_bg_color text-white",
                     isTimeDisabled(selectedHour, selectedMinute, period) && "opacity-50 cursor-not-allowed"
                   )}
