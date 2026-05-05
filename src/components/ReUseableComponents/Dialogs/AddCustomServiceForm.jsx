@@ -609,9 +609,9 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
   ];
 
   return (
-    <div className="w-full max-w-6xl mx-auto animate-in fade-in slide-in-from-top-4 duration-500 bg-white min-h-[70vh] px-4 md:px-6">
+    <div className="w-full max-w-6xl mx-auto animate-in fade-in slide-in-from-top-4 duration-500 bg-white dark:bg-gray-900 min-h-[70vh] px-4 md:px-6">
       {/* Compact Header & Stepper Progress */}
-      <div className="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-gray-100/80">
+      <div className="sticky top-0 z-50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border-b border-gray-100/80 dark:border-gray-700/80">
         <div className="px-6 py-4 flex items-center justify-between"></div>
 
         {/* Sleek Minimalist Stepper */}
@@ -622,7 +622,7 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
                 <div
                   className={`
                     w-6 h-6 rounded-lg flex items-center justify-center transition-all duration-300 text-[10px] font-semibold
-                    ${currentStep >= step.id ? "bg-blue-600 text-white " : "bg-gray-100 text-gray-400"}
+                    ${currentStep >= step.id ? "bg-blue-600 text-white " : "bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500"}
                   `}
                 >
                   {currentStep > step.id ? (
@@ -632,13 +632,13 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
                   )}
                 </div>
                 <span
-                  className={`text-[13px] font-semibold uppercase tracking-wider hidden sm:block whitespace-nowrap ${currentStep >= step.id ? "text-blue-600" : "text-gray-400"}`}
+                  className={`text-[13px] font-semibold uppercase tracking-wider hidden sm:block whitespace-nowrap ${currentStep >= step.id ? "text-blue-600" : "text-gray-400 dark:text-gray-500"}`}
                 >
                   {step.title}
                 </span>
               </div>
               {idx < steps.length - 1 && (
-                <div className="flex-1 h-[2px] bg-gray-100 rounded-full mx-1">
+                <div className="flex-1 h-[2px] bg-gray-100 dark:bg-gray-700 rounded-full mx-1">
                   <div
                     className={`h-full bg-blue-600 rounded-full transition-all duration-500 ${currentStep > step.id ? "w-full" : "w-0"}`}
                   />
@@ -653,12 +653,12 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
         {currentStep === 1 && (
           <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
             {/* Step 1: Info */}
-            <div className="bg-white border border-gray-100 rounded-lg p-4 flex items-start gap-4 transition-all focus-within:ring-2 focus-within:ring-blue-500/10 focus-within:border-blue-500 shadow-sm">
-              <div className="p-2.5 bg-blue-50 rounded-lg text-blue-600">
+            <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg p-4 flex items-start gap-4 transition-all focus-within:ring-2 focus-within:ring-blue-500/10 focus-within:border-blue-500 shadow-sm">
+              <div className="p-2.5 bg-blue-50 dark:bg-blue-900/30 rounded-lg text-blue-600">
                 <Pencil size={18} />
               </div>
               <div className="flex-1 space-y-1">
-                <label className="text-[13px] font-semibold uppercase tracking-widest flex items-center gap-2 text-gray-400">
+                <label className="text-[13px] font-semibold uppercase tracking-widest flex items-center gap-2 text-gray-400 dark:text-gray-500">
                   {t("serviceTitle") || "Service Title"}
                   <span className="text-red-500">*</span>
                 </label>
@@ -666,31 +666,31 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
                   type="text"
                   name="serviceTitle"
                   placeholder="Ex: Kitchen Sink Repair"
-                  className="w-full text-base focus:outline-none placeholder:text-gray-200 bg-transparent text-gray-900"
+                  className="w-full text-base focus:outline-none placeholder:text-gray-200 dark:placeholder:text-gray-600 bg-transparent text-gray-900 dark:text-gray-100"
                   onChange={handleChange}
                   value={formValues.serviceTitle}
                 />
               </div>
             </div>
 
-            <div className="bg-white border border-gray-100 rounded-lg p-4 flex items-start gap-4 transition-all focus-within:ring-2 focus-within:ring-blue-500/10 focus-within:border-blue-500 shadow-sm">
-              <div className="p-2.5 bg-blue-50 rounded-lg text-blue-600">
+            <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg p-4 flex items-start gap-4 transition-all focus-within:ring-2 focus-within:ring-blue-500/10 focus-within:border-blue-500 shadow-sm">
+              <div className="p-2.5 bg-blue-50 dark:bg-blue-900/30 rounded-lg text-blue-600">
                 <MessageSquare size={18} />
               </div>
               <div className="flex-1 space-y-1">
                 <div className="flex justify-between items-center">
-                  <label className="text-[13px] font-semibold uppercase tracking-widest text-gray-400">
+                  <label className="text-[13px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500">
                     {t("description") || "Description"}
                     <span className="text-red-500">*</span>
                   </label>
-                  <span className="text-[9px] bg-gray-50 px-2 py-0.5 rounded-full text-gray-400 font-semibold">
+                  <span className="text-[9px] bg-gray-50 dark:bg-gray-700 px-2 py-0.5 rounded-full text-gray-400 dark:text-gray-500 font-semibold">
                     {formValues.serviceDescription.length}/500
                   </span>
                 </div>
                 <textarea
                   name="serviceDescription"
                   placeholder="Tell us more about what you need..."
-                  className="w-full text-sm focus:outline-none resize-none min-h-[100px] placeholder:text-gray-200 bg-transparent text-gray-900 leading-relaxed"
+                  className="w-full text-sm focus:outline-none resize-none min-h-[100px] placeholder:text-gray-200 dark:placeholder:text-gray-600 bg-transparent text-gray-900 dark:text-gray-100 leading-relaxed"
                   maxLength={500}
                   onChange={handleChange}
                   value={formValues.serviceDescription}
@@ -702,15 +702,15 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
             <button
               onClick={handleAIImprove}
               disabled={isImproving}
-              className="w-full h-12 bg-white border border-blue-100 hover:border-blue-600 rounded-lg px-4 flex items-center justify-between group transition-all active:scale-[0.99] disabled:opacity-50"
+              className="w-full h-12 bg-white dark:bg-gray-800 border border-blue-100 dark:border-blue-900 hover:border-blue-600 dark:hover:border-blue-500 rounded-lg px-4 flex items-center justify-between group transition-all active:scale-[0.99] disabled:opacity-50"
             >
               <div className="flex items-center gap-3">
                 <div
-                  className={`p-1.5 bg-blue-50 rounded-lg ${isImproving ? "animate-spin" : ""}`}
+                  className={`p-1.5 bg-blue-50 dark:bg-blue-900/30 rounded-lg ${isImproving ? "animate-spin" : ""}`}
                 >
                   <Sparkles className="text-blue-600" size={16} />
                 </div>
-                <span className="text-sm font-semibold text-gray-700">
+                <span className="text-sm font-semibold text-gray-700 dark:text-gray-200">
                   {isImproving
                     ? "Refining Details..."
                     : "Improve with Smart AI"}
@@ -727,12 +727,12 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
               </div>
             </button>
 
-            <div className="bg-white border border-gray-100 rounded-lg p-4 flex items-center gap-4 shadow-sm transition-all focus-within:ring-2 focus-within:ring-indigo-500/10 focus-within:border-indigo-500">
-              <div className="p-2.5 bg-indigo-50 rounded-lg text-indigo-600">
+            <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg p-4 flex items-center gap-4 shadow-sm transition-all focus-within:ring-2 focus-within:ring-indigo-500/10 focus-within:border-indigo-500">
+              <div className="p-2.5 bg-indigo-50 dark:bg-indigo-900/30 rounded-lg text-indigo-600">
                 <Wrench size={18} />
               </div>
               <div className="flex-1">
-                <label className="text-[13px] font-semibold text-gray-400 uppercase tracking-widest block mb-0.5">
+                <label className="text-[13px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-widest block mb-0.5">
                   {t("category") || "Category"}
                 </label>
                 <Select
@@ -747,7 +747,7 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
                 >
                   <SelectTrigger className="w-full border-none p-0 h-auto focus:ring-0 shadow-none text-left bg-transparent">
                     <div className="flex flex-col">
-                      <span className="text-base font-semibold text-gray-900 line-clamp-1">
+                      <span className="text-base font-semibold text-gray-900 dark:text-gray-100 line-clamp-1">
                         {formValues.category
                           ? categories.find((c) => c.id === formValues.category)
                               ?.translated_name ||
@@ -757,12 +757,12 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
                       </span>
                     </div>
                   </SelectTrigger>
-                  <SelectContent className="max-h-[300px] z-[9999] rounded-lg border-none shadow-2xl p-2 bg-white">
+                  <SelectContent className="max-h-[300px] z-[9999] rounded-lg border-none shadow-2xl p-2 bg-white dark:bg-gray-800 dark:border dark:border-gray-700">
                     {categoriesLoading ? (
                       <SelectItem
                         value="loading"
                         disabled
-                        className="rounded-lg"
+                        className="rounded-lg dark:text-gray-400"
                       >
                         {t("loading")}...
                       </SelectItem>
@@ -771,13 +771,13 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
                         <SelectItem
                           key={cat.id}
                           value={cat.id}
-                          className="rounded-lg my-1 focus:bg-blue-50 focus:text-blue-600 font-semibold"
+                          className="rounded-lg my-1 focus:bg-blue-50 dark:focus:bg-blue-900/40 focus:text-blue-600 font-semibold dark:text-gray-200"
                         >
                           {cat.translated_name || cat.name}
                         </SelectItem>
                       ))
                     ) : (
-                      <SelectItem value="none" disabled>
+                      <SelectItem value="none" disabled className="dark:text-gray-500">
                         {t("noCategoriesAvailable")}
                       </SelectItem>
                     )}
@@ -788,15 +788,15 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
 
             <div className="space-y-4">
               <div className="flex items-center justify-between px-1">
-                <h3 className="text-[13px] font-semibold uppercase tracking-widest text-gray-400 flex items-center">
+                <h3 className="text-[13px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 flex items-center">
                   {t("addAttachments") || "Attachments"}
-                  <span className="ml-2 text-[11px] font-normal lowercase italic tracking-normal text-gray-300">
+                  <span className="ml-2 text-[11px] font-normal lowercase italic tracking-normal text-gray-300 dark:text-gray-600">
                     (optional)
                   </span>
                 </h3>
               </div>
               <div
-                className={`p-6 border-2 border-dashed rounded-lg transition-all duration-500 ${isRecording ? "bg-purple-50/50 border-purple-300" : "bg-white border-gray-100 hover:border-blue-200"}`}
+                className={`p-6 border-2 border-dashed rounded-lg transition-all duration-500 ${isRecording ? "bg-purple-50/50 dark:bg-purple-900/20 border-purple-300 dark:border-purple-700" : "bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 hover:border-blue-200 dark:hover:border-blue-700"}`}
               >
                 <input
                   type="file"
@@ -854,23 +854,23 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
                         >
                           <item.icon size={28} />
                         </div>
-                        <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-tight">
+                        <span className="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-tight">
                           {item.label}
                         </span>
                       </button>
                     ))}
                   </div>
                 ) : (
-                  <div className="flex items-center justify-between bg-purple-50/50 p-4 rounded-lg">
+                  <div className="flex items-center justify-between bg-purple-50/50 dark:bg-purple-900/20 p-4 rounded-lg">
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center text-white animate-pulse shadow-lg shadow-red-200">
+                      <div className="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center text-white animate-pulse shadow-lg shadow-red-200 dark:shadow-red-900">
                         <Mic size={20} />
                       </div>
                       <div>
-                        <p className="text-[10px] font-semibold uppercase text-purple-600">
+                        <p className="text-[10px] font-semibold uppercase text-purple-600 dark:text-purple-400">
                           Recording...
                         </p>
-                        <p className="text-2xl font-semibold text-gray-900 tabular-nums">
+                        <p className="text-2xl font-semibold text-gray-900 dark:text-gray-100 tabular-nums">
                           {formatTime(recordingDuration)}
                         </p>
                       </div>
@@ -878,7 +878,7 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
                     <div className="flex gap-2">
                       <button
                         onClick={() => stopRecording(false)}
-                        className="w-10 h-10 rounded-full bg-white text-gray-400 hover:text-red-500 shadow-sm flex items-center justify-center transition-all"
+                        className="w-10 h-10 rounded-full bg-white dark:bg-gray-700 text-gray-400 dark:text-gray-400 hover:text-red-500 shadow-sm flex items-center justify-center transition-all"
                       >
                         <X size={18} />
                       </button>
@@ -897,18 +897,18 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
                   {attachments.map((file, index) => (
                     <div
                       key={index}
-                      className="flex items-center justify-between p-4 bg-white rounded-lg border border-gray-100 hover:border-blue-100 transition-all group shadow-sm"
+                      className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700 hover:border-blue-100 dark:hover:border-blue-700 transition-all group shadow-sm"
                     >
                       <div className="flex items-center gap-3 truncate">
-                        <div className="p-2.5 bg-gray-50 rounded-lg text-gray-400 group-hover:text-blue-500 transition-colors shadow-sm">
+                        <div className="p-2.5 bg-gray-50 dark:bg-gray-700 rounded-lg text-gray-400 group-hover:text-blue-500 transition-colors shadow-sm">
                           {getFileIcon(file.type)}
                         </div>
                         <div className="truncate">
-                          <p className="text-xs font-semibold text-gray-900 truncate">
+                          <p className="text-xs font-semibold text-gray-900 dark:text-gray-100 truncate">
                             {file.name}
                           </p>
                           <div className="flex items-center gap-2">
-                            <span className="text-[9px] font-semibold text-gray-400 uppercase">
+                            <span className="text-[9px] font-semibold text-gray-400 dark:text-gray-500 uppercase">
                               {(file.size / 1024).toFixed(0)} KB
                             </span>
                             {file.type.startsWith("audio/") && (
@@ -932,7 +932,7 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
                       </div>
                       <div className="flex items-center gap-2">
                         {file.type.startsWith("image/") && (
-                          <div className="w-10 h-10 rounded-lg overflow-hidden border border-gray-100 shadow-sm hidden sm:block">
+                          <div className="w-10 h-10 rounded-lg overflow-hidden border border-gray-100 dark:border-gray-600 shadow-sm hidden sm:block">
                             <img
                               src={URL.createObjectURL(file)}
                               alt="preview"
@@ -942,7 +942,7 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
                         )}
                         <button
                           onClick={() => removeAttachment(index)}
-                          className="p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-full transition-all"
+                          className="p-2 text-gray-300 dark:text-gray-600 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-full transition-all"
                         >
                           <Trash2 size={14} />
                         </button>
@@ -961,10 +961,10 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
             <div className="space-y-5">
               <div className="space-y-2">
                 <div className="flex items-center gap-2 px-1">
-                  <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400">
+                  <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500">
                     Scheduling
                   </h3>
-                  <div className="h-[1px] flex-1 bg-gray-100/60" />
+                  <div className="h-[1px] flex-1 bg-gray-100/60 dark:bg-gray-700/60" />
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                   {timeOptionCards.map((opt) => (
@@ -974,8 +974,8 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
                       className={`group flex flex-col items-center text-center p-3.5 rounded-lg border-2 transition-all duration-300 relative overflow-hidden active:scale-[0.97]
                             ${
                               timeOption === opt.id
-                                ? `${opt.border} bg-white shadow-xl shadow-gray-100 scale-[1.02] z-10`
-                                : "bg-white border-gray-100 hover:border-gray-200 hover:shadow-lg hover:shadow-gray-100/50"
+                                ? `${opt.border} bg-white dark:bg-gray-800 shadow-xl shadow-gray-100 dark:shadow-gray-900 scale-[1.02] z-10`
+                                : "bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 hover:border-gray-200 dark:hover:border-gray-600 hover:shadow-lg hover:shadow-gray-100/50"
                             }
                           `}
                     >
@@ -996,8 +996,8 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
                         <span
                           className={`block text-[11px] font-bold uppercase tracking-[0.05em] transition-colors duration-300 ${
                             timeOption === opt.id
-                              ? "text-gray-900"
-                              : "text-gray-400 group-hover:text-gray-600"
+                              ? "text-gray-900 dark:text-gray-100"
+                              : "text-gray-400 dark:text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-300"
                           }`}
                         >
                           {opt.title}
@@ -1005,8 +1005,8 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
                         <span
                           className={`text-[9px] font-medium leading-tight block transition-colors duration-300 ${
                             timeOption === opt.id
-                              ? "text-gray-500"
-                              : "text-gray-400/80"
+                              ? "text-gray-500 dark:text-gray-400"
+                              : "text-gray-400/80 dark:text-gray-600"
                           }`}
                         >
                           {opt.sub}
@@ -1026,34 +1026,34 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
                 </div>
 
                 {timeOption === "choose" && (
-                  <div className="bg-white rounded-lg p-5 space-y-4 border border-gray-100 shadow-gray-100/50 animate-in slide-in-from-top-4 duration-500">
+                  <div className="bg-white dark:bg-gray-800 rounded-lg p-5 space-y-4 border border-gray-100 dark:border-gray-700 shadow-gray-100/50 animate-in slide-in-from-top-4 duration-500">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <button
                         onClick={() => handleDateTimeClick("startDateTime")}
                         className={`group p-4 rounded-lg text-left transition-all border-2 flex items-center gap-4 ${
                           datePickerType === "startDateTime" && showDatePicker
-                            ? "border-blue-600 bg-blue-50/30 shadow-sm"
-                            : "border-gray-50 bg-gray-50/30 hover:bg-white hover:border-blue-200"
+                            ? "border-blue-600 bg-blue-50/30 dark:bg-blue-900/20 shadow-sm"
+                            : "border-gray-50 dark:border-gray-700 bg-gray-50/30 dark:bg-gray-700/30 hover:bg-white dark:hover:bg-gray-700 hover:border-blue-200 dark:hover:border-blue-700"
                         }`}
                       >
                         <div
                           className={`p-2.5 rounded-lg transition-all duration-300 ${
                             datePickerType === "startDateTime" && showDatePicker
                               ? "bg-blue-600 text-white shadow-lg shadow-blue-200"
-                              : "bg-white text-gray-400 group-hover:text-blue-500 shadow-sm"
+                              : "bg-white dark:bg-gray-700 text-gray-400 group-hover:text-blue-500 shadow-sm"
                           }`}
                         >
                           <Calendar size={20} />
                         </div>
                         <div>
-                          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.1em] mb-0.5">
+                          <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-[0.1em] mb-0.5">
                             Start Schedule
                           </p>
                           <p
                             className={`text-sm font-bold transition-colors ${
                               formValues.startDateTime
-                                ? "text-gray-900"
-                                : "text-gray-300"
+                                ? "text-gray-900 dark:text-gray-100"
+                                : "text-gray-300 dark:text-gray-600"
                             }`}
                           >
                             {formValues.startDateTime
@@ -1069,28 +1069,28 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
                         onClick={() => handleDateTimeClick("endDateTime")}
                         className={`group p-4 rounded-lg text-left transition-all border-2 flex items-center gap-4 ${
                           datePickerType === "endDateTime" && showDatePicker
-                            ? "border-orange-500 bg-orange-50/30 shadow-sm"
-                            : "border-gray-50 bg-gray-50/30 hover:bg-white hover:border-orange-200"
+                            ? "border-orange-500 bg-orange-50/30 dark:bg-orange-900/20 shadow-sm"
+                            : "border-gray-50 dark:border-gray-700 bg-gray-50/30 dark:bg-gray-700/30 hover:bg-white dark:hover:bg-gray-700 hover:border-orange-200 dark:hover:border-orange-700"
                         }`}
                       >
                         <div
                           className={`p-2.5 rounded-lg transition-all duration-300 ${
                             datePickerType === "endDateTime" && showDatePicker
                               ? "bg-orange-500 text-white shadow-lg shadow-orange-200"
-                              : "bg-white text-gray-400 group-hover:text-orange-500 shadow-sm"
+                              : "bg-white dark:bg-gray-700 text-gray-400 group-hover:text-orange-500 shadow-sm"
                           }`}
                         >
                           <Calendar size={20} />
                         </div>
                         <div>
-                          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.1em] mb-0.5">
+                          <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-[0.1em] mb-0.5">
                             End Schedule
                           </p>
                           <p
                             className={`text-sm font-bold transition-colors ${
                               formValues.endDateTime
-                                ? "text-gray-900"
-                                : "text-gray-300"
+                                ? "text-gray-900 dark:text-gray-100"
+                                : "text-gray-300 dark:text-gray-600"
                             }`}
                           >
                             {formValues.endDateTime
@@ -1103,7 +1103,7 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
                       </button>
                     </div>
                     {showDatePicker && (
-                      <div className="pt-2 border-t border-gray-50">
+                      <div className="pt-2 border-t border-gray-50 dark:border-gray-700">
                         <CustomDateTimePicker
                           value={formValues[datePickerType]}
                           onChange={handleDateTimeSelect}
@@ -1122,18 +1122,18 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
 
               <div className="space-y-2">
                 <div className="flex items-center gap-2 px-1">
-                  <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400">
+                  <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500">
                     Expected Budget ({currencySymbol})
                   </h3>
-                  <div className="h-[1px] flex-1 bg-gray-100/60" />
+                  <div className="h-[1px] flex-1 bg-gray-100/60 dark:bg-gray-700/60" />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="group bg-white rounded-lg p-4 border-2 border-gray-100 focus-within:border-blue-500 focus-within:bg-white transition-all shadow-sm hover:shadow-md">
-                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-1.5 transition-colors group-focus-within:text-blue-500">
+                  <div className="group bg-white dark:bg-gray-800 rounded-lg p-4 border-2 border-gray-100 dark:border-gray-700 focus-within:border-blue-500 focus-within:bg-white dark:focus-within:bg-gray-800 transition-all shadow-sm hover:shadow-md">
+                    <label className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest block mb-1.5 transition-colors group-focus-within:text-blue-500">
                       Min Budget
                     </label>
                     <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400  transition-all font-bold text-base">
+                      <div className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 dark:text-gray-500 transition-all font-bold text-base">
                         {currencySymbol}
                       </div>
                       <input
@@ -1141,18 +1141,18 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
                         name="minPrice"
                         min="0"
                         placeholder="0"
-                        className="w-full text-base font-bold focus:outline-none bg-transparent text-gray-900 placeholder:text-gray-200"
+                        className="w-full text-base font-bold focus:outline-none bg-transparent text-gray-900 dark:text-gray-100 placeholder:text-gray-200 dark:placeholder:text-gray-600"
                         onChange={handleChange}
                         value={formValues.minPrice}
                       />
                     </div>
                   </div>
-                  <div className="group bg-white rounded-lg p-4 border-2 border-gray-100 focus-within:border-emerald-500 focus-within:bg-white transition-all shadow-sm hover:shadow-md">
-                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-1.5 transition-colors group-focus-within:text-emerald-500">
+                  <div className="group bg-white dark:bg-gray-800 rounded-lg p-4 border-2 border-gray-100 dark:border-gray-700 focus-within:border-emerald-500 focus-within:bg-white dark:focus-within:bg-gray-800 transition-all shadow-sm hover:shadow-md">
+                    <label className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest block mb-1.5 transition-colors group-focus-within:text-emerald-500">
                       Max Budget
                     </label>
                     <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400   transition-all font-bold text-base">
+                      <div className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 dark:text-gray-500 transition-all font-bold text-base">
                         {currencySymbol}
                       </div>
                       <input
@@ -1160,7 +1160,7 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
                         name="maxPrice"
                         min="0"
                         placeholder="0"
-                        className="w-full text-base font-bold focus:outline-none bg-transparent text-gray-900 placeholder:text-gray-200"
+                        className="w-full text-base font-bold focus:outline-none bg-transparent text-gray-900 dark:text-gray-100 placeholder:text-gray-200 dark:placeholder:text-gray-600"
                         onChange={handleChange}
                         value={formValues.maxPrice}
                       />
@@ -1175,38 +1175,38 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
         {currentStep === 3 && (
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 text-left">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-[17px] font-bold text-gray-900 tracking-tight">
+              <h3 className="text-[17px] font-bold text-gray-900 dark:text-gray-100 tracking-tight">
                 Request Summary
               </h3>
             </div>
 
-            <div className="bg-white rounded-lg p-8 border border-gray-100 shadow-2xl shadow-gray-200/40 space-y-8 relative overflow-hidden">
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-8 border border-gray-100 dark:border-gray-700 shadow-2xl shadow-gray-200/40 dark:shadow-gray-900/40 space-y-8 relative overflow-hidden">
               <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-500 to-indigo-600 opacity-90" />
 
               {/* Header Info */}
-              <div className="flex flex-col gap-3 pb-6 border-b border-gray-50/80">
-                <div className="px-2.5 py-1 bg-blue-50/80 text-blue-600 border border-blue-100 rounded-lg text-[10px] font-bold uppercase tracking-[0.15em] w-fit">
+              <div className="flex flex-col gap-3 pb-6 border-b border-gray-50/80 dark:border-gray-700/80">
+                <div className="px-2.5 py-1 bg-blue-50/80 dark:bg-blue-900/30 text-blue-600 border border-blue-100 dark:border-blue-800 rounded-lg text-[10px] font-bold uppercase tracking-[0.15em] w-fit">
                   {categories.find((c) => c.id === formValues.category)
                     ?.translated_name ||
                     categories.find((c) => c.id === formValues.category)
                       ?.name ||
                     "Service"}
                 </div>
-                <h4 className="text-2xl font-bold text-gray-900 tracking-tight leading-tight">
+                <h4 className="text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-tight leading-tight">
                   {formValues.serviceTitle}
                 </h4>
               </div>
 
               {/* Grid Metadata */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="p-4 bg-gray-50/50 rounded-lg border border-gray-100 hover:bg-white hover:border-blue-100 hover:shadow-md hover:shadow-blue-500/5 transition-all space-y-2 group">
-                  <div className="flex items-center gap-2 text-gray-400 group-hover:text-blue-500 transition-colors">
+                <div className="p-4 bg-gray-50/50 dark:bg-gray-700/50 rounded-lg border border-gray-100 dark:border-gray-600 hover:bg-white dark:hover:bg-gray-700 hover:border-blue-100 dark:hover:border-blue-700 hover:shadow-md hover:shadow-blue-500/5 transition-all space-y-2 group">
+                  <div className="flex items-center gap-2 text-gray-400 dark:text-gray-500 group-hover:text-blue-500 transition-colors">
                     <Calendar size={14} />
                     <span className="text-[13px] font-semibold uppercase tracking-widest">
                       Timing
                     </span>
                   </div>
-                  <p className="text-sm font-semibold text-gray-900 truncate">
+                  <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">
                     {timeOption === "choose"
                       ? formValues.startDateTime
                         ? `${dayjs(formValues.startDateTime).format("MMM D, HH:mm")} — ${formValues.endDateTime ? dayjs(formValues.endDateTime).format(dayjs(formValues.startDateTime).isSame(dayjs(formValues.endDateTime), "day") ? "HH:mm" : "MMM D, HH:mm") : ""}`
@@ -1216,28 +1216,28 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
                   </p>
                 </div>
 
-                <div className="p-4 bg-gray-50/50 rounded-lg border border-gray-100 hover:bg-white hover:border-emerald-100 hover:shadow-md hover:shadow-emerald-500/5 transition-all space-y-2 group">
-                  <div className="flex items-center gap-2 text-gray-400 group-hover:text-emerald-500 transition-colors">
+                <div className="p-4 bg-gray-50/50 dark:bg-gray-700/50 rounded-lg border border-gray-100 dark:border-gray-600 hover:bg-white dark:hover:bg-gray-700 hover:border-emerald-100 dark:hover:border-emerald-700 hover:shadow-md hover:shadow-emerald-500/5 transition-all space-y-2 group">
+                  <div className="flex items-center gap-2 text-gray-400 dark:text-gray-500 group-hover:text-emerald-500 transition-colors">
                     <CreditCard size={14} />
                     <span className="text-[13px] font-semibold uppercase tracking-widest">
                       Budget
                     </span>
                   </div>
-                  <p className="text-sm font-semibold text-gray-900 truncate">
+                  <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">
                     {formValues.minPrice && formValues.maxPrice
                       ? `${currencySymbol}${formValues.minPrice} - ${formValues.maxPrice}`
                       : "Flexible"}
                   </p>
                 </div>
 
-                <div className="p-4 bg-gray-50/50 rounded-lg border border-gray-100 hover:bg-white hover:border-purple-100 hover:shadow-md hover:shadow-purple-500/5 transition-all space-y-2 group">
-                  <div className="flex items-center gap-2 text-gray-400 group-hover:text-purple-500 transition-colors">
+                <div className="p-4 bg-gray-50/50 dark:bg-gray-700/50 rounded-lg border border-gray-100 dark:border-gray-600 hover:bg-white dark:hover:bg-gray-700 hover:border-purple-100 dark:hover:border-purple-700 hover:shadow-md hover:shadow-purple-500/5 transition-all space-y-2 group">
+                  <div className="flex items-center gap-2 text-gray-400 dark:text-gray-500 group-hover:text-purple-500 transition-colors">
                     <ImageIcon size={14} />
                     <span className="text-[13px] font-semibold uppercase tracking-widest">
                       Assets
                     </span>
                   </div>
-                  <p className="text-sm font-semibold text-gray-900 truncate">
+                  <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">
                     {attachments.length}{" "}
                     {attachments.length === 1 ? "File" : "Files"}
                   </p>
@@ -1245,16 +1245,16 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
               </div>
 
               {/* Description */}
-              <div className="bg-blue-50/30 rounded-lg p-5 border border-blue-50 relative group transition-all">
+              <div className="bg-blue-50/30 dark:bg-blue-900/20 rounded-lg p-5 border border-blue-50 dark:border-blue-800/50 relative group transition-all">
                 <div className="absolute top-4 left-0 w-1 h-6 bg-blue-500 rounded-r-full" />
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
                     <MessageSquare size={14} className="text-blue-500" />
-                    <span className="text-[13px] font-semibold text-gray-400 uppercase tracking-widest">
+                    <span className="text-[13px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-widest">
                       Description
                     </span>
                   </div>
-                  <p className="text-sm font-medium text-gray-600 leading-relaxed italic line-clamp-4 group-hover:line-clamp-none transition-all">
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400 leading-relaxed italic line-clamp-4 group-hover:line-clamp-none transition-all">
                     "{formValues.serviceDescription}"
                   </p>
                 </div>
@@ -1265,7 +1265,7 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
                 <div className="space-y-4 pt-2">
                   <div className="flex items-center gap-2 px-1">
                     <ImageIcon size={14} className="text-blue-500" />
-                    <span className="text-[13px] font-semibold text-gray-400 uppercase tracking-widest">
+                    <span className="text-[13px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-widest">
                       Attached Assets
                     </span>
                   </div>
@@ -1273,18 +1273,18 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
                     {attachments.map((file, index) => (
                       <div
                         key={index}
-                        className="flex items-center justify-between p-4 bg-gray-50/50 rounded-lg border border-gray-100 hover:bg-white transition-all group"
+                        className="flex items-center justify-between p-4 bg-gray-50/50 dark:bg-gray-700/50 rounded-lg border border-gray-100 dark:border-gray-600 hover:bg-white dark:hover:bg-gray-700 transition-all group"
                       >
                         <div className="flex items-center gap-3 truncate">
-                          <div className="p-2.5 bg-white rounded-lg text-gray-400 group-hover:text-blue-500 transition-colors shadow-sm">
+                          <div className="p-2.5 bg-white dark:bg-gray-700 rounded-lg text-gray-400 group-hover:text-blue-500 transition-colors shadow-sm">
                             {getFileIcon(file.type)}
                           </div>
                           <div className="truncate">
-                            <p className="text-xs font-semibold text-gray-900 truncate">
+                            <p className="text-xs font-semibold text-gray-900 dark:text-gray-100 truncate">
                               {file.name}
                             </p>
                             <div className="flex items-center gap-2">
-                              <span className="text-[9px] font-semibold text-gray-400 uppercase">
+                              <span className="text-[9px] font-semibold text-gray-400 dark:text-gray-500 uppercase">
                                 {(file.size / 1024).toFixed(0)} KB
                               </span>
                               {file.type.startsWith("audio/") && (
@@ -1307,7 +1307,7 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
                           </div>
                         </div>
                         {file.type.startsWith("image/") && (
-                          <div className="w-10 h-10 rounded-lg overflow-hidden border border-gray-100 shadow-sm">
+                          <div className="w-10 h-10 rounded-lg overflow-hidden border border-gray-100 dark:border-gray-600 shadow-sm">
                             <img
                               src={URL.createObjectURL(file)}
                               alt="preview"
@@ -1322,48 +1322,48 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
               )}
 
               {/* Trust Signals Section */}
-              <div className="mt-8 p-6 bg-gray-50/50 rounded-2xl border border-gray-100/50 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-4 overflow-hidden relative">
+              <div className="mt-8 p-6 bg-gray-50/50 dark:bg-gray-700/50 rounded-2xl border border-gray-100/50 dark:border-gray-600/50 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-4 overflow-hidden relative">
                 <div className="flex items-center gap-4 flex-1">
-                  <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-blue-600 shadow-sm border border-blue-50">
+                  <div className="w-10 h-10 rounded-xl bg-white dark:bg-gray-700 flex items-center justify-center text-blue-600 shadow-sm border border-blue-50 dark:border-blue-900">
                     <ShieldCheck size={20} />
                   </div>
                   <div className="space-y-0.5">
-                    <h4 className="text-[12px] font-bold text-gray-900">
+                    <h4 className="text-[12px] font-bold text-gray-900 dark:text-gray-100">
                       {t("verifiedPros") || "Verified pros"}
                     </h4>
-                    <p className="text-[11px] text-gray-500">
+                    <p className="text-[11px] text-gray-500 dark:text-gray-400">
                       {t("qualityAssured") || "Quality assured"}
                     </p>
                   </div>
                 </div>
 
-                <div className="hidden md:block w-px h-8 bg-gray-200/60" />
+                <div className="hidden md:block w-px h-8 bg-gray-200/60 dark:bg-gray-600/60" />
 
                 <div className="flex items-center gap-4 flex-1">
-                  <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-orange-500 shadow-sm border border-orange-50">
+                  <div className="w-10 h-10 rounded-xl bg-white dark:bg-gray-700 flex items-center justify-center text-orange-500 shadow-sm border border-orange-50 dark:border-orange-900">
                     <Zap size={20} />
                   </div>
                   <div className="space-y-0.5">
-                    <h4 className="text-[12px] font-bold text-gray-900">
+                    <h4 className="text-[12px] font-bold text-gray-900 dark:text-gray-100">
                       {t("fastResponses") || "Fast responses"}
                     </h4>
-                    <p className="text-[11px] text-gray-500">
+                    <p className="text-[11px] text-gray-500 dark:text-gray-400">
                       {t("usuallyWithin1Hour") || "Usually within 1 hour"}
                     </p>
                   </div>
                 </div>
 
-                <div className="hidden md:block w-px h-8 bg-gray-200/60" />
+                <div className="hidden md:block w-px h-8 bg-gray-200/60 dark:bg-gray-600/60" />
 
                 <div className="flex items-center gap-4 flex-1">
-                  <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-emerald-500 shadow-sm border border-emerald-50">
+                  <div className="w-10 h-10 rounded-xl bg-white dark:bg-gray-700 flex items-center justify-center text-emerald-500 shadow-sm border border-emerald-50 dark:border-emerald-900">
                     <Lock size={20} />
                   </div>
                   <div className="space-y-0.5">
-                    <h4 className="text-[12px] font-bold text-gray-900">
+                    <h4 className="text-[12px] font-bold text-gray-900 dark:text-gray-100">
                       {t("freeToUse") || "Free to use"}
                     </h4>
-                    <p className="text-[11px] text-gray-500">
+                    <p className="text-[11px] text-gray-500 dark:text-gray-400">
                       {t("noCommitment") || "No commitment"}
                     </p>
                   </div>
@@ -1373,12 +1373,12 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
           </div>
         )}
 
-        <div className="mt-10 flex items-center justify-between gap-4 flex-wrap border-t border-gray-50 pt-6">
+        <div className="mt-10 flex items-center justify-between gap-4 flex-wrap border-t border-gray-50 dark:border-gray-700 pt-6">
           <div className="min-w-[120px] md:min-w-[144px]">
             {currentStep > 1 && (
               <Button
                 variant="ghost"
-                className="h-10 w-32 md:w-36 text-gray-500 hover:text-gray-900 border border-gray-100 hover:border-gray-200 rounded-lg text-[13px] font-semibold transition-all active:scale-[0.98]"
+                className="h-10 w-32 md:w-36 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 border border-gray-100 dark:border-gray-700 hover:border-gray-200 dark:hover:border-gray-600 rounded-lg text-[13px] font-semibold transition-all active:scale-[0.98]"
                 onClick={handleBack}
               >
                 {t("back") || "Back"}
