@@ -975,7 +975,7 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
                             ${
                               timeOption === opt.id
                                 ? `${opt.border} bg-white dark:bg-gray-800 shadow-xl shadow-gray-100 dark:shadow-gray-900 scale-[1.02] z-10`
-                                : "bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 hover:border-gray-200 dark:hover:border-gray-600 hover:shadow-lg hover:shadow-gray-100/50"
+                                : "bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 hover:border-gray-200 "
                             }
                           `}
                     >
