@@ -867,5 +867,6 @@
   "quoteFooterText": "Your request will be sent to this provider and other available professionals.",
   "microphoneError": "Microphone access denied. Please enable microphone in browser settings to use voice notes.",
   "requestDescription": "Request Description",
-  "bidNote": "Bid Note"
+  "bidNote": "Bid Note",
+  "requestType":"Request Type"
 }

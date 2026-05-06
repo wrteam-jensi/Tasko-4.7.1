@@ -364,6 +364,21 @@ const ServiceRequestDetails = () => {
                       {showPrice(serviceData?.max_price)}
                     </p>
                   </div>
+                  {serviceData?.type && (
+                    <div>
+                      <p className="description_color text-sm">
+                        {t("requestType") || "Request Type"}
+                      </p>
+                      <p className="font-medium capitalize">
+                        {{
+                          one_day: t("today") || "Today",
+                          week: t("thisWeek") || "This Week",
+                          flexible: t("flexible") || "Flexible",
+                          custom: t("chooseDates") || "Custom",
+                        }[serviceData.type] || serviceData.type}
+                      </p>
+                    </div>
+                  )}
                   <div>
                     <p className="description_color text-sm">{t("postedAt")}</p>
                     <p className="font-medium">
@@ -378,20 +393,25 @@ const ServiceRequestDetails = () => {
                           ).format("DD-MM-YYYY - hh:mm A")}
                     </p>
                   </div>
-                  <div>
-                    <p className="description_color text-sm">{t("expireOn")}</p>
-                    <p className="font-medium">
-                      {serviceData?.requested_end_date_time_utc
-                        ? dayjs(serviceData.requested_end_date_time_utc).format(
-                            "DD-MM-YYYY - hh:mm A",
-                          )
-                        : dayjs(
-                            serviceData?.requested_end_date +
-                              " " +
-                              serviceData?.requested_end_time,
-                          ).format("DD-MM-YYYY - hh:mm A")}
-                    </p>
-                  </div>
+                  {(serviceData?.requested_end_date_time_utc ||
+                    serviceData?.requested_end_date) && (
+                    <div>
+                      <p className="description_color text-sm">
+                        {t("expireOn")}
+                      </p>
+                      <p className="font-medium">
+                        {serviceData?.requested_end_date_time_utc
+                          ? dayjs(
+                              serviceData.requested_end_date_time_utc,
+                            ).format("DD-MM-YYYY - hh:mm A")
+                          : dayjs(
+                              serviceData?.requested_end_date +
+                                " " +
+                                serviceData?.requested_end_time,
+                            ).format("DD-MM-YYYY - hh:mm A")}
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 {/* Files Section */}
