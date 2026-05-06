@@ -371,7 +371,7 @@ const ServiceRequestDetails = () => {
                       </p>
                       <p className="font-medium capitalize">
                         {{
-                          one_day: t("today") || "Today",
+                          one_day: t("today1") || "Today",
                           week: t("thisWeek") || "This Week",
                           flexible: t("flexible") || "Flexible",
                           custom: t("chooseDates") || "Custom",
