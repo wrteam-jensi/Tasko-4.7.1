@@ -81,7 +81,8 @@ export function useCheckoutLogic() {
     const availableOnHome = currentCartProviderData?.at_doorstep === "1";
     const availableOnStore = currentCartProviderData?.at_store === "1";
     const isPayLaterAllowed =
-        Number(currentCartProviderData?.is_pay_later_allowed) === 1;
+        Number(currentCartProviderData?.is_pay_later_allowed) === 1 &&
+        currentCartProviderData?.verify_status === "approved";
     const isPayOnlineAllowed =
         Number(currentCartProviderData?.is_online_payment_allowed) === 1;
 

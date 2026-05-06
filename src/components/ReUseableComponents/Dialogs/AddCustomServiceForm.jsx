@@ -896,6 +896,25 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
                   </div>
                 )}
               </div>
+              {requestQuoteSettings && (
+                <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-2 leading-relaxed">
+                  {[
+                    requestQuoteSettings.max_files_allowed &&
+                      `Max ${requestQuoteSettings.max_files_allowed} files`,
+                    requestQuoteSettings.max_file_size_images &&
+                      `JPG, PNG up to ${requestQuoteSettings.max_file_size_images}MB`,
+                    requestQuoteSettings.max_file_size_video &&
+                      `MP4 up to ${requestQuoteSettings.max_file_size_video}MB`,
+                    requestQuoteSettings.max_file_size_audio &&
+                      `MP3, WAV up to ${requestQuoteSettings.max_file_size_audio}MB`,
+                    requestQuoteSettings.max_file_size_other &&
+                      `PDF, DOC, XLS up to ${requestQuoteSettings.max_file_size_other}MB`,
+                  ]
+                    .filter(Boolean)
+                    .join(" | ")}
+                </p>
+              )}
+         
               {attachments.length > 0 && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {attachments.map((file, index) => (
