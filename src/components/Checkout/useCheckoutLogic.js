@@ -80,9 +80,19 @@ export function useCheckoutLogic() {
     const isCustomJob = Boolean(customJobData?.custom_job_request_id);
     const availableOnHome = currentCartProviderData?.at_doorstep === "1";
     const availableOnStore = currentCartProviderData?.at_store === "1";
-    const isPayLaterAllowed =
-        Number(currentCartProviderData?.is_pay_later_allowed) === 1 &&
-        currentCartProviderData?.verify_status === "approved";
+    const isPayLaterAllowed = (() => {
+        const payLater = currentCartProviderData?.is_pay_later_allowed;
+        const verified = currentCartProviderData?.is_verified;
+        const payLaterOk =
+            payLater === "Allowed" ||
+            Number(payLater) === 1 ||
+            payLater === true;
+        const verifiedOk =
+            verified === true ||
+            verified === "true" ||
+            Number(verified) === 1;
+        return payLaterOk && verifiedOk;
+    })();
     const isPayOnlineAllowed =
         Number(currentCartProviderData?.is_online_payment_allowed) === 1;
 

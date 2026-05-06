@@ -205,6 +205,7 @@ const ServiceRequestDetails = () => {
         at_store: bid?.at_store,
         is_pay_later_allowed: bid?.is_pay_later_allowed,
         is_online_payment_allowed: bid?.is_online_payment_allowed,
+        is_verified: bid?.is_verified,
         advance_booking_days: bid?.advance_booking_days,
         providerDetails: {
           name: bid?.provider_name,
