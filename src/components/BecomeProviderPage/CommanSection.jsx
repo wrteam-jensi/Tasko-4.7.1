@@ -19,7 +19,7 @@ const CommanSection = ({ isReversed, headline, title, description, buttonText, i
 
                 {/* Image Section */}
                 <div className="w-full md:w-1/2 flex items-center justify-center relative p-6">
-                    <div className="relative w-full h-fit md:h-[645px] aspect-square">
+                    <div className="relative w-full h-fit aspect-square">
                         <CustomImageTag
                             src={img}
                             alt={title}
