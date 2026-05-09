@@ -358,13 +358,15 @@ const ServiceRequestDetails = () => {
 
                 {/* Budget & Dates */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 light_bg_color p-4 rounded-lg">
-                  <div>
-                    <p className="description_color text-sm">{t("budget")}</p>
-                    <p className="font-medium">
-                      {showPrice(serviceData?.min_price)} {t("to")}{" "}
-                      {showPrice(serviceData?.max_price)}
-                    </p>
-                  </div>
+                  {(Number(serviceData?.min_price) > 0 || Number(serviceData?.max_price) > 0) && (
+                    <div>
+                      <p className="description_color text-sm">{t("budget")}</p>
+                      <p className="font-medium">
+                        {showPrice(serviceData?.min_price)} {t("to")}{" "}
+                        {showPrice(serviceData?.max_price)}
+                      </p>
+                    </div>
+                  )}
                   {serviceData?.type && (
                     <div>
                       <p className="description_color text-sm">
