@@ -1337,10 +1337,10 @@ export const makeCustomJobRequestApi = async ({
   if (service_short_description) {
     formData.append("service_short_description", service_short_description);
   }
-  if (min_price) {
+  if (min_price !== undefined && min_price !== null) {
     formData.append("min_price", min_price);
   }
-  if (max_price) {
+  if (max_price !== undefined && max_price !== null) {
     formData.append("max_price", max_price);
   }
   if (type) {

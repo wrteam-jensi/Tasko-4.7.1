@@ -32,12 +32,14 @@ const MyServiceRequestCard = ({ data }) => {
       <h3 className="text-lg font-semibold">{data?.service_title}</h3>
 
       {/* Budget */}
-      <div>
-        <p className="description_color text-sm">{t("budget")}</p>
-        <p className="font-medium">
-          {showPrice(data?.min_price)} {t("to")} {showPrice(data?.max_price)}
-        </p>
-      </div>
+      {(data?.min_price || data?.max_price) && (
+        <div>
+          <p className="description_color text-sm">{t("budget")}</p>
+          <p className="font-medium">
+            {showPrice(data?.min_price)} {t("to")} {showPrice(data?.max_price)}
+          </p>
+        </div>
+      )}
 
       {/* Divider */}
       <hr className="description_color" />
