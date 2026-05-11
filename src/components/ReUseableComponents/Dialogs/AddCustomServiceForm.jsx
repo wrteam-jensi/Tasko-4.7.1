@@ -1420,15 +1420,13 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
 
         <div className="mt-10 flex items-center justify-between gap-4 flex-wrap border-t border-gray-50 dark:border-gray-700 pt-6">
           <div className="min-w-[120px] md:min-w-[144px]">
-            {currentStep > 1 && (
-              <Button
-                variant="ghost"
-                className="h-10 w-32 md:w-36 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 border border-gray-100 dark:border-gray-700 hover:border-gray-200 dark:hover:border-gray-600 rounded-lg text-[13px] font-semibold transition-all active:scale-[0.98]"
-                onClick={handleBack}
-              >
-                {t("back") || "Back"}
-              </Button>
-            )}
+            <Button
+              variant="ghost"
+              className="h-10 w-32 md:w-36 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 border border-gray-100 dark:border-gray-600 hover:border-gray-200 dark:hover:border-gray-500 rounded-lg text-[13px] font-semibold transition-all active:scale-[0.98]"
+              onClick={currentStep > 1 ? handleBack : close}
+            >
+              {currentStep > 1 ? (t("back") || "Back") : (t("cancel") || "Cancel")}
+            </Button>
           </div>
 
           <div className="flex-1 flex justify-end">
