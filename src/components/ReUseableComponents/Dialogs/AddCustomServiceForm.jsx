@@ -701,7 +701,7 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
               </div>
               <div className="flex-1 space-y-1">
                 <div className="flex justify-between items-center">
-                  <label className="text-[13px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500">
+                  <label className="text-[13px] font-semibold uppercase tracking-widest flex items-center gap-2 text-gray-400 dark:text-gray-500">
                     {t("description") || "Description"}
                     <span className="text-red-500">*</span>
                   </label>
