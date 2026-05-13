@@ -82,3 +82,5 @@ export const createCashfreeOrder = "cashfree_create_order";
 export const updateFcm = "update_fcm";
 
 export const getUserInfo = "get_user_info";
+
+export const getCategoriesHierarchical = "get_categories_hierarchical";

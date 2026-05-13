@@ -29,6 +29,8 @@ import {
   ShieldCheck,
   Lock,
   ChevronRight,
+  ChevronDown,
+  ChevronUp,
   Gift,
   X,
   Trash2,
@@ -42,7 +44,7 @@ import CustomDateTimePicker from "../CustomDateTimePicker/CustomDateTimePicker";
 import { useTranslation } from "@/components/Layout/TranslationContext";
 import dayjs from "dayjs";
 import {
-  getAllCategoriesApi,
+  getCategoriesHierarchicalApi,
   makeCustomJobRequestApi,
   enhanceCustomJobRequestApi,
 } from "@/api/apiRoutes";
@@ -99,6 +101,8 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
   const [categoriesLoading, setCategoriesLoading] = useState(false);
+  const [expandedCategoryId, setExpandedCategoryId] = useState(null);
+  const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
   const [timeOption, setTimeOption] = useState("flexible");
   const [isImproving, setIsImproving] = useState(false);
 
@@ -107,6 +111,7 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
     serviceTitle: "",
     serviceDescription: "",
     category: "",
+    subCategory: "",
     minPrice: "",
     maxPrice: "",
     startDateTime: null,
@@ -388,9 +393,9 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
   const fetchCategories = async () => {
     try {
       setCategoriesLoading(true);
-      const response = await getAllCategoriesApi({});
+      const response = await getCategoriesHierarchicalApi();
       const categoriesData = response?.data || response;
-      setCategories(categoriesData || []);
+      setCategories(Array.isArray(categoriesData) ? categoriesData : []);
     } catch (error) {
       console.error("Error fetching categories:", error);
       setCategories([]);
@@ -404,6 +409,7 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
       serviceTitle: "",
       serviceDescription: "",
       category: "",
+      subCategory: "",
       minPrice: "",
       maxPrice: "",
       startDateTime: null,
@@ -413,6 +419,8 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
     setAttachments([]);
     setCurrentStep(1);
     setIsManualCategory(false);
+    setExpandedCategoryId(null);
+    setCategoryDropdownOpen(false);
   };
 
   const handleAIImprove = async () => {
@@ -522,7 +530,7 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
         new Date(date).toISOString().replace("T", " ").slice(0, 19);
 
       const payload = {
-        category_id: formValues.category || categories[0]?.id || "1",
+        category_id: formValues.subCategory || formValues.category || categories[0]?.id || "1",
         service_title: formValues.serviceTitle,
         service_short_description: formValues.serviceDescription,
         min_price: formValues.minPrice,
@@ -740,69 +748,179 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
         )}
 
         {currentStep === 2 && (
-          <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
-            {/* Step 2: Category */}
-            <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg p-4 flex items-center gap-4 shadow-sm transition-all focus-within:ring-2 focus-within:ring-indigo-500/10 focus-within:border-indigo-500">
-              <div className="p-2.5 bg-indigo-50 dark:bg-indigo-900/30 rounded-lg text-indigo-600">
-                <Wrench size={18} />
+          <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg shadow-sm overflow-hidden">
+              {/* Trigger */}
+              <button
+                type="button"
+                onClick={() => setCategoryDropdownOpen((prev) => !prev)}
+                className="w-full flex items-center gap-4 p-4 hover:bg-gray-50 dark:hover:bg-gray-700/40 transition-colors"
+              >
+                <div className="p-2.5 bg-indigo-50 dark:bg-indigo-900/30 rounded-lg text-indigo-600 flex-shrink-0">
+                  <Wrench size={18} />
+                </div>
+                <div className="flex-1 min-w-0 text-left">
+                  <span className="text-[13px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-widest block mb-0.5">
+                    {t("category") || "Category"}
+                  </span>
+                  {(() => {
+                    const selectedCat = categories.find((c) => c.id === formValues.category);
+                    const selectedSub = formValues.subCategory
+                      ? (selectedCat?.children || []).find((s) => s.id === formValues.subCategory)
+                      : null;
+                    const display = selectedSub || selectedCat;
+                    const displayImg = display?.image || display?.category_image;
+                    const displayName = display
+                      ? display.translated_name || display.category_name || display.name
+                      : t("selectCategory") || "Choose category";
+                    return (
+                      <div className="flex items-center gap-2">
+                        {displayImg && (
+                          <img src={displayImg} alt="" className="w-6 h-6 rounded-md object-cover flex-shrink-0" />
+                        )}
+                        <div className="flex flex-col min-w-0">
+                          <span className="text-base font-semibold text-gray-900 dark:text-gray-100 line-clamp-1">
+                            {displayName}
+                          </span>
+                          {selectedSub && selectedCat && (
+                            <span className="text-[11px] text-gray-400 dark:text-gray-500 line-clamp-1">
+                              {selectedCat.translated_name || selectedCat.category_name || selectedCat.name}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })()}
+                </div>
+                <ChevronDown
+                  size={18}
+                  className={`text-gray-400 flex-shrink-0 transition-transform duration-200 ${categoryDropdownOpen ? "rotate-180" : ""}`}
+                />
+              </button>
+
+              {/* Category list — shown only when open */}
+              {categoryDropdownOpen && (
+              <div className="border-t border-gray-100 dark:border-gray-700 max-h-[55vh] overflow-y-auto">
+                {categoriesLoading ? (
+                  <div className="divide-y divide-gray-50 dark:divide-gray-700">
+                    {[1, 2, 3, 4].map((i) => (
+                      <div key={i} className="flex items-center gap-3 px-4 py-3">
+                        <div className="w-5 h-5 rounded-full bg-gray-100 dark:bg-gray-700 animate-pulse flex-shrink-0" />
+                        <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-700 animate-pulse flex-shrink-0" />
+                        <div className="h-4 bg-gray-100 dark:bg-gray-700 animate-pulse rounded flex-1" />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="divide-y divide-gray-50 dark:divide-gray-700/50">
+                    {categories.map((cat) => {
+                      const catImg = cat.image || cat.category_image;
+                      const catName = cat.translated_name || cat.category_name || cat.name;
+                      const isSelected = formValues.category === cat.id;
+                      const isExpanded = expandedCategoryId === cat.id;
+                      const catSubCategories = Array.isArray(cat.children) ? cat.children : [];
+                      const hasSubCategories = catSubCategories.length > 0;
+
+                      return (
+                        <div key={cat.id}>
+                          {/* Category row */}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setIsManualCategory(true);
+                              setFormValues((prev) => ({
+                                ...prev,
+                                category: cat.id,
+                                subCategory: "",
+                              }));
+                              if (!hasSubCategories) {
+                                setCategoryDropdownOpen(false);
+                              } else if (isExpanded) {
+                                setExpandedCategoryId(null);
+                              } else {
+                                setExpandedCategoryId(cat.id);
+                              }
+                            }}
+                            className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors ${
+                              isSelected
+                                ? "bg-blue-50 dark:bg-blue-900/20"
+                                : "hover:bg-gray-50 dark:hover:bg-gray-700/40"
+                            }`}
+                          >
+                            {/* Image */}
+                            {catImg ? (
+                              <img
+                                src={catImg}
+                                alt=""
+                                className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
+                              />
+                            ) : (
+                              <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
+                                <Wrench size={18} className="text-gray-400" />
+                              </div>
+                            )}
+                            {/* Name */}
+                            <span className="flex-1 text-sm font-medium text-gray-900 dark:text-gray-100">
+                              {catName}
+                            </span>
+                            {/* Chevron — hidden if no subcategories */}
+                            {hasSubCategories && (
+                              isExpanded ? (
+                                <ChevronUp size={18} className="text-gray-400 flex-shrink-0" />
+                              ) : (
+                                <ChevronDown size={18} className="text-gray-400 flex-shrink-0" />
+                              )
+                            )}
+                          </button>
+
+                          {/* Subcategories — inline below parent */}
+                          {isExpanded && hasSubCategories && (
+                            <div className="divide-y divide-gray-50 dark:divide-gray-700/30 bg-gray-50/50 dark:bg-gray-700/20">
+                              {catSubCategories.map((sub) => {
+                                  const subImg = sub.category_image || sub.image;
+                                  const subName = sub.translated_name || sub.name;
+                                  const isSubSelected = formValues.subCategory === sub.id;
+                                  return (
+                                    <button
+                                      key={sub.id}
+                                      type="button"
+                                      onClick={() => {
+                                        setFormValues((prev) => ({
+                                          ...prev,
+                                          subCategory: isSubSelected ? "" : sub.id,
+                                        }));
+                                        if (!isSubSelected) setCategoryDropdownOpen(false);
+                                      }}
+                                      className={`w-full flex items-center gap-3 pl-12 pr-4 py-3 text-left transition-colors ${
+                                        isSubSelected
+                                          ? "bg-blue-50/70 dark:bg-blue-900/15"
+                                          : "hover:bg-gray-100 dark:hover:bg-gray-700/40"
+                                      }`}
+                                    >
+                                      {subImg ? (
+                                        <img
+                                          src={subImg}
+                                          alt=""
+                                          className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
+                                        />
+                                      ) : (
+                                        <div className="w-12 h-12 rounded-lg bg-gray-200 dark:bg-gray-600 flex-shrink-0" />
+                                      )}
+                                      <span className="flex-1 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                        {subName}
+                                      </span>
+                                    </button>
+                                  );
+                                })}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
-              <div className="flex-1">
-                <label className="text-[13px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-widest block mb-0.5">
-                  {t("category") || "Category"}
-                </label>
-                <Select
-                  onValueChange={(value) => {
-                    setIsManualCategory(true);
-                    setFormValues((prevValues) => ({
-                      ...prevValues,
-                      category: value,
-                    }));
-                  }}
-                  value={formValues.category}
-                >
-                  <SelectTrigger className="w-full border-none p-0 h-auto focus:ring-0 shadow-none text-left bg-transparent">
-                    <div className="flex flex-col">
-                      <span className="text-base font-semibold text-gray-900 dark:text-gray-100 line-clamp-1">
-                        {formValues.category
-                          ? categories.find((c) => c.id === formValues.category)
-                              ?.translated_name ||
-                            categories.find((c) => c.id === formValues.category)
-                              ?.name
-                          : t("selectCategory") || "Choose category"}
-                      </span>
-                    </div>
-                  </SelectTrigger>
-                  <SelectContent className="max-h-[300px] z-[9999] rounded-lg border-none shadow-2xl p-2 bg-white dark:bg-gray-800 dark:border dark:border-gray-700">
-                    {categoriesLoading ? (
-                      <SelectItem
-                        value="loading"
-                        disabled
-                        className="rounded-lg dark:text-gray-400"
-                      >
-                        {t("loading")}...
-                      </SelectItem>
-                    ) : categories.length > 0 ? (
-                      categories.map((cat) => (
-                        <SelectItem
-                          key={cat.id}
-                          value={cat.id}
-                          className="rounded-lg my-1 focus:bg-blue-50 dark:focus:bg-blue-900/40 focus:text-blue-600 font-semibold dark:text-gray-200"
-                        >
-                          {cat.translated_name || cat.name}
-                        </SelectItem>
-                      ))
-                    ) : (
-                      <SelectItem
-                        value="none"
-                        disabled
-                        className="dark:text-gray-500"
-                      >
-                        {t("noCategoriesAvailable")}
-                      </SelectItem>
-                    )}
-                  </SelectContent>
-                </Select>
-              </div>
+              )}
             </div>
           </div>
         )}
@@ -1230,13 +1348,26 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
 
               {/* Header Info */}
               <div className="flex flex-col gap-3 pb-6 border-b border-gray-50/80 dark:border-gray-700/80">
-                <div className="px-2.5 py-1 bg-blue-50/80 dark:bg-blue-900/30 text-blue-600 border border-blue-100 dark:border-blue-800 rounded-lg text-[10px] font-bold uppercase tracking-[0.15em] w-fit">
-                  {categories.find((c) => c.id === formValues.category)
-                    ?.translated_name ||
-                    categories.find((c) => c.id === formValues.category)
-                      ?.name ||
-                    "Service"}
-                </div>
+                {(() => {
+                  const reviewCat = categories.find((c) => c.id === formValues.category);
+                  const reviewSub = formValues.subCategory
+                    ? (reviewCat?.children || []).find((s) => s.id === formValues.subCategory)
+                    : null;
+                  const catName = reviewCat?.translated_name || reviewCat?.category_name || reviewCat?.name || "Service";
+                  const subName = reviewSub?.translated_name || reviewSub?.name;
+                  return (
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <div className="px-2.5 py-1 bg-blue-50/80 dark:bg-blue-900/30 text-blue-600 border border-blue-100 dark:border-blue-800 rounded-lg text-[10px] font-bold uppercase tracking-[0.15em] w-fit">
+                        {catName}
+                      </div>
+                      {subName && (
+                        <div className="px-2.5 py-1 bg-indigo-50/80 dark:bg-indigo-900/30 text-indigo-600 border border-indigo-100 dark:border-indigo-800 rounded-lg text-[10px] font-bold uppercase tracking-[0.15em] w-fit">
+                          {subName}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })()}
                 <h4 className="text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-tight leading-tight">
                   {formValues.serviceTitle}
                 </h4>

@@ -2147,3 +2147,14 @@ export const enhanceCustomJobRequestApi = async ({ service_title, service_short_
     throw error;
   }
 };
+
+// 78. get categories hierarchical api
+export const getCategoriesHierarchicalApi = async () => {
+  try {
+    const response = await api.post(apiEndPoints.getCategoriesHierarchical);
+    return response.data;
+  } catch (error) {
+    console.error("Error in getCategoriesHierarchical:", error);
+    throw error;
+  }
+};
