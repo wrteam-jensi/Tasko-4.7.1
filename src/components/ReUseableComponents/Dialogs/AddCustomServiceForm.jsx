@@ -530,7 +530,11 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
         new Date(date).toISOString().replace("T", " ").slice(0, 19);
 
       const payload = {
-        category_id: formValues.subCategory || formValues.category || categories[0]?.id || "1",
+        category_id:
+          formValues.subCategory ||
+          formValues.category ||
+          categories[0]?.id ||
+          "1",
         service_title: formValues.serviceTitle,
         service_short_description: formValues.serviceDescription,
         min_price: formValues.minPrice,
@@ -627,9 +631,9 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
   ];
 
   return (
-    <div className="w-full max-w-6xl mx-auto animate-in fade-in slide-in-from-top-4 duration-500 bg-white dark:bg-gray-900 min-h-[70vh] px-4 md:px-6">
+    <div className="w-full max-w-6xl mx-auto animate-in fade-in slide-in-from-top-4 duration-500 min-h-[70vh] px-4 md:px-6">
       {/* Compact Header & Stepper Progress */}
-      <div className="sticky top-0 z-50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border-b border-gray-100/80 dark:border-gray-700/80">
+      <div className="sticky top-0 z-50  backdrop-blur-xl border-b border-gray-100/80 dark:border-gray-700/80">
         <div className="px-6 py-4 flex items-center justify-between"></div>
 
         {/* Sleek Minimalist Stepper */}
@@ -731,12 +735,12 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
                 <span className="text-sm font-semibold text-gray-700 dark:text-gray-200">
                   {isImproving
                     ? "Refining Details..."
-                    : "Improve with Smart AI"}
+                    : t("improveWithSmartAI") || "Improve with Smart AI"}
                 </span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="hidden sm:block px-2 py-0.5 bg-blue-600 text-white text-[9px] font-semibold rounded-lg uppercase">
-                  New
+                  {t("RECOMMENDED") || "Recommended"}
                 </div>
                 <ChevronRight
                   size={14}
@@ -764,19 +768,30 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
                     {t("category") || "Category"}
                   </span>
                   {(() => {
-                    const selectedCat = categories.find((c) => c.id === formValues.category);
+                    const selectedCat = categories.find(
+                      (c) => c.id === formValues.category,
+                    );
                     const selectedSub = formValues.subCategory
-                      ? (selectedCat?.children || []).find((s) => s.id === formValues.subCategory)
+                      ? (selectedCat?.children || []).find(
+                          (s) => s.id === formValues.subCategory,
+                        )
                       : null;
                     const display = selectedSub || selectedCat;
-                    const displayImg = display?.image || display?.category_image;
+                    const displayImg =
+                      display?.image || display?.category_image;
                     const displayName = display
-                      ? display.translated_name || display.category_name || display.name
+                      ? display.translated_name ||
+                        display.category_name ||
+                        display.name
                       : t("selectCategory") || "Choose category";
                     return (
                       <div className="flex items-center gap-2">
                         {displayImg && (
-                          <img src={displayImg} alt="" className="w-6 h-6 rounded-md object-cover flex-shrink-0" />
+                          <img
+                            src={displayImg}
+                            alt=""
+                            className="w-6 h-6 rounded-md object-cover flex-shrink-0"
+                          />
                         )}
                         <div className="flex flex-col min-w-0">
                           <span className="text-base font-semibold text-gray-900 dark:text-gray-100 line-clamp-1">
@@ -784,7 +799,9 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
                           </span>
                           {selectedSub && selectedCat && (
                             <span className="text-[11px] text-gray-400 dark:text-gray-500 line-clamp-1">
-                              {selectedCat.translated_name || selectedCat.category_name || selectedCat.name}
+                              {selectedCat.translated_name ||
+                                selectedCat.category_name ||
+                                selectedCat.name}
                             </span>
                           )}
                         </div>
@@ -800,86 +817,100 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
 
               {/* Category list — shown only when open */}
               {categoryDropdownOpen && (
-              <div className="border-t border-gray-100 dark:border-gray-700 max-h-[55vh] overflow-y-auto">
-                {categoriesLoading ? (
-                  <div className="divide-y divide-gray-50 dark:divide-gray-700">
-                    {[1, 2, 3, 4].map((i) => (
-                      <div key={i} className="flex items-center gap-3 px-4 py-3">
-                        <div className="w-5 h-5 rounded-full bg-gray-100 dark:bg-gray-700 animate-pulse flex-shrink-0" />
-                        <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-700 animate-pulse flex-shrink-0" />
-                        <div className="h-4 bg-gray-100 dark:bg-gray-700 animate-pulse rounded flex-1" />
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="divide-y divide-gray-50 dark:divide-gray-700/50">
-                    {categories.map((cat) => {
-                      const catImg = cat.image || cat.category_image;
-                      const catName = cat.translated_name || cat.category_name || cat.name;
-                      const isSelected = formValues.category === cat.id;
-                      const isExpanded = expandedCategoryId === cat.id;
-                      const catSubCategories = Array.isArray(cat.children) ? cat.children : [];
-                      const hasSubCategories = catSubCategories.length > 0;
+                <div className="border-t border-gray-100 dark:border-gray-700 max-h-[55vh] overflow-y-auto">
+                  {categoriesLoading ? (
+                    <div className="divide-y divide-gray-50 dark:divide-gray-700">
+                      {[1, 2, 3, 4].map((i) => (
+                        <div
+                          key={i}
+                          className="flex items-center gap-3 px-4 py-3"
+                        >
+                          <div className="w-5 h-5 rounded-full bg-gray-100 dark:bg-gray-700 animate-pulse flex-shrink-0" />
+                          <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-700 animate-pulse flex-shrink-0" />
+                          <div className="h-4 bg-gray-100 dark:bg-gray-700 animate-pulse rounded flex-1" />
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="divide-y divide-gray-50 dark:divide-gray-700/50">
+                      {categories.map((cat) => {
+                        const catImg = cat.image || cat.category_image;
+                        const catName =
+                          cat.translated_name || cat.category_name || cat.name;
+                        const isSelected = formValues.category === cat.id;
+                        const isExpanded = expandedCategoryId === cat.id;
+                        const catSubCategories = Array.isArray(cat.children)
+                          ? cat.children
+                          : [];
+                        const hasSubCategories = catSubCategories.length > 0;
 
-                      return (
-                        <div key={cat.id}>
-                          {/* Category row */}
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setIsManualCategory(true);
-                              setFormValues((prev) => ({
-                                ...prev,
-                                category: cat.id,
-                                subCategory: "",
-                              }));
-                              if (!hasSubCategories) {
-                                setCategoryDropdownOpen(false);
-                              } else if (isExpanded) {
-                                setExpandedCategoryId(null);
-                              } else {
-                                setExpandedCategoryId(cat.id);
-                              }
-                            }}
-                            className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors ${
-                              isSelected
-                                ? "bg-blue-50 dark:bg-blue-900/20"
-                                : "hover:bg-gray-50 dark:hover:bg-gray-700/40"
-                            }`}
-                          >
-                            {/* Image */}
-                            {catImg ? (
-                              <img
-                                src={catImg}
-                                alt=""
-                                className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
-                              />
-                            ) : (
-                              <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
-                                <Wrench size={18} className="text-gray-400" />
-                              </div>
-                            )}
-                            {/* Name */}
-                            <span className="flex-1 text-sm font-medium text-gray-900 dark:text-gray-100">
-                              {catName}
-                            </span>
-                            {/* Chevron — hidden if no subcategories */}
-                            {hasSubCategories && (
-                              isExpanded ? (
-                                <ChevronUp size={18} className="text-gray-400 flex-shrink-0" />
+                        return (
+                          <div key={cat.id}>
+                            {/* Category row */}
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setIsManualCategory(true);
+                                setFormValues((prev) => ({
+                                  ...prev,
+                                  category: cat.id,
+                                  subCategory: "",
+                                }));
+                                if (!hasSubCategories) {
+                                  setCategoryDropdownOpen(false);
+                                } else if (isExpanded) {
+                                  setExpandedCategoryId(null);
+                                } else {
+                                  setExpandedCategoryId(cat.id);
+                                }
+                              }}
+                              className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors ${
+                                isSelected
+                                  ? "bg-blue-50 dark:bg-blue-900/20"
+                                  : "hover:bg-gray-50 dark:hover:bg-gray-700/40"
+                              }`}
+                            >
+                              {/* Image */}
+                              {catImg ? (
+                                <img
+                                  src={catImg}
+                                  alt=""
+                                  className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
+                                />
                               ) : (
-                                <ChevronDown size={18} className="text-gray-400 flex-shrink-0" />
-                              )
-                            )}
-                          </button>
+                                <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
+                                  <Wrench size={18} className="text-gray-400" />
+                                </div>
+                              )}
+                              {/* Name */}
+                              <span className="flex-1 text-sm font-medium text-gray-900 dark:text-gray-100">
+                                {catName}
+                              </span>
+                              {/* Chevron — hidden if no subcategories */}
+                              {hasSubCategories &&
+                                (isExpanded ? (
+                                  <ChevronUp
+                                    size={18}
+                                    className="text-gray-400 flex-shrink-0"
+                                  />
+                                ) : (
+                                  <ChevronDown
+                                    size={18}
+                                    className="text-gray-400 flex-shrink-0"
+                                  />
+                                ))}
+                            </button>
 
-                          {/* Subcategories — inline below parent */}
-                          {isExpanded && hasSubCategories && (
-                            <div className="divide-y divide-gray-50 dark:divide-gray-700/30 bg-gray-50/50 dark:bg-gray-700/20">
-                              {catSubCategories.map((sub) => {
-                                  const subImg = sub.category_image || sub.image;
-                                  const subName = sub.translated_name || sub.name;
-                                  const isSubSelected = formValues.subCategory === sub.id;
+                            {/* Subcategories — inline below parent */}
+                            {isExpanded && hasSubCategories && (
+                              <div className="divide-y divide-gray-50 dark:divide-gray-700/30 bg-gray-50/50 dark:bg-gray-700/20">
+                                {catSubCategories.map((sub) => {
+                                  const subImg =
+                                    sub.category_image || sub.image;
+                                  const subName =
+                                    sub.translated_name || sub.name;
+                                  const isSubSelected =
+                                    formValues.subCategory === sub.id;
                                   return (
                                     <button
                                       key={sub.id}
@@ -887,9 +918,12 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
                                       onClick={() => {
                                         setFormValues((prev) => ({
                                           ...prev,
-                                          subCategory: isSubSelected ? "" : sub.id,
+                                          subCategory: isSubSelected
+                                            ? ""
+                                            : sub.id,
                                         }));
-                                        if (!isSubSelected) setCategoryDropdownOpen(false);
+                                        if (!isSubSelected)
+                                          setCategoryDropdownOpen(false);
                                       }}
                                       className={`w-full flex items-center gap-3 pl-12 pr-4 py-3 text-left transition-colors ${
                                         isSubSelected
@@ -912,14 +946,14 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
                                     </button>
                                   );
                                 })}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
               )}
             </div>
           </div>
@@ -1349,11 +1383,19 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
               {/* Header Info */}
               <div className="flex flex-col gap-3 pb-6 border-b border-gray-50/80 dark:border-gray-700/80">
                 {(() => {
-                  const reviewCat = categories.find((c) => c.id === formValues.category);
+                  const reviewCat = categories.find(
+                    (c) => c.id === formValues.category,
+                  );
                   const reviewSub = formValues.subCategory
-                    ? (reviewCat?.children || []).find((s) => s.id === formValues.subCategory)
+                    ? (reviewCat?.children || []).find(
+                        (s) => s.id === formValues.subCategory,
+                      )
                     : null;
-                  const catName = reviewCat?.translated_name || reviewCat?.category_name || reviewCat?.name || "Service";
+                  const catName =
+                    reviewCat?.translated_name ||
+                    reviewCat?.category_name ||
+                    reviewCat?.name ||
+                    "Service";
                   const subName = reviewSub?.translated_name || reviewSub?.name;
                   return (
                     <div className="flex items-center gap-2 flex-wrap">
@@ -1556,7 +1598,7 @@ const AddCustomServiceForm = ({ close, fetchBookings, provider_id }) => {
               className="h-10 w-32 md:w-36 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 border border-gray-100 dark:border-gray-600 hover:border-gray-200 dark:hover:border-gray-500 rounded-lg text-[13px] font-semibold transition-all active:scale-[0.98]"
               onClick={currentStep > 1 ? handleBack : close}
             >
-              {currentStep > 1 ? (t("back") || "Back") : (t("cancel") || "Cancel")}
+              {currentStep > 1 ? t("back") || "Back" : t("cancel") || "Cancel"}
             </Button>
           </div>
 
