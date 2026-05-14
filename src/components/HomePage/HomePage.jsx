@@ -165,13 +165,28 @@ const HomePage = () => {
 
   // Check if there's any data to display
   // Note: HeroSlider is always shown (even without slider data) because it contains location/search functionality
-  
+
   // Check if categories exist and have data
   const hasCategories = homePageData?.categories && Array.isArray(homePageData.categories) && homePageData.categories.length > 0;
-  
+
   // Check if sections exist and at least one section has valid data
   const hasSections = homePageData?.sections && Array.isArray(homePageData.sections) && homePageData.sections.length > 0;
   const hasValidSections = hasSections && homePageData.sections.some(hasSectionData);
+
+  // Separate the special "request_a_quote" banner (rank=1) from remaining sections.
+  // This banner renders pinned between the search field and all other content.
+  const isRequestAQuoteBanner = (section) =>
+    section?.section_type === "banner" &&
+    section?.banner?.[0]?.rank === "1" &&
+    section?.banner?.[0]?.banner_type === "request_a_quote";
+
+  const requestAQuoteBanner = hasSections
+    ? homePageData.sections.find(isRequestAQuoteBanner)
+    : null;
+
+  const remainingSections = hasSections
+    ? homePageData.sections.filter((s) => !isRequestAQuoteBanner(s))
+    : [];
 
   // Determine if we should show "no data found"
   // Show it only when loading is complete, there's no error, location is available, and there's no data
@@ -191,13 +206,16 @@ const HomePage = () => {
           {/* HeroSlider handles empty slider data gracefully and shows location/search section */}
           <HeroSlider sliderData={homePageData?.sliders} />
 
+          {/* request_a_quote banner with rank=1 pinned below search, above all other content */}
+          {requestAQuoteBanner && renderSection(requestAQuoteBanner, "raq")}
+
           {/* Show categories if they exist */}
           {hasCategories && (
             <HomeCategories categoriesData={homePageData?.categories} />
           )}
 
-          {/* Show sections if they exist */}
-          {hasSections && homePageData.sections.map(renderSection)}
+          {/* Show remaining sections in original API order */}
+          {remainingSections.map(renderSection)}
 
           {/* Show "No Data Found" message when there's no categories and no sections */}
           {/* This appears below HeroSlider so users can still change location */}

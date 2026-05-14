@@ -4,7 +4,8 @@ import axios from 'axios';
 import { store } from '../redux/store';
 import { clearUserData } from '@/redux/reducers/userDataSlice';
 import { clearCart } from '@/redux/reducers/cartSlice';
-import { signOut } from 'firebase/auth';
+import { signOut, getAuth } from 'firebase/auth';
+import Router from 'next/router';
 
 // Create Axios instance
 const api = axios.create({
@@ -72,7 +73,7 @@ api.interceptors.response.use(
       // Dispatch logout action to clear user data
       store.dispatch(clearUserData());
       store.dispatch(clearCart());
-      signOut();
+      signOut(getAuth());
       // Redirect to login page after logout
       Router.push("/");
     }

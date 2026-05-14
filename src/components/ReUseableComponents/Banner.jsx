@@ -4,9 +4,14 @@ import CustomImageTag from "./CustomImageTag";
 import { useRouter } from "next/router";
 import useDeviceType from "@/hooks/useDeviceType";
 import { useTranslation } from "../Layout/TranslationContext";
+import { useDispatch } from "react-redux";
+import { openLoginModal } from "@/redux/reducers/helperSlice";
+import { useIsLogin } from "@/utils/Helper";
 const Banner = ({ banner }) => {
   const router = useRouter();
   const t = useTranslation();
+  const dispatch = useDispatch();
+  const isLoggedIn = useIsLogin();
   const bannerData = banner?.banner[0];
   const isMobile = useDeviceType();
 
@@ -27,6 +32,14 @@ const Banner = ({ banner }) => {
         // For "provider", open the provider route in a new tab
         const providerRoute = `/provider-details/${banner?.provider_slug}`;
         router.push(providerRoute);
+        break;
+
+      case "request_a_quote":
+        if (!isLoggedIn) {
+          dispatch(openLoginModal());
+        } else {
+          router.push("/my-services-requests");
+        }
         break;
 
       case "banner_category":
