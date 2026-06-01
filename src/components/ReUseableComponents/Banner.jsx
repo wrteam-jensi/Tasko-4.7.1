@@ -74,8 +74,8 @@ const Banner = ({ banner }) => {
       <CustomImageTag
         src={isMobile ? bannerData?.app_banner_image : bannerData?.web_banner_image}
         alt={t("bannerImage")}
-        className="!object-contain w-full h-full bg-transparent aspect-provider-banner" 
-        imgClassName="rounded-lg"
+        className="w-full h-full bg-transparent aspect-provider-banner"
+        imgClassName="rounded-lg "
       />
     </div>
   );

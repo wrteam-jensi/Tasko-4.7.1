@@ -414,7 +414,7 @@ const EditProfile = ({ open, close, isEditProfile, userData }) => {
                   </svg>
                   <span className="text-sm description_color is_required">{t("phone")}</span>
                 </label>
-                <PhoneInput
+                <PhoneInput 
                   value={
                     formData.phone ? countryCode + formData.phone : countryCode
                   }
@@ -438,6 +438,7 @@ const EditProfile = ({ open, close, isEditProfile, userData }) => {
                   disableDropdown={
                     countryCodesArray.length <= 1 || userAuthData?.type === "phone" || userData?.login_type === "phone"
                   }
+                  enableLongNumbers={10}
                   enableSearch={true}
                   containerClass="w-full"
                   inputClass={`!w-full !py-2 !border !rounded-lg focus:!outline-none focus:!ring-0 focus:!border-[--primary-color] !bg-transparent ${(userAuthData?.type === "phone" || userData?.login_type === "phone") ? "!cursor-not-allowed opacity-50" : ""}`}
